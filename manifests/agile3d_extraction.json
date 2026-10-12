@@ -1,0 +1,99 @@
+{
+  "engine_functions_at_extraction": [
+    "_checkpoint_state",
+    "_wrapper_key_candidates",
+    "capture_rng_state",
+    "cpu_state_dict",
+    "evaluate",
+    "initialize_training_episode",
+    "load_frozen_backbone",
+    "make_dataset",
+    "make_loaders",
+    "paired_training_seed",
+    "restore_rng_state",
+    "run_training_click_prefix",
+    "set_seed",
+    "sha256_file",
+    "split_by_offsets",
+    "train_batch",
+    "unpack_batch"
+  ],
+  "engine_source_sha256": "9a453325711a89255d3291cabed380731dce40213f4276c78fbd90cfbf97c1b0",
+  "files": [
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/datasets/InterMultiObj3DSegDataset.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/datasets/InterMultiObj3DSegDataset.py",
+      "source_sha256": "069388da398e376686bf2287016b1f493a43a4dd7724f99d9564ef7231139f25"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/datasets/InterSingleObj3DSegDataset.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/datasets/InterSingleObj3DSegDataset.py",
+      "source_sha256": "de53e5817f5c7379b92b49d978ea1c7c1a0c09ea2cae333527f2667d0bbb19c6"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/datasets/normal_utils.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/datasets/normal_utils.py",
+      "source_sha256": "01cb2a6b8d4b1fd0e6d4bcc3cfd28c98d8b562772d1df929d81425e9699a30eb"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/datasets/external_feature_utils.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/datasets/external_feature_utils.py",
+      "source_sha256": "cce6301c56095a56803f29f67369ded83cd9712626082d081dfec8f56771d16b"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/utils/ply.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/utils/ply.py",
+      "source_sha256": "d62a32f2fbcd7308ef983bc1003b5f03c63ed516da6a06a652fcb9d1f2ba2537"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/utils/seg.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/utils/seg.py",
+      "source_sha256": "ad3967ef0a61cd3224d921109e5cf93ae38063cba88692e15fe8110d95e82641"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/evaluation/evaluator_MO.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/evaluation/evaluator_MO.py",
+      "source_sha256": "8dad138f6bab51ef4497e926d1f2113ede2d2d474b1328f6e9794d0b04198d06"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/evaluation/evaluator_SO.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/evaluation/evaluator_SO.py",
+      "source_sha256": "114016ceb7156b8a7c56b51210b95c0e6568ca100c71a12adc51b7cb0eff6770"
+    },
+    {
+      "path": "src/delimit3d/tasks/agile3d/protocol/evaluation/labels.py",
+      "source": "/cluster/work/igp_psr/nedela/AGILE3D/evaluation/labels.py",
+      "source_sha256": "b3a8a6eb329e94ebfccb1b0902eb9a73135c0f47397f3ced4c13e572855fbd25"
+    }
+  ],
+  "hash_scope": "Source hashes describe the preserved extraction inputs; release_files describe current executable bytes.",
+  "release_changes": [
+    "Namespaced official imports and portable NumPy quantization.",
+    "Explicit frozen encoder and stateless evaluation normalization.",
+    "Fresh task input hashes and full checkpoint/resume/validation records.",
+    "Initialize empty evaluation click slots for raw samples."
+  ],
+  "release_files": {
+    "src/delimit3d/tasks/agile3d/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/agile3d/engine.py": "0337a0cb0853d7ad576c4e5742de14c4865eaae010316a1c9e0b4d48477fc4dc",
+    "src/delimit3d/tasks/agile3d/legacy.py": "86b5ec2bed7d2827693da2a3a2b434ee19c927aa0891206fc4a8ba3cfa1af289",
+    "src/delimit3d/tasks/agile3d/model.py": "01a1745dafa54328354f6031751a41e0e54e7d67567e9525568d6ecb8fa4f082",
+    "src/delimit3d/tasks/agile3d/protocol/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/agile3d/protocol/datasets/InterMultiObj3DSegDataset.py": "d0a66ede924656969e2870932b8862e4272439f9251e0b31a36c76de0f6633d8",
+    "src/delimit3d/tasks/agile3d/protocol/datasets/InterSingleObj3DSegDataset.py": "4ebb48e8e727852bfe806c840e76bcfb38c9e22e3e82f1747f055de96b65f641",
+    "src/delimit3d/tasks/agile3d/protocol/datasets/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/agile3d/protocol/datasets/external_feature_utils.py": "cce6301c56095a56803f29f67369ded83cd9712626082d081dfec8f56771d16b",
+    "src/delimit3d/tasks/agile3d/protocol/datasets/normal_utils.py": "01cb2a6b8d4b1fd0e6d4bcc3cfd28c98d8b562772d1df929d81425e9699a30eb",
+    "src/delimit3d/tasks/agile3d/protocol/evaluation/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/agile3d/protocol/evaluation/evaluator_MO.py": "28abc48c6833b6ac14e999a01a27daebaa31a398e2d85c99d1ce53a91142d603",
+    "src/delimit3d/tasks/agile3d/protocol/evaluation/evaluator_SO.py": "492da063fe61602c6be957647703fe1a31bf17701fe25fd26329225d7843ee5b",
+    "src/delimit3d/tasks/agile3d/protocol/evaluation/labels.py": "b3a8a6eb329e94ebfccb1b0902eb9a73135c0f47397f3ced4c13e572855fbd25",
+    "src/delimit3d/tasks/agile3d/protocol/quantization.py": "43b8862caded5580fdb3f80c531387fd63dae3e6bf9a47540d4f5660c4bca006",
+    "src/delimit3d/tasks/agile3d/protocol/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/agile3d/protocol/utils/ply.py": "1069a55261c7a452c3e93ed8685360d852e6a498722d4d743e5cea2db03b69f2",
+    "src/delimit3d/tasks/agile3d/protocol/utils/seg.py": "731f8989f0f8a326f81f51924885508cd45ad950d7cbe0a678f02670b0abe2f6",
+    "src/delimit3d/tasks/agile3d/trainer.py": "db7a212ad770ef84fe98b2ef8c7bb18c390884957919c898cdbc2edc6c624cec"
+  },
+  "schema": "delimit3d_dependency_extraction/v1",
+  "upstream_commit": "b73638da41edbabe52a1b578d52ddeb8fa552173"
+}

@@ -1,0 +1,7 @@
+extends: [mask3d.yaml, ../models/concerto_small.yaml]
+name: mask3d_concerto_native_lr01
+model:
+  architecture: concerto_mask3d_class_agnostic
+initialization:
+  backbone_source: concerto
+  backbone_checkpoint: null

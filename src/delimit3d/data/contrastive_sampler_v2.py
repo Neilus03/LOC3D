@@ -434,7 +434,7 @@ class FrameProposalCatalog:
     proposal_point_indices: torch.Tensor
 
     def valid_proposal_indices(self) -> torch.Tensor:
-        if not self.cell.startswith("2d/g") or not self.frame_id:
+        if (self.cell not in (*DEFAULT_2D_CELLS, "2d/sam2")) or not self.frame_id:
             raise ValueError("a 2D source cell and physical frame ID are required")
         if self.visible_indices.ndim != 1 or self.proposal_offsets.ndim != 1:
             raise ValueError("visible indices and proposal offsets must be vectors")
@@ -591,6 +591,22 @@ def rotating_three_cell_quotas(
     for offset in range(remainder):
         output[ordered[(start + offset) % len(ordered)]] += 1
     return output
+
+
+def source_cell_quotas(
+    epoch: int,
+    *,
+    total_proposals: int = 16,
+    cells: Sequence[str] = DEFAULT_2D_CELLS,
+) -> dict[str, int]:
+    """Keep the original three-cell rotation, or give one source the full budget."""
+
+    ordered = tuple(cells)
+    if len(ordered) == 1 and ordered[0] in (*DEFAULT_2D_CELLS, "2d/sam2"):
+        if int(epoch) < 0 or int(total_proposals) <= 0:
+            raise ValueError("epoch must be non-negative and total_proposals positive")
+        return {ordered[0]: int(total_proposals)}
+    return rotating_three_cell_quotas(epoch, total_proposals=total_proposals, cells=ordered)
 
 
 def _catalog_fingerprint(entries: Sequence[tuple[int, int, str]]) -> str:
@@ -1125,6 +1141,7 @@ def _all_pure_dec0_pairs_have_relation_safe_negative(
     ancestry: LitePTHierarchyAncestry,
     frame_support: Mapping[str, Any],
     require_negative_proposal_membership: bool,
+    allow_shared_proposal_negatives: bool = False,
     objective_known_counts: torch.Tensor | None = None,
     precomputed_present_tokens: torch.Tensor | None = None,
     precomputed_present_point_counts: torch.Tensor | None = None,
@@ -1254,19 +1271,39 @@ def _all_pure_dec0_pairs_have_relation_safe_negative(
             return False
         if sampled_positive_pair_generator is None:
             raise ValueError("sampled positive-pair generator is required")
+        # The proposal-local pair stream is the CPU stream used by normal
+        # training. Torch's CUDA RNG differs even with the same integer seed;
+        # moving the eligibility predicate must not change these pairs.
+        pair_generator = sampled_positive_pair_generator
+        if pair_generator.device.type != "cpu":
+            pair_generator = torch.Generator(device="cpu").manual_seed(
+                pair_generator.initial_seed()
+            )
         sampled_pairs = sample_unique_positive_pairs(
-            pure_tokens,
+            pure_tokens.cpu(),
             min(int(sampled_positive_pair_count), 64),
-            generator=sampled_positive_pair_generator,
-        )
+            generator=pair_generator,
+        ).to(pure_tokens.device)
         if sampled_positive_pair_output is not None:
             sampled_positive_pair_output.append(sampled_pairs.detach())
+        if allow_shared_proposal_negatives:
+            return bool(
+                candidate_signature_counts.sum().item() > 0
+                if candidate_signature_counts is not None
+                else pure_negative_tokens.numel() > 0
+            )
         return _sampled_anchor_pairs_have_safe_negative_signature(
             sampled_pairs,
             relation_index.point_words,
             candidate_signatures,
             require_candidate_membership=require_negative_proposal_membership,
             candidate_signature_counts=candidate_signature_counts,
+        )
+    if allow_shared_proposal_negatives:
+        return bool(
+            candidate_signature_counts.sum().item() > 0
+            if candidate_signature_counts is not None
+            else pure_negative_tokens.numel() > 0
         )
     return _all_anchor_pairs_have_safe_negative_signature(
         relation_index.point_words[pure_tokens],
@@ -1668,6 +1705,7 @@ def _proposal_preselection_evidence(
     ancestry: LitePTHierarchyAncestry,
     frame_support: Mapping[str, Any],
     require_negative_proposal_membership: bool,
+    allow_shared_proposal_negatives: bool = False,
     require_hierarchy_routes: bool = True,
     catalog_context: Mapping[str, Any] | None = None,
     sampled_positive_pair_count: int | None = None,
@@ -1797,6 +1835,7 @@ def _proposal_preselection_evidence(
             ancestry=ancestry,
             frame_support=frame_support,
             require_negative_proposal_membership=require_negative_proposal_membership,
+            allow_shared_proposal_negatives=allow_shared_proposal_negatives,
             objective_known_counts=(
                 catalog_context["relation_known_counts"]["dec0"]
                 if require_negative_proposal_membership and catalog_context is not None
@@ -1877,7 +1916,7 @@ def _coverage_minimum_cursor_before_epoch(
 
     return sum(
         min(
-            rotating_three_cell_quotas(
+            source_cell_quotas(
                 previous,
                 total_proposals=total_proposals,
                 cells=cells,
@@ -1967,7 +2006,9 @@ def sample_multigranular_frame_group_plan(
     num_feature_hard_negatives: int = 128,
     feature_candidate_pool: int = 1024,
     require_negative_proposal_membership: bool = False,
+    allow_shared_proposal_negatives: bool = False,
     require_hierarchy_routes: bool = True,
+    grid_size: float = 0.02,
     operation: str = "multigranular-train-v2",
     coverage_states: Mapping[str, DeterministicCoverageState | None] | None = None,
     quota_epoch: int | None = None,
@@ -1989,10 +2030,10 @@ def sample_multigranular_frame_group_plan(
     coverage queue; separating those concepts avoids pretending that an
     unrelated training cursor exists for that fixed pack.
 
-    ``require_hierarchy_routes`` remains enabled for every training visit: it
+    ``require_hierarchy_routes`` remains enabled for hierarchy training: it
     prefilters g02/g05/g08 rows against the routed query-mask stages.  The
-    fixed dec0 feature evaluator disables only that extra criterion because it
-    never computes a hierarchy-mask loss; its native token pairs and
+    dec0-only trainer and fixed feature evaluator disable that criterion because
+    they never compute a hierarchy-mask loss; their native token pairs and
     ambiguity-safe negatives remain identical V2 contract checks.
 
     ``materialize_full_preselection_evidence`` is an audit-only switch.  The
@@ -2039,7 +2080,7 @@ def sample_multigranular_frame_group_plan(
     # exact float32 floor/unique ancestry used by the LitePT wrapper.  Integer
     # planning below is then moved to CPU, where the many scalar checks do not
     # become hundreds of CUDA launches and host synchronizations.
-    ancestry = derive_litept_hierarchy_ancestry(points)
+    ancestry = derive_litept_hierarchy_ancestry(points, grid_size=grid_size)
     phase_end("ancestry_ms", ancestry_start)
 
     requested_planning_device = (
@@ -2090,7 +2131,7 @@ def sample_multigranular_frame_group_plan(
         }
     phase_end("planning_transfer_ms", planning_transfer_start)
     resolved_quota_epoch = int(epoch) if quota_epoch is None else int(quota_epoch)
-    quotas = rotating_three_cell_quotas(
+    quotas = source_cell_quotas(
         resolved_quota_epoch,
         total_proposals=int(total_proposal_quota),
         cells=ordered_cells,
@@ -2316,6 +2357,7 @@ def sample_multigranular_frame_group_plan(
                     require_negative_proposal_membership
                 ),
                 require_hierarchy_routes=require_hierarchy_routes,
+                allow_shared_proposal_negatives=allow_shared_proposal_negatives,
                 catalog_context=catalog_context,
                 sampled_positive_pair_count=min(
                     int(positive_pairs_per_proposal), 64
@@ -2605,6 +2647,7 @@ def sample_multigranular_frame_group_plan(
                         require_negative_proposal_membership
                     ),
                     defer_token_loss=bool(defer_token_loss),
+                    allow_shared_proposal_negatives=allow_shared_proposal_negatives,
                     generator=generator,
                     prepared_visible_indices=prepared["visible"],
                     prepared_relation_points=prepared["relation_points"],
@@ -2717,6 +2760,7 @@ def sample_multigranular_frame_groups(
     feature_candidate_pool: int = 1024,
     require_negative_proposal_membership: bool = False,
     require_hierarchy_routes: bool = True,
+    grid_size: float = 0.02,
     operation: str = "multigranular-train-v2",
     coverage_states: Mapping[str, DeterministicCoverageState | None] | None = None,
     quota_epoch: int | None = None,
@@ -2747,6 +2791,7 @@ def sample_multigranular_frame_groups(
         feature_candidate_pool=feature_candidate_pool,
         require_negative_proposal_membership=require_negative_proposal_membership,
         require_hierarchy_routes=require_hierarchy_routes,
+        grid_size=grid_size,
         operation=operation,
         coverage_states=coverage_states,
         quota_epoch=quota_epoch,
@@ -2770,6 +2815,7 @@ __all__ = [
     "PRESELECTION_POLICY",
     "derive_litept_hierarchy_ancestry",
     "rotating_three_cell_quotas",
+    "source_cell_quotas",
     "sample_multigranular_frame_group_plan",
     "sample_multigranular_frame_groups",
 ]

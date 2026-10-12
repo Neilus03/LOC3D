@@ -1792,9 +1792,9 @@ def test_cpu_planning_matches_cuda_planning_for_controlled_and_adversarial_masks
         for repeat_timing in warm_timings
     )
 
-    # The relation graph deliberately contains the same-chunk unsafe pair
-    # exercised by the preselection regression.  CPU placement must preserve
-    # the fail-closed selection and every serialized evidence field.
+    # This relation graph contains an unsafe (1,2) pair, but other sampled
+    # pairs and proposals can still have safe negatives. Placement must
+    # preserve the retained plan and every serialized evidence field.
     adversarial_points = torch.stack(
         [torch.arange(5, dtype=torch.float32), torch.zeros(5), torch.zeros(5)],
         dim=1,
@@ -1825,12 +1825,49 @@ def test_cpu_planning_matches_cuda_planning_for_controlled_and_adversarial_masks
         num_feature_hard_negatives=0,
         require_negative_proposal_membership=False,
     )
+    old = sample_multigranular_frame_group_plan(
+        **adversarial_common, planning_device=adversarial_points.device
+    )
+    new = sample_multigranular_frame_group_plan(
+        **adversarial_common, planning_device="cpu"
+    )
+    _assert_v2_plans_equal(old, new)
+    assert new.groups
+    for group in new.groups:
+        batch = group.batch
+        pairs = batch.token_positive_pair_indices
+        assert pairs is not None and pairs.numel() > 0
+        safe_by_endpoint = [
+            co_membership_safe_negative_mask_reference(
+                pairs[:, endpoint],
+                adversarial_catalog.visible_indices,
+                proposal_offsets=batch.relation_proposal_offsets,
+                proposal_point_indices=batch.relation_proposal_member_indices,
+            )
+            for endpoint in (0, 1)
+        ]
+        assert bool((safe_by_endpoint[0] & safe_by_endpoint[1]).any(dim=1).all())
+
+    # A fully co-contained catalog really has no safe negative. Both
+    # placements must reject it and retain identical rejection accounting.
+    contained_catalog = replace(
+        adversarial_catalog,
+        proposal_offsets=torch.tensor([0, 5], device=adversarial_points.device),
+        proposal_point_indices=torch.arange(5, device=adversarial_points.device),
+    )
+    contained_common = {
+        **adversarial_common,
+        "frames_by_cell": {
+            cell: (replace(contained_catalog, cell=cell),)
+            for cell in DEFAULT_2D_CELLS
+        },
+    }
     with pytest.raises(NoRetainedFrameGroupsError) as old_error:
         sample_multigranular_frame_group_plan(
-            **adversarial_common, planning_device=adversarial_points.device
+            **contained_common, planning_device=adversarial_points.device
         )
     with pytest.raises(NoRetainedFrameGroupsError) as new_error:
         sample_multigranular_frame_group_plan(
-            **adversarial_common, planning_device="cpu"
+            **contained_common, planning_device="cpu"
         )
     _assert_v2_plans_equal(old_error.value.plan, new_error.value.plan)

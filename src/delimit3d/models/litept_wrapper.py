@@ -59,14 +59,30 @@ LITEPT_S_STAR_KWARGS: dict[str, Any] = {
 }
 
 
+# Official Structured3D LitePT-B encoder, widths and heads. The full decoder's
+# depth and convolution/attention pattern come from the published S* instance
+# configuration. B* is our configuration extension, built by native LitePT code.
+LITEPT_B_STAR_KWARGS: dict[str, Any] = {
+    **LITEPT_S_STAR_KWARGS,
+    "enc_depths": (3, 3, 3, 12, 3),
+    "enc_channels": (54, 108, 216, 432, 576),
+    "enc_num_head": (3, 6, 12, 24, 32),
+    "dec_channels": (72, 108, 216, 432),
+    "dec_num_head": (4, 6, 12, 24),
+}
+LITEPT_STAR_VARIANTS = ("litept_s_star", "litept_b_star")
+
+
 def _litept_constructor_kwargs(variant: str) -> dict[str, Any]:
+    if variant == "litept_b_star":
+        return dict(LITEPT_B_STAR_KWARGS)
     if variant == "litept_s_star":
         return dict(LITEPT_S_STAR_KWARGS)
     if variant == "litept_s":
         # ``litept.model.LitePT`` defaults match semantic-seg LitePT-S (no decoder blocks).
         return {}
     raise ValueError(
-        f"Unknown litept_variant {variant!r}; expected 'litept_s_star' or 'litept_s'."
+        f"Unknown litept_variant {variant!r}; expected 'litept_b_star', 'litept_s_star' or 'litept_s'."
     )
 
 
@@ -228,9 +244,9 @@ class LitePTBackbone(nn.Module):
         self.litept_root = Path(litept_root).resolve()
         self.in_channels = int(in_channels)
         self.grid_size = float(grid_size)
-        if litept_variant not in ("litept_s_star", "litept_s"):
+        if litept_variant not in (*LITEPT_STAR_VARIANTS, "litept_s"):
             raise ValueError(
-                f"litept_variant must be 'litept_s_star' or 'litept_s', got {litept_variant!r}"
+                f"litept_variant must be 'litept_b_star', 'litept_s_star' or 'litept_s', got {litept_variant!r}"
             )
         self.litept_variant = litept_variant
 
@@ -244,14 +260,23 @@ class LitePTBackbone(nn.Module):
             sys.path.insert(0, litept_root_str)
 
         from litept.model import LitePT
+        import litept.model as native_module
+        native_file = getattr(native_module, "__file__", None)
+        if native_file is not None and not Path(native_file).resolve().is_relative_to(self.litept_root):
+            raise RuntimeError(f"LitePT was imported from {native_file}, outside the configured source checkout")
 
         ctor: dict[str, Any] = _litept_constructor_kwargs(litept_variant)
         if litept_kwargs:
+            if litept_variant == "litept_b_star":
+                drift = {key: value for key, value in litept_kwargs.items()
+                         if key in ctor and value != ctor[key]}
+                if drift:
+                    raise ValueError(f"LitePT-B* architecture overrides are incompatible: {drift}")
             ctor.update(litept_kwargs)
         self.model = LitePT(in_channels=self.in_channels, **ctor)
 
-        # LitePT-S and LitePT-S* both use dec_channels[0] = 72 at the finest output.
-        self.out_channels: int = 72
+        self.resolved_architecture = {"in_channels": self.in_channels, **ctor}
+        self.out_channels = int(ctor.get("dec_channels", (72,))[0])
         self.cache_training_voxelization = bool(cache_training_voxelization)
         self.feature_pyramid_mode = feature_pyramid_mode
         self.capture_hierarchy = bool(capture_hierarchy)
@@ -284,10 +309,10 @@ class LitePTBackbone(nn.Module):
             "mask3d_dec0_pooled_fpn",
             "mask3d_decoder_only_fpn",
         }:
-            if self.litept_variant != "litept_s_star":
+            if self.litept_variant not in LITEPT_STAR_VARIANTS:
                 raise ValueError(
                     f"{self.feature_pyramid_mode} requires "
-                    "litept_variant='litept_s_star'"
+                    "a full-decoder LitePT star variant"
                 )
             if self.voxel_reduce != "representative":
                 raise ValueError(
@@ -301,8 +326,8 @@ class LitePTBackbone(nn.Module):
                     "do not also set multi_scale=true"
                 )
         if self.capture_hierarchy:
-            if self.litept_variant != "litept_s_star":
-                raise ValueError("capture_hierarchy requires litept_variant='litept_s_star'")
+            if self.litept_variant not in LITEPT_STAR_VARIANTS:
+                raise ValueError("capture_hierarchy requires a full-decoder LitePT star variant")
             if self.feature_pyramid_mode is not None:
                 raise ValueError(
                     "capture_hierarchy augments LitePTBackboneOutput and cannot be "
@@ -383,6 +408,35 @@ class LitePTBackbone(nn.Module):
             self.model.enc[4].register_forward_hook(self._make_fpn_hook("enc4"))
             for index, name in enumerate(("dec3", "dec2", "dec1", "dec0")):
                 self.model.dec[index].register_forward_hook(self._make_fpn_hook(name))
+
+    def load_state_dict(self, state_dict, strict=True, assign=False):
+        # Validate the entire B* state before PyTorch can copy any matching S*
+        # tensors and then raise. B* never supports partial backbone loading.
+        if self.litept_variant == "litept_b_star":
+            current = self.state_dict()
+            if set(state_dict) != set(current) or any(
+                state_dict[key].shape != current[key].shape
+                for key in set(state_dict) & set(current)
+            ):
+                raise RuntimeError("LitePT-B* requires an exact backbone checkpoint; partial/cross-variant loading is forbidden")
+        return super().load_state_dict(state_dict, strict=strict, assign=assign)
+
+    @property
+    def hierarchy_channels(self) -> dict[str, int]:
+        architecture = getattr(self, "resolved_architecture", LITEPT_S_STAR_KWARGS)
+        return {"enc4": int(architecture["enc_channels"][-1]), **{
+            f"dec{i}": int(width) for i, width in reversed(list(enumerate(architecture["dec_channels"])))
+        }}
+
+    @property
+    def memory_channels(self) -> tuple[int, ...]:
+        widths = self.hierarchy_channels
+        native = tuple(widths[name] for name in ("enc4", "dec3", "dec2", "dec1"))
+        if self.feature_pyramid_mode == "mask3d_dec0_pooled_fpn":
+            return (widths["dec0"],) * 4
+        if self.feature_pyramid_mode == "mask3d_decoder_only_fpn":
+            return (widths["dec3"], *native[1:])
+        return native
 
     def _make_hook(self, scale_idx: int):
         """Capture features and integer grids from a LitePT decoder substage."""
@@ -842,13 +896,7 @@ class LitePTBackbone(nn.Module):
             if missing:
                 raise RuntimeError(f"LitePT FPN hooks did not capture stages: {missing}")
 
-            stage_channels = {
-                "enc4": 504,
-                "dec3": 252,
-                "dec2": 144,
-                "dec1": 72,
-                "dec0": 72,
-            }
+            stage_channels = self.hierarchy_channels
             stage_strides = {
                 "enc4": 16,
                 "dec3": 8,
@@ -989,13 +1037,7 @@ class LitePTBackbone(nn.Module):
                 raise RuntimeError(
                     f"LitePT hierarchy hooks did not capture stages: {missing}"
                 )
-            expected_channels = {
-                "enc4": 504,
-                "dec3": 252,
-                "dec2": 144,
-                "dec1": 72,
-                "dec0": 72,
-            }
+            expected_channels = self.hierarchy_channels
             for name in hierarchy_stage_names:
                 features = self._fpn_captured[name][0]
                 if features.ndim != 2 or int(features.shape[1]) != expected_channels[name]:

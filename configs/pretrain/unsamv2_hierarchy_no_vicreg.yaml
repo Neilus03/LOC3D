@@ -1,0 +1,4 @@
+extends: unsamv2_hierarchy.yaml
+name: unsamv2_hierarchy_no_vicreg_336ep
+description: Same original hierarchy mask objective and routes with VICReg coefficient zero.
+hierarchy_vicreg_loss_weight: 0

@@ -1,0 +1,7 @@
+extends: ../models/litept_sstar.yaml
+name: native_litept_feature_segmentation
+probe:
+  checkpoint: ${DELIMIT3D_BACKBONE_CHECKPOINT}
+  grid_size: 0.05
+  coordinate_policy: center_xy_min_z
+  backbone_batchnorm_policy: eval

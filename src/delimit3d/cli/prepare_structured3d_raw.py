@@ -569,7 +569,7 @@ def _export_scene(
     return manifest_path
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     source_group = parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("--scene-ids-file", type=Path)
@@ -583,16 +583,16 @@ def parse_args() -> argparse.Namespace:
         "--exclude-scene-ids-file",
         type=Path,
         default=Path(__file__).resolve().parents[1]
-        / "configs/splits/structured3d_unsamv2_excluded_scenes.list",
+        / "runtime/assets/structured3d_unsamv2_excluded_scenes.list",
         help="Comment-tolerant scene list excluded from the raw/source dataset.",
     )
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--model-cfg", default=None)
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> None:
-    args = parse_args()
+def main(argv=None) -> None:
+    args = parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     if args.scene_ids_file is not None:
         scene_ids = load_scene_ids(args.scene_ids_file)

@@ -21,6 +21,17 @@ def compute_visible_points(
     z = z[finite_mask]
     valid_indices = valid_indices[finite_mask]
 
+    # Reject off-image coordinates while they are still floating point.  A
+    # point just behind the camera plane can project to a finite value larger
+    # than int32; casting that value first emits a warning and has
+    # platform-dependent results.  The lower bound preserves NumPy's
+    # truncation-toward-zero behavior for sub-pixel coordinates in (-1, 0).
+    finite_image = (u > -1.0) & (u < w) & (v > -1.0) & (v < h)
+    u = u[finite_image]
+    v = v[finite_image]
+    z = z[finite_image]
+    valid_indices = valid_indices[finite_image]
+
     u_int = u.astype(np.int32)
     v_int = v.astype(np.int32)
 

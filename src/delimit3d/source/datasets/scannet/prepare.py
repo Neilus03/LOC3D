@@ -8,7 +8,8 @@ import numpy as np
 
 
 def _resolve_scannet_pair_root() -> Path:
-    default_root = "/home/nedela/projects/LitePT/datasets/preprocessing/scannet/scannet_pair"
+    litept_root = Path(os.environ.get("DELIMIT3D_LITEPT_ROOT", Path.cwd() / ".deps" / "LitePT"))
+    default_root = str(litept_root / "datasets/preprocessing/scannet/scannet_pair")
     return Path(
         os.path.expandvars(
             os.path.expanduser(

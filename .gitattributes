@@ -1,0 +1,3 @@
+# Preserve upstream formatting and the exact bytes of the locked runtime patch.
+src/delimit3d/runtime/assets/*.patch -whitespace
+src/delimit3d/tasks/agile3d/protocol/**/*.py -whitespace

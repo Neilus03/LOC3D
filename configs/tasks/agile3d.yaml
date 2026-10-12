@@ -1,0 +1,60 @@
+schema: delimit3d_task_recipe/v1
+task: agile3d
+seed: 42
+encoder_initialization:
+  kind: pretrained_checkpoint
+  checkpoint: ${DELIMIT3D_BACKBONE_CHECKPOINT}
+decoder_initialization:
+  seed: 20260912
+paths:
+  litept_root: null
+  scan_folder: ${DELIMIT3D_AGILE3D_SCANS}
+  train_list: ${DELIMIT3D_AGILE3D_TRAIN_LIST}
+  val_list: ${DELIMIT3D_AGILE3D_VAL_LIST}
+  normal_root: ${DELIMIT3D_AGILE3D_NORMALS}
+  decoder_initialization: ${DELIMIT3D_AGILE3D_DECODER}
+  single_object_root: ${DELIMIT3D_AGILE3D_OBJECTS}
+  output_root: ${DELIMIT3D_OUTPUT_DIR}
+protocol:
+  randomness_contract: epoch_loader_and_batch_episode_seed_v1
+  input_features: rgbn6
+  multi_scale: false
+  coordinate_contract: official_agile3d_per_axis_minimum
+  quantization_backend: numpy_utility_compat_v1
+  voxel_size_m: 0.05
+  batch_size: 5
+  val_batch_size: 1
+  epochs: 1100
+  val_epochs: 50
+  lr_drop: [1000]
+  max_num_clicks: 20
+model:
+  in_channels: 6
+  feature_dim: 72
+  hidden_dim: 128
+  num_heads: 8
+  dim_feedforward: 1024
+  num_decoders: 3
+  num_bg_queries: 10
+  dropout: 0
+  pre_norm: false
+  max_click_events: 200
+  normalize_pos_enc: true
+  gauss_scale: 1
+  aux: true
+  freeze_encoder: false
+optimizer:
+  decoder_learning_rate: 0.0001
+  encoder_learning_rate_multiplier: 0.1
+  weight_decay: 0.0001
+  clip_norm: 0.1
+loss:
+  bce_weight: 1
+  dice_weight: 2
+  alpha: 0.8
+  beta: 2
+  radius: 0.3
+runtime:
+  num_workers: 2
+evaluation:
+  backbone_batchnorm_policy: eval

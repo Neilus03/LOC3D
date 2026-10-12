@@ -326,7 +326,7 @@ def _candidate_scannet_metadata_roots() -> list[Path]:
     if env_root:
         candidates.append(Path(os.path.expanduser(os.path.expandvars(env_root))).resolve())
 
-    litept_root = os.environ.get("LITEPT_ROOT")
+    litept_root = os.environ.get("DELIMIT3D_LITEPT_ROOT", os.environ.get("LITEPT_ROOT"))
     if litept_root:
         candidates.append(
             (

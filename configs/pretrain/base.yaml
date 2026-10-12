@@ -1,0 +1,25 @@
+schema: delimit3d_pretraining_recipe/v1
+dataset: structured3d
+litept_variant: litept_s_star
+litept_root: ${DELIMIT3D_LITEPT_ROOT}
+source_root: ${DELIMIT3D_SOURCE_ROOT}
+source_audit: ${DELIMIT3D_SOURCE_AUDIT}
+train_split: ${DELIMIT3D_TRAIN_SPLIT}
+holdout_split: ${DELIMIT3D_VAL_SPLIT}
+output_dir: ${DELIMIT3D_OUTPUT_DIR}
+input_features: rgbn6
+representative_sampling: first
+coordinate_normalization_policy: structured3d_local_y_up_to_scannet_z_up_v1
+color_mean: [0, 0, 0]
+color_std: [1, 1, 1]
+seed: 42
+head_lr: 0.003
+weight_decay: 0.05
+warmup_epochs: 17
+source_family: 2d
+source_cell_schedule: balanced_random_permutation_v1
+expected_world_size: 2
+scenes_per_rank_per_update: 6
+sampling_profile: pf_hnm_512_p16_v1
+evaluation_sampling_profile: pf_hnm_512_v1
+log_every: 10

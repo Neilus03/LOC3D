@@ -1,0 +1,25 @@
+extends: base.yaml
+name: unsamv2_multiscale_contrastive_84ep
+description: Legacy full-scene dec0 plus dec3/dec2/dec1 contrastive deep supervision; local BatchNorm.
+grid_size: 0.02
+required_crop_mode: full_scene
+train_augmentation_profile: mask3d_scannet_rgbn6_fullscene_v1
+epochs: 84
+backbone_lr: 0.001
+grad_clip_norm: 1
+sampling_mode: random_with_replacement
+multiscale_supervision: true
+multiscale_loss_weight: 0.4
+multiscale_warmup_epochs: 20
+hierarchy_supervision: legacy
+normalization_policy: batchnorm
+bn_recalibration_scenes: 0
+source_loading_mode: logical_batch
+source_loader_workers: 4
+source_audit: ${DELIMIT3D_SOURCE_AUDIT}
+code_manifest: ${DELIMIT3D_CODE_MANIFEST}
+recipe:
+  calibration_required: true
+  calibration_report: ${DELIMIT3D_CALIBRATION}
+evaluation_epochs: 0,18,36,84
+checkpoint_epochs: 0,18,36,84

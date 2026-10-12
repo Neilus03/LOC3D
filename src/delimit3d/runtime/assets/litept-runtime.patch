@@ -1,0 +1,115 @@
+diff --git a/libs/pointrope/__init__.py b/libs/pointrope/__init__.py
+index 33b15e9..cb8a9b7 100644
+--- a/libs/pointrope/__init__.py
++++ b/libs/pointrope/__init__.py
+@@ -1,10 +1,24 @@
+-try:
+-    from .pointrope_cuda import PointROPE
+-except Exception as e:
+-    print(
+-        f"[PointROPE] CUDA implementation unavailable ({type(e).__name__}: {e}). "
+-        "Using slower Pytorch fallback."
+-    )
++import os
++
++_force_torch = (os.environ.get("POINTROPE_FORCE_TORCH") or "").strip().lower() in {
++    "1",
++    "true",
++    "yes",
++    "y",
++    "on",
++}
++
++if _force_torch:
++    print("[PointROPE] POINTROPE_FORCE_TORCH=1 — using Pytorch fallback.")
+     from .pointrope_torch import PointROPE
++else:
++    try:
++        from .pointrope_cuda import PointROPE
++    except Exception as e:
++        print(
++            f"[PointROPE] CUDA implementation unavailable ({type(e).__name__}: {e}). "
++            "Using slower Pytorch fallback."
++        )
++        from .pointrope_torch import PointROPE
+ 
+ __all__ = ["PointROPE"]
+diff --git a/libs/pointrope/pointrope_cuda.py b/libs/pointrope/pointrope_cuda.py
+index 64ce913..20c3411 100644
+--- a/libs/pointrope/pointrope_cuda.py
++++ b/libs/pointrope/pointrope_cuda.py
+@@ -31,5 +31,9 @@ class PointROPE(torch.nn.Module):
+         self.F0 = F0
+ 
+     def forward(self, tokens, positions): 
++        # LitePT stores voxel coordinates as int32, while the CUDA kernel
++        # indexes them as int64.  Keep the model/data contract unchanged and
++        # normalize only at this backend boundary.
++        positions = positions.to(dtype=torch.int64).contiguous()
+         PointROPE_func.apply(tokens.transpose(1,2), positions, self.base, self.F0)
+-        return tokens
+\ No newline at end of file
++        return tokens
+diff --git a/libs/pointrope/setup.py b/libs/pointrope/setup.py
+index 0c00754..7cb2fa0 100644
+--- a/libs/pointrope/setup.py
++++ b/libs/pointrope/setup.py
+@@ -10,7 +10,7 @@ from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+ all_cuda_archs = [
+     # '-gencode', 'arch=compute_90,code=sm_90',
+     # '-gencode', 'arch=compute_75,code=sm_75',
+-    # '-gencode', 'arch=compute_80,code=sm_80',
++    '-gencode', 'arch=compute_80,code=sm_80',
+     '-gencode', 'arch=compute_86,code=sm_86'
+ ]
+ 
+diff --git a/models/litept/litept.py b/models/litept/litept.py
+index 1a8ff7d..db4c297 100644
+--- a/models/litept/litept.py
++++ b/models/litept/litept.py
+@@ -60,11 +60,11 @@ class PointROPEAttention(PointModule):
+         pos = pos.reshape(-1, 3).unsqueeze(0)
+ 
+         q, k, v = qkv.half().chunk(3, dim=-1)
+-        q = q.reshape(-1, H, C // H).transpose(0,1)[None] # [1, H, N, head_dim] 
+-        k = k.reshape(-1, H, C // H).transpose(0,1)[None] # [1, H, N, head_dim] 
++        q = q.reshape(-1, H, C // H).transpose(0,1)[None] # [1, H, N, head_dim]
++        k = k.reshape(-1, H, C // H).transpose(0,1)[None] # [1, H, N, head_dim]
+ 
+         # workround to make pointrope cuda float32 happy
+-        q = self.rope(q.float(), pos).to(q.dtype) # [1, H, N, head_dim] 
++        q = self.rope(q.float(), pos).to(q.dtype) # [1, H, N, head_dim]
+         k = self.rope(k.float(), pos).to(k.dtype) # [1, H, N, head_dim]
+ 
+         # assemble input for flash attention
+@@ -72,7 +72,7 @@ class PointROPEAttention(PointModule):
+             q.squeeze(0).transpose(0,1),
+             k.squeeze(0).transpose(0,1),
+             v.reshape(-1, H, C // H)
+-        ], dim=1) # [N, 3, H, head_dim] 
++        ], dim=1) # [N, 3, H, head_dim]
+ 
+         feat = flash_attn.flash_attn_varlen_qkvpacked_func(
+             qkv_rotated,
+@@ -275,9 +275,12 @@ class LitePT(PointModule):
+         # norm layers
+         bn_layer = partial(nn.BatchNorm1d, eps=1e-3, momentum=0.01)
+         ln_layer = nn.LayerNorm
++        #rmsnorm would be faster than layernorm
+ 
+         # activation layers
+         act_layer = nn.GELU
++        #alternatively use Swiglu which was proven more effective by Shazeer's paper on GLU for Transformers
++
+ 
+         self.embedding = Embedding(
+             in_channels=in_channels,
+@@ -389,7 +392,7 @@ class LitePT(PointModule):
+         """
+         data_dict is the batched input point cloud, it should contain as least:
+         1. feat [N, input_dim]: input feature for the point cloud
+-        2. grid_coord [N, 3]: voxelized coordinate after grid sampling 
++        2. grid_coord [N, 3]: voxelized coordinate after grid sampling
+            or/and
+            coord [N, 3]: original coordinate + grid_size: grid_size used for grid sampling
+         3. offset [batch_size]: separator of point clouds in batched data

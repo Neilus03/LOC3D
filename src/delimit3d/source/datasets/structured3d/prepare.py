@@ -49,7 +49,8 @@ def _count_frame_files(scene_dir: Path) -> tuple[int, int, int]:
     return color_count, depth_count, pose_count
 
 
-def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_root: str) -> None:
+def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_root: str,
+                              *, include_gt: bool = True) -> None:
     """
     Prepare a Structured3D scene directory in the ScanNet-like scene format
     consumed by the Delimit3D source adapter.
@@ -72,8 +73,13 @@ def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_ro
         )
 
     scene_dir = Path(output_scans_root) / scene_id
-    if is_prepared(scene_dir):
+    if is_prepared(scene_dir) and include_gt:
         return
+    if not include_gt and scene_dir.exists():
+        marker = scene_dir / ".prepared_geometry_only"
+        if marker.is_file() and all((scene_dir / (key + ".npy")).is_file() for key in ("points", "colors", "normals")):
+            return
+        raise FileExistsError(f"Use a fresh directory for geometry-only preparation: {scene_dir}")
 
     print(f"Preparing Structured3D scene: {scene_id}")
 
@@ -91,9 +97,9 @@ def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_ro
     # Official release puts per-pixel instance.png under Structured3D_bbox.zip, not in
     # perspective_full_*.zip (RGB/depth/semantic only). Merge bbox so prepare can fuse GT.
     bbox_zip = os.path.join(raw_zips_dir, "Structured3D_bbox.zip")
-    if os.path.isfile(bbox_zip):
+    if include_gt and os.path.isfile(bbox_zip):
         zip_files.append(bbox_zip)
-    else:
+    elif include_gt:
         print(
             "Warning: Structured3D_bbox.zip not found in raw_zips_dir; "
             "instance masks will be unavailable and gt_instance_ids.npy will not be written. "
@@ -142,11 +148,12 @@ def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_ro
 
             # Instance is optional (some releases/zips do not provide instance masks).
             instance = None
-            try:
-                instance = reader.read_instance(f"{prsp_path}/{frame}/instance.png")
-                any_instances = True
-            except Exception:
-                instance = None
+            if include_gt:
+                try:
+                    instance = reader.read_instance(f"{prsp_path}/{frame}/instance.png")
+                    any_instances = True
+                except Exception:
+                    instance = None
 
             if cam_f is None:
                 print(f"Skipping {scene_id} room {room} frame {frame} due to missing cam_f")
@@ -253,10 +260,19 @@ def prepare_structured3d_scene(scene_id: str, raw_zips_dir: str, output_scans_ro
     ply_path = scene_dir / f"{scene_id}_vh_clean_2.ply"
     o3d.io.write_point_cloud(str(ply_path), pcd)
 
+    if not include_gt:
+        pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
+        pcd.orient_normals_towards_camera_location(np.zeros(3))
+        np.save(scene_dir / "points.npy", down_coords.astype(np.float32))
+        np.save(scene_dir / "colors.npy", down_colors)
+        np.save(scene_dir / "normals.npy", np.asarray(pcd.normals, dtype=np.float32))
+        (scene_dir / ".prepared_geometry_only").write_text("delimit3d_geometry_only/v1\n")
+
     if down_instances is not None:
         np.save(str(scene_dir / "gt_instance_ids.npy"), down_instances)
 
-    (scene_dir / ".prepared").write_text(PREPARED_VERSION + "\n", encoding="utf-8")
+    if include_gt:
+        (scene_dir / ".prepared").write_text(PREPARED_VERSION + "\n", encoding="utf-8")
     color_count, depth_count, pose_count = _count_frame_files(scene_dir)
     print(
         f"Finished {scene_id}. Saved {len(down_coords)} points and {frame_idx} frames "

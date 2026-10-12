@@ -1,0 +1,15 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+--find-links https://data.pyg.org/whl/torch-2.4.0+cu124.html
+-r base.txt
+torch==2.4.1+cu124
+torch-scatter==2.1.2+pt24cu124
+torch-cluster==1.6.3+pt24cu124
+spconv-cu124==2.3.8
+timm==1.0.24
+addict==2.4.0
+einops==0.8.2
+scikit-learn==1.8.0
+ninja==1.13.0
+packaging==26.0
+# FlashAttention 2.8.3 and PointROPE/pointops are built after Torch;
+# see environment/README.md and the locked sources.

@@ -742,7 +742,7 @@ def test_logical_scene_group_preserves_requested_order_and_skips_rehash(
         calls.append((scene_id, verify_hashes))
         return [SimpleNamespace(scene_id=scene_id)]
 
-    monkeypatch.setattr(ddp_runner, "_preload_sources", fake_preload_sources)
+    monkeypatch.setattr("delimit3d.pretraining.dataset._preload_sources", fake_preload_sources)
     scene_ids = ["scene_00000", "scene_00001", "scene_00002"]
     with ThreadPoolExecutor(max_workers=2) as executor:
         loaded = _load_logical_scene_group(
@@ -1291,7 +1291,7 @@ def test_token_pure_fixed_eval_advances_queue_until_all_cells_survive(
         )
 
     monkeypatch.setattr(
-        "delimit3d.training.adaptation."
+        "delimit3d.pretraining.fixed_eval."
         "sample_multigranular_frame_group_plan",
         fake_plan,
     )
@@ -1327,11 +1327,11 @@ def test_token_pure_fixed_eval_rotates_quota_without_training_epoch_cursor(
         )
 
     monkeypatch.setattr(
-        "delimit3d.training.adaptation.stable_seed",
+        "delimit3d.pretraining.fixed_eval.stable_seed",
         lambda *_parts: 1,
     )
     monkeypatch.setattr(
-        "delimit3d.training.adaptation."
+        "delimit3d.pretraining.fixed_eval."
         "sample_multigranular_frame_group_plan",
         fake_plan,
     )

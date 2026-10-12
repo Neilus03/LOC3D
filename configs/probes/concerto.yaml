@@ -1,0 +1,6 @@
+extends: ../models/concerto_small.yaml
+name: native_concerto_feature_segmentation
+probe:
+  grid_size: 0.02
+  coordinate_policy: center_xy_min_z
+  backbone_batchnorm_policy: eval

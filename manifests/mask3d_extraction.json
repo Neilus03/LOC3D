@@ -1,0 +1,174 @@
+{
+  "files": [
+    {
+      "module": "delimit3d.tasks.mask3d.legacy_probe",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/audit/litept_mask3d_dev_probe.py",
+      "path": "src/delimit3d/tasks/mask3d/legacy_probe.py",
+      "sha256_original": "329832b674ac9b1c7d18e7c6629706eb721f86a6db5c0104de503fe340acc4ca"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.config",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/config_utils.py",
+      "path": "src/delimit3d/tasks/mask3d/config.py",
+      "sha256_original": "a7e2c17e6dcee2a5c9f4e18008f4943c637ef0bd59730674deeba8b4add4bdd0"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.batched_scene_batch",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/batched_scene_batch.py",
+      "path": "src/delimit3d/tasks/mask3d/data/batched_scene_batch.py",
+      "sha256_original": "8662a49b65d480658a7dbadf44784da9f62e8cac781d918dd02c74f6223d2751"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.distributed_scene_sampler",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/distributed_scene_sampler.py",
+      "path": "src/delimit3d/tasks/mask3d/data/distributed_scene_sampler.py",
+      "sha256_original": "ee8c02b6ff07c66dce4bc90473814edbb261c3e35e431290e4b00338dcda9b87"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.multi_scene_dataset",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/multi_scene_dataset.py",
+      "path": "src/delimit3d/tasks/mask3d/data/multi_scene_dataset.py",
+      "sha256_original": "b0ad9ce76a051a422234f293fddf0612caa5f078ea97c4663196787fdab56b65"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.point_augmentations",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/point_augmentations.py",
+      "path": "src/delimit3d/tasks/mask3d/data/point_augmentations.py",
+      "sha256_original": "9ad487987db2a33b761ba087803ff0a5be5bf3309da1ce3917a5026ed48b46e8"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.region_sampling",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/region_sampling.py",
+      "path": "src/delimit3d/tasks/mask3d/data/region_sampling.py",
+      "sha256_original": "bd9d67ff0d4eb4a8908d3f832e41d41ff6acd28e90a94de61bdddd4c06f5c6a6"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.scannet_gt_cache",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/scannet_gt_cache.py",
+      "path": "src/delimit3d/tasks/mask3d/data/scannet_gt_cache.py",
+      "sha256_original": "8975420223dfe413161ce237e08247bac4780f8f62d9fa5698e5c9647177454c"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.segment_targets",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/segment_targets.py",
+      "path": "src/delimit3d/tasks/mask3d/data/segment_targets.py",
+      "sha256_original": "33617b825847023a73223fadd7ee53c4672edf7132faf6b788b57f91500c32a0"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.single_scene_dataset",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/single_scene_dataset.py",
+      "path": "src/delimit3d/tasks/mask3d/data/single_scene_dataset.py",
+      "sha256_original": "275d94df0855416b4b2307985b59c7e50bccb9740726aeb2a272d2b970d9896e"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.target_builder",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/target_builder.py",
+      "path": "src/delimit3d/tasks/mask3d/data/target_builder.py",
+      "sha256_original": "2c763d7102d4d8b7f3ab7cc08c44d82a979c7a5dc21163357a5cf72dae6f82bc"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.data.training_pack",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/data/training_pack.py",
+      "path": "src/delimit3d/tasks/mask3d/data/training_pack.py",
+      "sha256_original": "b05345077c4209d1c19a77d79bc19fb4081945f2d8fc3393fb14c815aa04cbb7"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.scheduler",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/engine/litept_mask3d_training.py",
+      "path": "src/delimit3d/tasks/mask3d/scheduler.py",
+      "sha256_original": "508d26d068754a47507ffc6b437b21a8735b7ed473a823b4cbf8dc7e313724e7"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.losses.mask3d_mask_only_loss",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/losses/mask3d_mask_only_loss.py",
+      "path": "src/delimit3d/tasks/mask3d/losses/mask3d_mask_only_loss.py",
+      "sha256_original": "77d17b6ff410505f15066246929f5dba14141c54b9ffcebe9c6f383095091666"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.losses.mask3d_segment_loss",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/losses/mask3d_segment_loss.py",
+      "path": "src/delimit3d/tasks/mask3d/losses/mask3d_segment_loss.py",
+      "sha256_original": "f4bc6031fa3804e8d602a6380c72e157f4cb52f66506109ccb04e33da0dba6b9"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.losses.mask_set_loss",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/losses/mask_set_loss.py",
+      "path": "src/delimit3d/tasks/mask3d/losses/mask_set_loss.py",
+      "sha256_original": "6a66f7bd4042752cb3454cf41c89174df9a199476d7b6af73640eebceb5ee9fc"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.metrics.litept_mask3d_ca_ap",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/metrics/litept_mask3d_ca_ap.py",
+      "path": "src/delimit3d/tasks/mask3d/metrics/litept_mask3d_ca_ap.py",
+      "sha256_original": "89bfec51cbcd0e98117c581ddb64d63c09625ab41ad1f12cfb8b8e3fb9e82874"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.model",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/models/litept_mask3d.py",
+      "path": "src/delimit3d/tasks/mask3d/model.py",
+      "sha256_original": "d56bc9b4320478c2f0d55533e8d5d95c2b315e7b62e85150598a0a23f02b7fac"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.initialization",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/models/litept_mask3d_initialization.py",
+      "path": "src/delimit3d/tasks/mask3d/initialization.py",
+      "sha256_original": "670b208f6dd219e038d69a0eb6390d920d47f80fca0a89108d281b29dbad6e2b"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.region_sampling",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/student/region_sampling.py",
+      "path": "src/delimit3d/tasks/mask3d/region_sampling.py",
+      "sha256_original": "9c277adaf2511e07789f73e5393ca7af0a0e84a0775253ae9c3561ef5a35f51a"
+    },
+    {
+      "module": "delimit3d.tasks.mask3d.engine",
+      "original": "/cluster/work/igp_psr/nedela/scratch_baselines_20260916/source/mask3d/student/scripts/run_litept_mask3d.py",
+      "path": "src/delimit3d/tasks/mask3d/engine.py",
+      "sha256_original": "671dba265cc1ae1de0fde16ecd832ce5da412d8ed7e7b64a996812c54a94426a"
+    }
+  ],
+  "hash_scope": "Source hashes describe the preserved extraction inputs; release_files describe current executable bytes.",
+  "release_changes": [
+    "Namespaced executed engine, losses, data and decoder dependencies.",
+    "Native backbone projections and shared decoder initialization.",
+    "Fresh task geometry/GT cache and strict data/interface records.",
+    "Explicit evaluation normalization, scheduler frontier and pending-validation recovery."
+  ],
+  "release_files": {
+    "src/delimit3d/tasks/mask3d/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/mask3d/config.py": "6557e851eaaa5bfcdf092035fd5738558bb3dadfc286edeaca51771ce2277b79",
+    "src/delimit3d/tasks/mask3d/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/mask3d/data/aligned_augmentation.py": "b590487af1f682c133719dfc37abad5f48682f8d3c189ba4edc47b2ec08ddb61",
+    "src/delimit3d/tasks/mask3d/data/batched_scene_batch.py": "8662a49b65d480658a7dbadf44784da9f62e8cac781d918dd02c74f6223d2751",
+    "src/delimit3d/tasks/mask3d/data/distributed_scene_sampler.py": "ee8c02b6ff07c66dce4bc90473814edbb261c3e35e431290e4b00338dcda9b87",
+    "src/delimit3d/tasks/mask3d/data/multi_scene_dataset.py": "630155f86729e90e820bfe327d9c904b5deb415c3a41e8d45da561ca1d86812f",
+    "src/delimit3d/tasks/mask3d/data/point_augmentations.py": "9ad487987db2a33b761ba087803ff0a5be5bf3309da1ce3917a5026ed48b46e8",
+    "src/delimit3d/tasks/mask3d/data/region_sampling.py": "5fc4f407b2e9cbc0d31c9e69c75f790883e17c179cb569ae390c66cd484c88e9",
+    "src/delimit3d/tasks/mask3d/data/scannet_gt_cache.py": "30698a264db6447275913786c5bce4397c746742fd5b7d2447c86c31cc744c93",
+    "src/delimit3d/tasks/mask3d/data/segment_targets.py": "33617b825847023a73223fadd7ee53c4672edf7132faf6b788b57f91500c32a0",
+    "src/delimit3d/tasks/mask3d/data/single_scene_dataset.py": "b79c101ab951d5a68bebc36cc7a3d3ba9e8327ed76b5c56f53e720d8be9df5b4",
+    "src/delimit3d/tasks/mask3d/data/target_builder.py": "5ad4d558f611558bf3d8681deb4d0fc00791b90151677e5a656c675400d08f92",
+    "src/delimit3d/tasks/mask3d/data/training_pack.py": "c287394a4de658d811617c53ced1d0be0716c58b65cf33d3f0c1647ce079305d",
+    "src/delimit3d/tasks/mask3d/engine.py": "efbafc0916d3c63021b508c17e2dd68055bfa256f98ac8456a13423620a366c2",
+    "src/delimit3d/tasks/mask3d/evaluate.py": "014da5d7a988c6abc1e21236a40d63edaf47fc703721cbd6a765c331905c2731",
+    "src/delimit3d/tasks/mask3d/factory.py": "c8b959b91c20d9f47a398fca07443a6ab54a97ef37fab771b0f09b55f0cebd5c",
+    "src/delimit3d/tasks/mask3d/initialization.py": "fb827d2c393ed27749d56cfbf3e8d7e0ccb8bc322fbb362b9b41a42bab1bfc0b",
+    "src/delimit3d/tasks/mask3d/legacy_probe.py": "e8dba9df7535016973be8614ac2026c5035351710426c4691e86500daad38d1b",
+    "src/delimit3d/tasks/mask3d/losses/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/mask3d/losses/mask3d_mask_only_loss.py": "e7ac97f4d497048271faa4a8ebec72edaaead706e306221be03626ac6c1f454b",
+    "src/delimit3d/tasks/mask3d/losses/mask3d_segment_loss.py": "7acd8b5a8b344bd8057987c44ffad0b98714f666b3fb7a72d394e997f28d1eaa",
+    "src/delimit3d/tasks/mask3d/losses/mask_set_loss.py": "12a43276c413e6125eb07cdfe972a4348610703bf08b7dd98d3b23b874778f84",
+    "src/delimit3d/tasks/mask3d/metrics/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/delimit3d/tasks/mask3d/metrics/litept_mask3d_ca_ap.py": "c7780ba24ddba2b932e5156fd6e2f62891857b96c447b93c09bdd818de328a0d",
+    "src/delimit3d/tasks/mask3d/model.py": "0365b8043f6f1a09295f13638acde7da746c3d6a5e2f8d6d3887825e1146b758",
+    "src/delimit3d/tasks/mask3d/ptv3.py": "4752f3855ff833e1cbd67b8fb4db9f48a098842ff02e54d829ffe84d5320b0f0",
+    "src/delimit3d/tasks/mask3d/region_sampling.py": "9c277adaf2511e07789f73e5393ca7af0a0e84a0775253ae9c3561ef5a35f51a",
+    "src/delimit3d/tasks/mask3d/scheduler.py": "508d26d068754a47507ffc6b437b21a8735b7ed473a823b4cbf8dc7e313724e7"
+  },
+  "reused_modules": {
+    "metrics.official_instance_ap": "delimit3d.metrics.official_instance_ap",
+    "models.litept_v2_transfer": "delimit3d.models.litept_v2_transfer",
+    "models.litept_wrapper": "delimit3d.models.litept_wrapper"
+  },
+  "schema": "delimit3d_dependency_extraction/v1"
+}

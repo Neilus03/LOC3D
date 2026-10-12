@@ -1,0 +1,75 @@
+schema: delimit3d_task_recipe/v1
+task: mask3d
+experiment:
+  name: mask3d
+  seed: 42
+  output_root: ${DELIMIT3D_RUN_ROOT}
+data:
+  scans_root: ${DELIMIT3D_MASK3D_SCANS}
+  train_split: ${DELIMIT3D_MASK3D_TRAIN_SPLIT}
+  val_split: ${DELIMIT3D_MASK3D_VAL_SPLIT}
+  label_source: scannet_gt
+  scannet_gt_cache_root: ${DELIMIT3D_MASK3D_GT_CACHE}
+  granularities: [0.5]
+  use_colors: true
+  use_normals: true
+  append_xyz_to_features: false
+  augmentation_profile: mask3d_scannet
+  augmentations: true
+  color_mean: [0, 0, 0]
+  color_std: [1, 1, 1]
+  preload: true
+  preload_workers: 8
+  max_points: null
+  subsampling_mode: none
+  sphere_point_max: null
+model:
+  architecture: litept_mask3d_class_agnostic
+  mask_only: false
+  input_features: rgbn6
+  input_channels: 6
+  voxel_size: 0.05
+  voxel_reduce: representative
+  representative_sampling: first
+  feature_pyramid_mode: mask3d_fpn
+  train_queries: 100
+  eval_queries: 100
+  num_classes: 2
+initialization:
+  backbone_source: structured3d
+  backbone_checkpoint: ${DELIMIT3D_BACKBONE_CHECKPOINT}
+  freeze_backbone: false
+  decoder_template: ${DELIMIT3D_MASK3D_DECODER}
+  official_mask3d_checkpoint: null
+loss:
+  include_auxiliary: true
+train:
+  persistent_workers: false
+  deterministic_epoch_seed: true
+  save_latest_each_epoch: true
+  max_run_hours: 1000000000
+  max_epochs: 600
+  batch_scenes_per_step: 5
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  drop_last: false
+  backbone_lr: 1.0e-05
+  decoder_lr: 0.0001
+  backbone_freeze_epochs: 0
+  weight_decay: 0.01
+  grad_clip_norm: null
+  eval_every_epochs: 50
+  save_every_epochs: 50
+  report_loss_components: true
+scheduler:
+  name: onecyclelr
+  interval: optimizer_step
+eval:
+  primary: raw_queries
+  scannet_benchmark: scannet20
+  backbone_batchnorm_policy: train_no_update
+  report_dbscan: false
+  dbscan_eps: 0.95
+  dbscan_min_samples: 1
+  topk_per_image: 100
+  report_train_metrics: false

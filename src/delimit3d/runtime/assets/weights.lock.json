@@ -1,0 +1,26 @@
+{
+  "schema": "delimit3d_weight_lock/v1",
+  "weights": {
+    "concerto_small": {
+      "url": "https://huggingface.co/Pointcept/Concerto/resolve/efc130718a564eba0ce4899318f3c20b19d9c752/concerto_small.pth",
+      "sha256": "251441d92ac7d9cff9e0c3ae22bdf2dc416d1c9dbb7a75f1922c08bfd1a18868",
+      "license": "CC-BY-NC-4.0"
+    },
+    "sonata_small": {
+      "url": "https://huggingface.co/facebook/sonata/resolve/df99897472c09f91ba9288da0a034aacffc0b010/sonata_small.pth",
+      "sha256": "ee5dae277dde1d164499579a6b17d0bd38df4e4286b0f1ba21a82f8cc14270d1",
+      "license": "CC-BY-NC-4.0"
+    },
+    "sam2_1_hiera_large": {
+      "url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt",
+      "sha256": "2647878d5dfa5098f2f8649825738a9345572bae2d4350a2468587ece47dd318",
+      "license": "Apache-2.0"
+    },
+    "unsamv2_plus": {
+      "url": "https://huggingface.co/spaces/yujunwei04/UnSAMv2/resolve/675a2bceabf284b69d5d537a3aa798b53c50a8ff/sam2/checkpoints/unsamv2_plus_ckpt.pt",
+      "sha256": "4067a6966b06df984828f537da0f02389ff28655a8985a1e1f4a3e1de4077195",
+      "size_bytes": 188689844,
+      "reference": "UnSAMv2+ checkpoint from the official demo, hash matched to the executed teacher"
+    }
+  }
+}

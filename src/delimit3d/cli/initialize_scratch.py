@@ -29,11 +29,13 @@ from delimit3d.training.adaptation import (
 )
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--litept-root", type=Path, required=True)
+    parser.add_argument("--litept-variant", choices=("litept_s_star", "litept_b_star"), default="litept_s_star")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--grid-size", type=float, default=0.02)
     parser.add_argument(
         "--input-features",
         choices=INPUT_FEATURE_CHOICES,
@@ -54,11 +56,10 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=MULTISCALE_AUXILIARY_WARMUP_EPOCHS,
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> None:
-    args = parse_args()
+def create_initialization(args: argparse.Namespace) -> None:
     if args.output.exists():
         raise FileExistsError(f"Refusing to overwrite initialization: {args.output}")
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -67,7 +68,9 @@ def main() -> None:
     torch.manual_seed(args.seed)
     model = LitePTContrastiveModel(
         litept_root=args.litept_root,
+        litept_variant=args.litept_variant,
         input_features=args.input_features,
+        grid_size=args.grid_size,
         multiscale_supervision=args.multiscale_supervision,
         multiscale_loss_weight=args.multiscale_loss_weight,
         multiscale_warmup_epochs=args.multiscale_warmup_epochs,
@@ -80,10 +83,12 @@ def main() -> None:
         "experiment_id": EXPERIMENT_ID,
         "seed": int(args.seed),
         "architecture": {
-            "backbone": "LitePT-S*",
+            "backbone": "LitePT-B*" if args.litept_variant == "litept_b_star" else "LitePT-S*",
+            "litept_variant": args.litept_variant,
+            "resolved_architecture": model.backbone.resolved_architecture,
             "input_features": args.input_features,
             "in_channels": int(model.input_channels),
-            "grid_size": 0.02,
+            "grid_size": float(args.grid_size),
             "voxel_reduce": "representative",
             "representative_sampling": model.backbone.representative_sampling,
             "native_dim": 72,
@@ -128,7 +133,9 @@ def main() -> None:
     reloaded = torch.load(args.output, map_location="cpu", weights_only=False)
     verifier = LitePTContrastiveModel(
         litept_root=args.litept_root,
+        litept_variant=args.litept_variant,
         input_features=args.input_features,
+        grid_size=args.grid_size,
         multiscale_supervision=args.multiscale_supervision,
         multiscale_loss_weight=args.multiscale_loss_weight,
         multiscale_warmup_epochs=args.multiscale_warmup_epochs,
@@ -162,6 +169,10 @@ def main() -> None:
         encoding="utf-8",
     )
     print(report_path)
+
+
+def main(argv=None) -> None:
+    create_initialization(parse_args(argv))
 
 
 if __name__ == "__main__":

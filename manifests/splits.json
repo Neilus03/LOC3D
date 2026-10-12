@@ -1,0 +1,28 @@
+{
+  "schema": "delimit3d_splits/v1",
+  "files": {
+    "structured3d_train.txt": {
+      "sha256": "c71f5fd48e0e58eab185e5138ede5a53dd23dc5cc510696fcbaabaa164a1a9b9",
+      "scene_count": 2930
+    },
+    "structured3d_val.txt": {
+      "sha256": "234d49a70a42a19629142893d5ed3135b867b00581a55d3014207124f60d97e0",
+      "scene_count": 326
+    },
+    "structured3d_all.txt": {
+      "sha256": "00abc1b51830596ab393724603e0b2d65cf8c1b4cfd91425a9ae8224ace4ba27",
+      "scene_count": 3256
+    },
+    "scannet_train.txt": {
+      "sha256": "96acca299b7855f02824c496b19077904d80996e7ced1bb9f0dac98f7dd4d0c8",
+      "scene_count": 1201
+    },
+    "scannet_val.txt": {
+      "sha256": "d75d4971c3fa7128c643695840e279042c212ef904fe933bd00cf9918c61b083",
+      "scene_count": 312
+    }
+  },
+  "structured3d_split_source": "existing_executed_seed42_split",
+  "structured3d_exclusions": "configs/splits/structured3d_unsamv2_excluded_scenes.list",
+  "scannet_split_source": "pinned_LitePT_official_ScanNet_lists"
+}

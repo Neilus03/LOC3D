@@ -1,0 +1,4 @@
+extends: sam2_dec0.yaml
+name: sam2_dec0_overlap_veto_150ep
+description: SAM2 dec0 contrastive pretraining with a veto on negatives sharing any mask with either positive endpoint.
+allow_shared_proposal_negatives: false

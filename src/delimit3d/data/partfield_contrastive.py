@@ -37,6 +37,13 @@ TOKEN_POSITIVE_PAIR_PAYLOAD_SCHEMA = (
     "partfield_native_dec0_token_positive_pairs/v1"
 )
 
+
+def negative_policy_name(allow_shared_proposal_negatives: bool) -> str:
+    """Name an explicit policy; strings and integers are not policy booleans."""
+    if not isinstance(allow_shared_proposal_negatives, bool):
+        raise ValueError("allow_shared_proposal_negatives must be a boolean")
+    return "selected_proposal_negatives" if allow_shared_proposal_negatives else "overlap_veto"
+
 _TOKEN_POSITIVE_PAIR_INTEGER_DTYPES = frozenset(
     {
         torch.int8,
@@ -405,8 +412,12 @@ class DeferredTokenLossPlan:
     schema_version: str = "partfield_deferred_token_loss_plan/v1"
     algorithm_version: str = SAMPLER_ALGORITHM_VERSION
     require_negative_proposal_membership: bool = False
+    allow_shared_proposal_negatives: bool = False
 
     def __post_init__(self) -> None:
+        negative_policy_name(self.allow_shared_proposal_negatives)
+        if self.allow_shared_proposal_negatives and not self.require_negative_proposal_membership:
+            raise ValueError("Selected-proposal negatives require known proposal membership")
         counts = (
             self.requested_positive_pairs_per_proposal,
             self.requested_uniform_negatives_per_pair,
@@ -437,6 +448,8 @@ class DeferredTokenLossPlan:
             "require_negative_proposal_membership": bool(
                 getattr(self, "require_negative_proposal_membership", False)
             ),
+            **({"allow_shared_proposal_negatives": True}
+               if self.allow_shared_proposal_negatives else {}),
             "requested_positive_pairs_per_proposal": int(
                 self.requested_positive_pairs_per_proposal
             ),
@@ -503,6 +516,7 @@ class ContrastiveTripletBatch:
     # carrying at least one teacher-proposal membership.  ``False`` is the
     # historical visible-complement default and must survive token rebuild.
     require_negative_proposal_membership: bool = False
+    allow_shared_proposal_negatives: bool = False
     # Optional exact native-dec0 positive-pair payload.  The CSR is ordered by
     # retained raw-proposal occurrence, not by token ID; the digest binds that
     # order, labels, sampler algorithm, and preselection policy.
@@ -511,6 +525,9 @@ class ContrastiveTripletBatch:
     token_positive_pair_digest: str | None = None
 
     def __post_init__(self) -> None:
+        negative_policy_name(self.allow_shared_proposal_negatives)
+        if self.allow_shared_proposal_negatives and not self.require_negative_proposal_membership:
+            raise ValueError("Selected-proposal negatives require known proposal membership")
         payload_fields = (
             self.token_positive_pair_offsets,
             self.token_positive_pair_indices,
@@ -698,6 +715,13 @@ def concatenate_triplet_batches(
     require_negative_proposal_membership = next(
         iter(relation_membership_requirements)
     )
+    shared_negative_policies = {
+        bool(getattr(batch, "allow_shared_proposal_negatives", False))
+        for batch in batches
+    }
+    if len(shared_negative_policies) != 1:
+        raise ValueError("Triplet batches disagree about shared-proposal negatives")
+    allow_shared_proposal_negatives = next(iter(shared_negative_policies))
 
     proposal_member_offsets = None
     proposal_member_indices = None
@@ -904,6 +928,7 @@ def concatenate_triplet_batches(
         deferred_token_loss=deferred_token_loss,
         algorithm_version=algorithm_version,
         require_negative_proposal_membership=require_negative_proposal_membership,
+        allow_shared_proposal_negatives=allow_shared_proposal_negatives,
         token_positive_pair_offsets=token_positive_pair_offsets,
         token_positive_pair_indices=token_positive_pair_indices,
         token_positive_pair_digest=token_positive_pair_digest,
@@ -1442,6 +1467,7 @@ def co_membership_safe_negative_mask(
     proposal_offsets: torch.Tensor,
     proposal_point_indices: torch.Tensor,
     require_candidate_membership: bool = False,
+    allow_shared_proposal_negatives: bool = False,
     membership_index: RelationMembershipIndex | None = None,
 ) -> torch.Tensor:
     """Mark candidates that share no teacher proposal with their anchor.
@@ -1515,7 +1541,8 @@ def co_membership_safe_negative_mask(
             anchor_words[:, word, None]
             & candidate_words[..., word]
         ).ne(0)
-    safe &= ~shared
+    if not allow_shared_proposal_negatives:
+        safe &= ~shared
     if require_candidate_membership:
         safe &= candidate_words.ne(0).any(dim=-1)
     return safe
@@ -1528,6 +1555,7 @@ def co_membership_safe_negative_pair_counts(
     proposal_offsets: torch.Tensor,
     proposal_point_indices: torch.Tensor,
     require_candidate_membership: bool = False,
+    allow_shared_proposal_negatives: bool = False,
     membership_index: RelationMembershipIndex | None = None,
 ) -> torch.Tensor:
     """Count candidates safe for both endpoints of each pair.
@@ -1577,7 +1605,8 @@ def co_membership_safe_negative_pair_counts(
     shared = torch.zeros_like(safe)
     for word in range(int(union_words.shape[1])):
         shared |= (union_words[:, word, None] & candidate_words[:, word]).ne(0)
-    safe &= ~shared
+    if not allow_shared_proposal_negatives:
+        safe &= ~shared
     if require_candidate_membership:
         safe &= candidate_words.ne(0).any(dim=-1)[None, :]
     return safe.sum(dim=1).long()
@@ -2045,6 +2074,7 @@ def sample_safe_overlapping_proposal_triplets(
     relation_proposal_offsets: torch.Tensor | None = None,
     relation_proposal_point_indices: torch.Tensor | None = None,
     require_negative_proposal_membership: bool = False,
+    allow_shared_proposal_negatives: bool = False,
     defer_token_loss: bool = False,
     generator: torch.Generator | None = None,
     # Internal planner caches.  They are optional so the public/legacy call
@@ -2436,6 +2466,7 @@ def sample_safe_overlapping_proposal_triplets(
                     ),
                     require_candidate_membership=require_negative_proposal_membership,
                     membership_index=safety_index,
+                    allow_shared_proposal_negatives=allow_shared_proposal_negatives,
                 ).to(device=pairs.device)
             else:
                 complement = visible[~torch.isin(visible, members)]
@@ -2446,6 +2477,7 @@ def sample_safe_overlapping_proposal_triplets(
                     proposal_point_indices=relation_members,
                     require_candidate_membership=require_negative_proposal_membership,
                     membership_index=relation_index,
+                    allow_shared_proposal_negatives=allow_shared_proposal_negatives,
                 )
             viable_rows = safe_counts > 0
             pairs = pairs[viable_rows]
@@ -2459,6 +2491,7 @@ def sample_safe_overlapping_proposal_triplets(
                 proposal_point_indices=relation_members,
                 require_candidate_membership=require_negative_proposal_membership,
                 membership_index=relation_index,
+                allow_shared_proposal_negatives=allow_shared_proposal_negatives,
             ) & co_membership_safe_negative_mask(
                 pairs[:, 1],
                 complement,
@@ -2466,6 +2499,7 @@ def sample_safe_overlapping_proposal_triplets(
                 proposal_point_indices=relation_members,
                 require_candidate_membership=require_negative_proposal_membership,
                 membership_index=relation_index,
+                allow_shared_proposal_negatives=allow_shared_proposal_negatives,
             )
             viable_rows = safe.any(dim=1)
             pairs = pairs[viable_rows]
@@ -2711,6 +2745,7 @@ def sample_safe_overlapping_proposal_triplets(
                 effective_spatial_hard_negatives_per_pair=spatial_width,
                 effective_feature_candidate_pool_per_pair=feature_width,
                 effective_feature_hard_negatives_per_pair=feature_hard,
+                allow_shared_proposal_negatives=allow_shared_proposal_negatives,
                 require_negative_proposal_membership=(
                     require_negative_proposal_membership
                 ),
@@ -2719,6 +2754,7 @@ def sample_safe_overlapping_proposal_triplets(
             else None
         ),
         algorithm_version=SAMPLER_ALGORITHM_VERSION,
+        allow_shared_proposal_negatives=allow_shared_proposal_negatives,
         require_negative_proposal_membership=(
             require_negative_proposal_membership
         ),
@@ -2778,7 +2814,8 @@ def sample_safe_overlapping_proposal_triplets(
         "negative_ids_unique_within_and_across_families": True,
         "point_negative_ids_materialized": not bool(defer_token_loss),
         "point_negative_sampling_skipped": bool(defer_token_loss),
-        "teacher_co_membership_filtered": True,
+        "teacher_co_membership_filtered": not allow_shared_proposal_negatives,
+        "allow_shared_proposal_negatives": allow_shared_proposal_negatives,
         "visible_count": int(visible.numel()),
         "known_count": int(known_indices.numel()),
         "unknown_count": int(unknown_indices.numel()),
