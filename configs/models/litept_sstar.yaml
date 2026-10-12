@@ -1,0 +1,4 @@
+model:
+  backbone_name: litept_s_star
+  litept_variant: litept_s_star
+  litept_root: ${DELIMIT3D_LITEPT_ROOT}

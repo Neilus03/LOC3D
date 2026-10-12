@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "delimit3d"
-version = "0.1.0"
-description = "Controlled 3D representation pretraining and adaptation for object and part segmentation"
+version = "0.2.0"
+description = "Contrastive 3D pretraining from SAM2 and UnSAMv2 2D masks"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.13"
 dependencies = [
-  "numpy>=1.24",
-  "scipy>=1.10",
-  "torch>=2.0",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "torch>=2.4,<2.6",
   "PyYAML>=6.0",
   "Pillow>=9.0",
   "opencv-python>=4.8",
@@ -22,25 +22,28 @@ dependencies = [
 [project.optional-dependencies]
 plots = ["matplotlib>=3.7"]
 
-dev = ["pytest>=7.0", "ruff>=0.5"]
-sources = ["open3d>=0.17"]
+dev = ["pytest>=9.0"]
+sources = ["open3d==0.19.0"]
 
 [project.scripts]
-delimit3d-adapt = "delimit3d.training.runner:main"
-delimit3d-init-scratch = "delimit3d.cli.initialize_scratch:main"
-delimit3d-init-public = "delimit3d.cli.initialize_public:main"
-delimit3d-select-checkpoint = "delimit3d.cli.select_checkpoint:main"
-delimit3d-prepare-structured3d-raw = "delimit3d.cli.prepare_structured3d_raw:main"
-delimit3d-prepare-structured3d-sources = "delimit3d.cli.prepare_structured3d_sources:main"
+delimit3d-prepare = "delimit3d.data.cli:main"
+delimit3d-pretrain = "delimit3d.pretraining.cli:main"
+delimit3d-train = "delimit3d.tasks.cli:train_main"
+delimit3d-evaluate = "delimit3d.tasks.cli:evaluate_main"
+delimit3d-probe = "delimit3d.probes.cli:main"
+delimit3d-export = "delimit3d.pretraining.export:main"
+delimit3d-calibrate-bn = "delimit3d.cli.recalibrate_bn:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools]
+license-files = ["LICENSE.md", "THIRD_PARTY_NOTICES.md", "third_party/*.LICENSE"]
+
+[tool.setuptools.package-data]
+"delimit3d.runtime" = ["assets/*.json", "assets/*.patch", "assets/*.list"]
 
 [tool.pytest.ini_options]
 addopts = "-ra"
 testpaths = ["tests"]
 pythonpath = ["src"]
-
-[tool.ruff]
-line-length = 100
-extend-exclude = ["src/delimit3d/training/runner.py", "src/delimit3d/training/adaptation.py"]

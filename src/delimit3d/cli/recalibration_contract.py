@@ -169,7 +169,10 @@ def validate_bn_recalibration_normal_audit(
     expected_train_split_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Fail closed unless an audit exactly covers the recalibration selection."""
-
+    if payload.get("schema_version") == "delimit3d_rgbn6_normal_audit/v1":
+        from delimit3d.data.normal_audit import validate
+        return validate(payload, source_root=source_root, train_split=train_split,
+                        scene_count=scene_count, seed=seed, expected_train_split_sha256=expected_train_split_sha256)
     if (
         payload.get("schema_version") != NORMAL_AUDIT_SCHEMA_VERSION
         or payload.get("passed") is not True

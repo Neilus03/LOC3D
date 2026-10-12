@@ -1,0 +1,6 @@
+extends: sam2_overlap_veto.yaml
+name: sam2_dec0_selected_proposal_negatives_150ep
+description: SAM2 dec0 contrastive pretraining with known, pure negatives outside the selected mask; sharing another mask is allowed.
+reference: null
+allow_shared_proposal_negatives: true
+fixed_eval_pack: ${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives

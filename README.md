@@ -1,191 +1,89 @@
 # Delimit3D
 
-Delimit3D studies how region-supervised 3D representations transfer to object
-and part segmentation. The current priority, following the 16 September 2026
-supervisor meeting, is a controlled comparison of **randomly initialized LitePT
-versus LitePT pretrained from scratch with PartField-style multigranular
-supervision**. Evaluate both ordinary class-agnostic instance segmentation
-(LitePT + mask-only Mask3D) and interactive segmentation (LitePT + AGILE3D).
-Interactive results complement the automatic segmentation endpoint.
+Delimit3D is a **contrastive pretraining strategy for 3D representations using projected 2D masks**. The main recipe trains **LitePT-S*** from scratch with SAM2 supervision. RGB, geometry, normals and camera poses are inputs; 3D object or part labels are not training supervision.
 
-The earlier **public LitePT + 256-update Delimit3D adaptation** study remains a
-separate, completed source of evidence. Its Structured3D adaptation uses
-category-agnostic 2D pseudomasks; the 2D teacher is absent at inference. Those
-results do not establish the benefit of the new scratch-pretraining recipe.
+The repository also supports the earlier **UnSAMv2 multigranular and multiscale recipes**, transfer through **Mask3D** and **AGILE3D**, and direct feature segmentation with cosine similarity or spherical K-means.
 
-## Start here
+## What is supported
 
-- [Current status and next decisions](CURRENT.md): dated run snapshot and open comparison gaps.
-- [Research direction](docs/RESEARCH.md): meeting decisions, hypotheses, and experiment priorities.
-- [Verified results](docs/results/20260918_experiment_summary.md): completed comparisons, interim panels, and hashed sources.
-- [Experiment map](docs/EXPERIMENTS.md): configurations, runners, branches, and external artifact roots.
-- [Reproducibility protocol](docs/protocol.md): what must remain matched within each pair.
-- [LitePT RGB3 AGILE3D baseline](docs/agile3d_litept_scratch.md): preflight, training, recovery, and validation.
+| Workflow | Recipes |
+| --- | --- |
+| Pretraining | SAM2 dec0 with overlap veto or selected-proposal negatives; UnSAMv2 contrastive multiscale; UnSAMv2 hierarchy with or without VICReg |
+| Mask3D | LitePT-S*, Concerto-small, Sonata-small; trainable or frozen encoders |
+| AGILE3D | The same backbones; official single-object and multi-object click evaluation |
+| Feature segmentation | Native features; cosine retrieval from user-selected points; spherical K-means |
 
-## Evidence as of 18 September 2026
+Concerto and Sonata are pretrained baselines. Their native PTv3 feature dimensions and task adapters are retained. A comparison between these models and LitePT-S* includes differences in architecture, pretraining and feature interfaces.
 
-The table compares **LitePT (public)** with **LitePT + Delimit3D (256 updates)**,
-using frozen encoders and each encoder's corresponding trained decoder.
-IoU is in percent; MO means multi-object and SO means single-object.
+## Repository layout
 
-| Evaluation | Units | IoU@5 public | IoU@5 adapted |
-|---|---:|---:|---:|
-| ScanNet40 MO | 312 scenes | 59.19 | 64.16 |
-| ScanNet40 SO | 10,357 objects | 42.99 | 49.16 |
-| S3DIS MO | 53 scenes | 45.82 | 52.38 |
-| S3DIS SO | 2,330 objects | 37.82 | 45.93 |
-| Articulate3D parts, ≥10 tokens | 1,663 parts / 42 scenes | 22.61 | 27.41 |
-
-These are matched LitePT experiments using AGILE3D-style readouts and metric
-protocols, not literal reproductions of the released AGILE3D model and full
-training recipe. Articulate3D uses raw-point IoU after inverse-map expansion;
-≥10 means the minimum surviving unambiguous feature tokens per part.
-The [results ledger](docs/results/20260918_experiment_summary.md) also reports
-the completed joint encoder/decoder control and the nearly unchanged one-click
-Articulate3D result.
-
-The new 5 cm pretraining and scratch baselines are still in progress. The
-RGB3 AGILE3D baseline and RGBN6 pretraining are different input contracts;
-resolve that difference before an initialization-only downstream comparison.
-
-## Repository scope
-
-This package contains LitePT/PTv3/Sonata adaptation, frozen-feature diagnostics,
-interactive evaluation, the LitePT RGB3 scratch runner, and regression tests.
-Historical experiments retain their original recipes and branch snapshots.
-The 5 cm resolution contract applies to the new scratch/pretraining comparison;
-it does not retroactively change the earlier 2 cm experiments.
-
-Data, pretrained weights, checkpoints, rendered figures, and runtime logs live
-outside Git. External LitePT, AGILE3D, Sonata, and CHORUS implementations are
-not vendored. This is research infrastructure with explicit environment and
-dataset dependencies, not a self-contained model release.
-
-## Runtime identity and paths
-
-The Python import package is stable as `delimit3d`. Human-facing run names and
-default artifact locations are controlled by one variable:
-
-```bash
-export DELIMIT3D_NAME=Delimit3D
+```text
+configs/       shared model settings and small workflow recipes
+scripts/       seven public commands
+src/delimit3d/ data, pretraining, backbone adapters, tasks and probes
+environment/   versioned runtime profiles and installation instructions
+tests/         scientific contract checks and opt-in CUDA checks
+docs/          data, recipes, task protocols and migration notes
+manifests/     source extraction, splits and release records
+third_party/   upstream license texts
+tools/reproduce/ limited historical experiment entry points
 ```
 
-Changing `DELIMIT3D_NAME` changes the project label and, unless an explicit
-artifact root is supplied, changes the default artifact subdirectory through a
-normalized slug. The path variables in [`env.example`](env.example) are
-examples for the Euler account and can be replaced on another host.
-
-Useful defaults are exposed by `delimit3d.identity`:
-
-```python
-from delimit3d.identity import artifact_root, data_root, project_name
-```
+Data, checkpoints, dependency checkouts and run output live outside versioned code.
 
 ## Install
 
-On Euler, use the existing LitePT environment or an equivalent environment
-that provides the pinned LitePT dependencies (including its external
-`litept` package). From this repository:
+Use Python 3.12 and the CUDA 12.4 profile in [environment/README.md](environment/README.md). Install the package after the CUDA dependencies:
 
 ```bash
-python -m pip install -e '.[plots,dev]'
-
-# Only needed when voxelizing raw Structured3D geometry from the archives:
-python -m pip install -e '.[sources]'
+python -m pip install --no-deps -e .
 ```
 
-The LitePT source tree and its weights are intentionally not vendored. Set
-`DELIMIT3D_LITEPT_ROOT` to the external LitePT checkout before loading a model.
+Copy [env.example](env.example) to `.env`, edit the paths and source it from the repository root. It contains portable example paths. SAM2 and UnSAMv2 inference use separate teacher environments.
 
-## Main entry points
+## Seven commands
 
-The current RGB3 scratch baseline has separate preflight, smoke, train and
-evaluate modes. Start with the [runbook](docs/agile3d_litept_scratch.md):
+| Script | Installed command | Purpose |
+| --- | --- | --- |
+| `scripts/prepare_data.py` | `delimit3d-prepare` | Fetch pinned dependencies, prepare geometry/masks/data records and decoder initialization |
+| `scripts/pretrain.py` | `delimit3d-pretrain` | Train or resume a pretraining recipe |
+| `scripts/train.py` | `delimit3d-train` | Train or resume Mask3D/AGILE3D |
+| `scripts/evaluate.py` | `delimit3d-evaluate` | Evaluate a full task checkpoint |
+| `scripts/probe.py` | `delimit3d-probe` | Segment native features directly |
+| `scripts/export_backbone.py` | `delimit3d-export` | Export a strict LitePT-S* backbone without training heads |
+| `scripts/calibrate_bn.py` | `delimit3d-calibrate-bn` | Produce a separate checkpoint with recalibrated BN buffers |
+
+Every command has `--help`. Config inheritance merges mappings and replaces lists; explicit flags override defaults. Task settings can be overridden with `--set section.key=value`.
+
+Preview recipes without data or GPU allocation:
 
 ```bash
-python scripts/training/run_agile3d_litept_sstar_rgb3.py \
-  --config configs/training/agile3d_litept_sstar_rgb3_scannet40.yaml \
-  --mode preflight
+python scripts/pretrain.py --config configs/pretrain/sam2_overlap_veto.yaml --show-config
+python scripts/train.py --config configs/tasks/mask3d_concerto.yaml --show-config
 ```
 
-The commands below illustrate the earlier adaptation interface. They are not
-the resolved launch recipe for the current 336-epoch pretraining run; use its
-immutable recipe and source record linked in the experiment map.
-
-Create an exact random initialization or a public-LitePT initialization:
+After preparing and sealing data, launch the main pretraining recipe:
 
 ```bash
-delimit3d-init-scratch \
-  --litept-root "$DELIMIT3D_LITEPT_ROOT" \
-  --output "$DELIMIT3D_ARTIFACT_ROOT/initialization/scratch.pt" \
-  --seed 42 --input-features rgbn6 --multiscale-supervision
-
-delimit3d-init-public \
-  --litept-root "$DELIMIT3D_LITEPT_ROOT" \
-  --scratch-initial "$DELIMIT3D_ARTIFACT_ROOT/initialization/scratch.pt" \
-  --public-checkpoint /path/to/public_litept.pth \
-  --expected-public-sha256 "<sha256>" \
-  --output "$DELIMIT3D_ARTIFACT_ROOT/initialization/public.pt"
+torchrun --standalone --nproc_per_node=2 scripts/pretrain.py \
+  --config configs/pretrain/sam2_overlap_veto.yaml
 ```
 
-Run the existing distributed adaptation contract with a clean, immutable
-source/config/checkpoint manifest:
+Use [sam2_selected_proposal_negatives.yaml](configs/pretrain/sam2_selected_proposal_negatives.yaml) for the alternative negative policy, with its separate fixed evaluation pack. Both recipes and resume requirements are described in [the pretraining guide](docs/pretraining.md#sam2-dec0).
 
-```bash
-python -m delimit3d.training.runner \
-  --dataset structured3d \
-  --source-family 2d \
-  --source-root /path/to/structured3d/source_manifests \
-  --train-split /path/to/structured3d/train.txt \
-  --holdout-split /path/to/structured3d/holdout.txt \
-  --initial-checkpoint "$DELIMIT3D_ARTIFACT_ROOT/initialization/public.pt" \
-  --litept-root "$DELIMIT3D_LITEPT_ROOT" \
-  --output-dir "$DELIMIT3D_ARTIFACT_ROOT/runs/public_256" \
-  --input-features rgbn6 --backbone-lr 0.0001 --head-lr 0.003
-```
+The full-scene recipes have substantial memory requirements. Follow the recipe-specific preparation and calibration steps before a production launch.
 
-The runner retains the old scientific checkpoint/schema identifiers so the
-existing validated source manifests and checkpoints remain loadable. New
-resolved configs, checkpoints, and summaries also record `project_name` and
-`project_slug` from `DELIMIT3D_NAME`.
+## Workflow guides
 
-The source preparation entry points consume external Structured3D archives and
-UnSAMv2:
+- [Prepare data](docs/data.md): 2D-only Structured3D packs, fixed evaluation and ScanNet inputs.
+- [Pretrain](docs/pretraining.md): SAM2 and both earlier UnSAMv2 objectives, calibration, export and resume.
+- [Train and evaluate tasks](docs/tasks.md): native adapters, frozen/trainable controls, losses and click protocols.
+- [Feature segmentation](docs/probes.md): cosine retrieval and spherical K-means without task decoders.
+- [Reproduce earlier experiments](docs/reproduction.md): historical recipes, feature pipelines and checkpoint boundaries.
+- [Release migration](docs/migration.md): what was retained, removed and preserved.
 
-```bash
-delimit3d-prepare-structured3d-raw --help
-delimit3d-prepare-structured3d-sources --help
-```
+Run status is written beside each run's resolved recipe, checkpoints and metrics. [CURRENT.md](CURRENT.md) describes the release's verification record; it is not a live research dashboard.
 
-The current fixed point-prompted ScanNet++ evaluator is available as a script.
-It consumes the frozen bundle manifest through environment variables and writes
-compact records under the external run root:
+## Licenses
 
-```bash
-export DELIMIT3D_PROMPT_BUNDLE=/path/to/frozen_bundle/freeze
-export DELIMIT3D_PROMPT_MODEL=public
-export DELIMIT3D_PROMPT_OUTPUT="$DELIMIT3D_ARTIFACT_ROOT/scannetpp/public"
-python scripts/evaluation/evaluate_scannetpp.py
-```
-
-Use the same bundle, scene manifest, prompts, and evaluator for `posttrained`
-to keep the comparison paired. `scripts/evaluation/aggregate_scannetpp.py`
-then aggregates the two compact JSONL outputs.
-
-## Experiment records
-
-[`manifests/legacy_evidence.json`](manifests/legacy_evidence.json) records the
-initial extraction from CHORUS and the earlier checkpoint identities.
-[`docs/migration_from_chorus.md`](docs/migration_from_chorus.md) is the historical
-migration record; [CURRENT.md](CURRENT.md) takes precedence for current direction.
-Small reviewed metric summaries and report source code are versioned. Large
-outputs stay in the external run roots recorded in the experiment map.
-
-Run CPU regression checks in an environment providing the project dependencies:
-
-```bash
-python -m pytest -q
-```
-
-GPU preflight/smoke checks require the external model source trees and prepared
-datasets. A passing CPU suite does not establish full GPU training correctness.
+Original project code retains the license status described in [LICENSE.md](LICENSE.md). Copied and external components retain their upstream terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

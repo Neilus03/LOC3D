@@ -32,7 +32,7 @@ def project_slug() -> str:
 
 def work_root() -> Path:
     return Path(os.path.expandvars(os.path.expanduser(
-        os.environ.get(WORK_ROOT_ENV, "/cluster/work/igp_psr/nedela")
+        os.environ.get(WORK_ROOT_ENV, str(Path.cwd() / "data"))
     ))).resolve()
 
 

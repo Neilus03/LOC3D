@@ -1,0 +1,7 @@
+extends: [agile3d.yaml, ../models/concerto_small.yaml]
+name: agile3d_concerto_native_lr01
+encoder_initialization:
+  kind: concerto
+  checkpoint: null
+model:
+  feature_dim: 992

@@ -1,0 +1,678 @@
+{
+  "definitions": {
+    "ContrastiveProjectionHead": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "d989ca8eeaff76c9a795c7630cc571a7859d91492cb2b6ec7e1b6523776e51c8",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "d989ca8eeaff76c9a795c7630cc571a7859d91492cb2b6ec7e1b6523776e51c8"
+    },
+    "LitePTContrastiveModel": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "4da3c82774750420b16d0121d245526da0e5adcd6b848c6769391c62e02719cd",
+      "module": "delimit3d.pretraining.model",
+      "release_ast_sha256": "4da3c82774750420b16d0121d245526da0e5adcd6b848c6769391c62e02719cd"
+    },
+    "MultiCropSceneSource": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f35fd9b9d93cb9f8bff5e3d2acc889e507160bdf630348e6942d213fd0ebe847",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "f35fd9b9d93cb9f8bff5e3d2acc889e507160bdf630348e6942d213fd0ebe847"
+    },
+    "RawFrame": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c4021e21a8a9804934c0846fd0e93f4686c610d269c97d2df5a18911cf639717",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "c4021e21a8a9804934c0846fd0e93f4686c610d269c97d2df5a18911cf639717"
+    },
+    "SamplingConfig": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "709d7cdb29a5f5ecec9195d17ddcf420dbdb9d70c0b368204408ca02aff805c4",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "709d7cdb29a5f5ecec9195d17ddcf420dbdb9d70c0b368204408ca02aff805c4"
+    },
+    "SceneSource": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "893d7f29533c4e0212013c659af7083344394e20bc7ced20fa466ee9c3c221ff",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "893d7f29533c4e0212013c659af7083344394e20bc7ced20fa466ee9c3c221ff"
+    },
+    "SceneVisitInput": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "51026d2142038a8dc4d8661a226a1b80210519fd67bafae7a5c51c097882202a",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "51026d2142038a8dc4d8661a226a1b80210519fd67bafae7a5c51c097882202a"
+    },
+    "_atomic_json_write": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "faf779f227b5911ea766a12f5e3e2d2a1d1ed0bfc5112251a012b26663f63ae2",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "faf779f227b5911ea766a12f5e3e2d2a1d1ed0bfc5112251a012b26663f63ae2"
+    },
+    "_atomic_torch_save": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "1634c3c08c0e9e59d12042c11ef823b827664d2ebf60e22162b2dee107f0582a",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "1634c3c08c0e9e59d12042c11ef823b827664d2ebf60e22162b2dee107f0582a"
+    },
+    "_cell_balanced_contrastive_results": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f0ff522a6d775c4d011b2cfa37891e1d62726c66689eaf9c87f137eb5f05c149",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "f0ff522a6d775c4d011b2cfa37891e1d62726c66689eaf9c87f137eb5f05c149"
+    },
+    "_coverage_raw_training_batch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "db82ce8ea311e43d2858963df3f5c18f38b74f42ca8fa9fcf77de2d1d5e4f91e",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "db82ce8ea311e43d2858963df3f5c18f38b74f42ca8fa9fcf77de2d1d5e4f91e"
+    },
+    "_expected_holdout_record_count": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f6aa57d6d3ddfe5a08c4f39d12aaf828f65e30964cc328a701f1a4df7d5ebb64",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "f6aa57d6d3ddfe5a08c4f39d12aaf828f65e30964cc328a701f1a4df7d5ebb64"
+    },
+    "_fixed_scene_batch_views": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "9749cb022e73473117ce7429e4bcf02e1e1ab4ae0ca2c8fe5ab7278b657567ae",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "9749cb022e73473117ce7429e4bcf02e1e1ab4ae0ca2c8fe5ab7278b657567ae"
+    },
+    "_generator": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "cdf851e8fd4e9ed61fec5520bdfbda29de31cf6a329e84e78d567e973716f7d4",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "cdf851e8fd4e9ed61fec5520bdfbda29de31cf6a329e84e78d567e973716f7d4"
+    },
+    "_holdout_batches": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c4f2dbc45e39f88db2e16adebcc5a7845581dcc7d8e36fc4d5b70497b2509127",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "c4f2dbc45e39f88db2e16adebcc5a7845581dcc7d8e36fc4d5b70497b2509127"
+    },
+    "_load_clean_multicrop_scene_source": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "cac59c6dbe9c3208f255379f417ae0f1567b4a210694c1a76ba18f71e2b03923",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "cac59c6dbe9c3208f255379f417ae0f1567b4a210694c1a76ba18f71e2b03923"
+    },
+    "_resolve_artifact": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "06428690fda4cf725416f6510fd12683d50db7642e3d450969191c4eb7bdc150",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "06428690fda4cf725416f6510fd12683d50db7642e3d450969191c4eb7bdc150"
+    },
+    "_token_pure_dec0_optimization_metrics": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "75269472b5cb4780a900ee4eb14f2f0009e4937c9ea4e7fa1d5babd0c1ae87c8",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "75269472b5cb4780a900ee4eb14f2f0009e4937c9ea4e7fa1d5babd0c1ae87c8"
+    },
+    "_token_pure_fixed_holdout_plan": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "3bfff951a83d7026dde64ebff59119fbb15be4576aecb5fb5542a982d33950a3",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "3bfff951a83d7026dde64ebff59119fbb15be4576aecb5fb5542a982d33950a3"
+    },
+    "_triplet_batch_from_record": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0b95ad5b47da5582dbf6af012d5f771f23f42b6ecec8a5d3129d1a399c7bd896",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "0b95ad5b47da5582dbf6af012d5f771f23f42b6ecec8a5d3129d1a399c7bd896"
+    },
+    "_triplet_batch_record": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f6dc92b0659592c612c85ef5bed602ad5e8657200499604040bd07f1fb632266",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "f6dc92b0659592c612c85ef5bed602ad5e8657200499604040bd07f1fb632266"
+    },
+    "_valid_partition_labels": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "9bcadf3ca366a24fd270189c1372e2270198ef2f2506fa1f6288889d163ade39",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "9bcadf3ca366a24fd270189c1372e2270198ef2f2506fa1f6288889d163ade39"
+    },
+    "_valid_raw_proposal_indices": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "508f4756f72b1977bb5511e4f23151f085c9d6e2d54f976d8d8253e6151bfda8",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "508f4756f72b1977bb5511e4f23151f085c9d6e2d54f976d8d8253e6151bfda8"
+    },
+    "_validate_token_pure_fixed_record": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "e9d6d70e5f0772c51e11ee7372c2c38589c51d7b7860e3a38df98a73d21fe585",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "e9d6d70e5f0772c51e11ee7372c2c38589c51d7b7860e3a38df98a73d21fe585"
+    },
+    "_zero_contrastive_result": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "82836866f7e008f177de6f1ed2b2bc82b08fdf6db25455d55bd7350a3e1b8d48",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "82836866f7e008f177de6f1ed2b2bc82b08fdf6db25455d55bd7350a3e1b8d48"
+    },
+    "augmentation_contract_for_profile": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "cbb1e7c4aded38be3e1c9e993e3ec53a0ea7e8ade34f18ba3dea39a2443f7e63",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "cbb1e7c4aded38be3e1c9e993e3ec53a0ea7e8ade34f18ba3dea39a2443f7e63"
+    },
+    "build_pure_token_contrastive_batch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "9a59cb5eb6d6fe2b1cf007efd20edb065660c643fdddcc5b65beac83c6dbf6c9",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "9a59cb5eb6d6fe2b1cf007efd20edb065660c643fdddcc5b65beac83c6dbf6c9"
+    },
+    "build_scene_visit_input": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "a4bdf0c4b157ff42c2f0427d9b9b450a6f094e7a788690977a82c08cca7a0476",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "a4bdf0c4b157ff42c2f0427d9b9b450a6f094e7a788690977a82c08cca7a0476"
+    },
+    "coverage_queue_indices": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "6b11c5f025f536ab3003cc04c9fd8eaf6e47a59b7dbdf77350e0ba60b747ac4e",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "6b11c5f025f536ab3003cc04c9fd8eaf6e47a59b7dbdf77350e0ba60b747ac4e"
+    },
+    "evaluate_holdout": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "638dd3f17640f573ab07f1d79b0cc7e9fb2adfa1384b1e095cc3e06a0f074db7",
+      "module": "delimit3d.pretraining.evaluation",
+      "release_ast_sha256": "638dd3f17640f573ab07f1d79b0cc7e9fb2adfa1384b1e095cc3e06a0f074db7"
+    },
+    "feature_health": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f7a11c4339b91dee1e33ce219cec74a373c910fd9706252be6bced382a2b07b5",
+      "module": "delimit3d.pretraining.evaluation",
+      "release_ast_sha256": "f7a11c4339b91dee1e33ce219cec74a373c910fd9706252be6bced382a2b07b5"
+    },
+    "hierarchy_mask_stage_weights_for_step": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "1424caf32f1ff13413d9390258544b920b15cd098e2db8f6630c8c4882fa29e3",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "1424caf32f1ff13413d9390258544b920b15cd098e2db8f6630c8c4882fa29e3"
+    },
+    "input_channels_for": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "7db98dcc1199d540c321f068f5d4968b315bfde0acfaff8e826509f88a3136f0",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "7db98dcc1199d540c321f068f5d4968b315bfde0acfaff8e826509f88a3136f0"
+    },
+    "load_scene_source": {
+      "ast_identical_to_original": false,
+      "ast_sha256": "913a0d1a4c23de7484e95380379b009e1ca2603e64864400cea034319bc0dc0d",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "8c7b4b43cc17f9299147945a99bbc31944a000a066c94912f20c4de0ef876f82",
+      "release_change": "Dispatch new 2D-only packs without reading 3D labels, alongside the retained historical formats."
+    },
+    "normalize_hierarchy_frame_groups": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "b7a0ca555d47dc2fd4774039fe413bfd3c4b080819985c5b2e02b8e17c62c1f1",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "b7a0ca555d47dc2fd4774039fe413bfd3c4b080819985c5b2e02b8e17c62c1f1"
+    },
+    "normalize_hierarchy_mask_stage_weight_schedule": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c8db8c6232d3eefbdcc70a61c63139050a7b8c0aaffa8b4ba8c5b78d6a4c964e",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "c8db8c6232d3eefbdcc70a61c63139050a7b8c0aaffa8b4ba8c5b78d6a4c964e"
+    },
+    "normalize_hierarchy_mask_stage_weights": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "1271101a700836662e0c8e696c0f91f7572159a7f4376c17b86bf950f9246c13",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "1271101a700836662e0c8e696c0f91f7572159a7f4376c17b86bf950f9246c13"
+    },
+    "optimizer_parameter_groups": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "ba7361022ed23a592461f69f8590b2feee0afb0299a9cdc0a04f8eb1462c363d",
+      "module": "delimit3d.pretraining.optim",
+      "release_ast_sha256": "ba7361022ed23a592461f69f8590b2feee0afb0299a9cdc0a04f8eb1462c363d"
+    },
+    "prepare_fixed_holdout_eval_pack": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "6c5647599a54f72677efdb36c4c2c623b9b0a1fbe8b3c5595dd85830cb29803c",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "6c5647599a54f72677efdb36c4c2c623b9b0a1fbe8b3c5595dd85830cb29803c"
+    },
+    "remap_contrastive_batch_to_level": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "a181475f982984a41a925bf90cbb69b01659eb9b6c12b27277e4dd158b94505e",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "a181475f982984a41a925bf90cbb69b01659eb9b6c12b27277e4dd158b94505e"
+    },
+    "sample_3d_batch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c296f3bb4890d2b1a07ecd784f66243e402a5c7e8f02f4bcdf15964f0f3f16aa",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "c296f3bb4890d2b1a07ecd784f66243e402a5c7e8f02f4bcdf15964f0f3f16aa"
+    },
+    "sample_raw_batch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "64727df5a636a93acc96d0dbae73dfb0212adff844d48c041e11fb75f9b88c88",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "64727df5a636a93acc96d0dbae73dfb0212adff844d48c041e11fb75f9b88c88"
+    },
+    "sampling_config_for_profile": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0a0c9db280d0bef4794b5e0857aa0bfcab25bcc6d4db9b78b5608282398944a6",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "0a0c9db280d0bef4794b5e0857aa0bfcab25bcc6d4db9b78b5608282398944a6"
+    },
+    "scene_source_for_visit": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "05e1e85b3f36dba3bd842b2f2c2ce30e3f4473260febcfab83ced78e3520bbba",
+      "module": "delimit3d.pretraining.sources",
+      "release_ast_sha256": "05e1e85b3f36dba3bd842b2f2c2ce30e3f4473260febcfab83ced78e3520bbba"
+    },
+    "set_optimizer_lr": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "434ecf2a42ea5df9b5623b1d5a8cad784248ea848f61ccce8437fc1f9983b8af",
+      "module": "delimit3d.pretraining.optim",
+      "release_ast_sha256": "434ecf2a42ea5df9b5623b1d5a8cad784248ea848f61ccce8437fc1f9983b8af"
+    },
+    "training_batch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c96f2883f8e000f3a59758a2732eaa927af32739b77b595bc576d3f9f4fa11a0",
+      "module": "delimit3d.pretraining.sampling",
+      "release_ast_sha256": "c96f2883f8e000f3a59758a2732eaa927af32739b77b595bc576d3f9f4fa11a0"
+    },
+    "validate_fixed_holdout_eval_pack": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f4fb0e7bc84d005119cac1fe1bb6f508c2d0a3d1bb53b7b05b0cdb408d85f2eb",
+      "module": "delimit3d.pretraining.fixed_eval",
+      "release_ast_sha256": "f4fb0e7bc84d005119cac1fe1bb6f508c2d0a3d1bb53b7b05b0cdb408d85f2eb"
+    },
+    "weighted_hierarchy_mask_loss": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "bcd4ded0d1cb77380caf9fba43a029ae8bdade78b78916c4e8a1af6d703928f6",
+      "module": "delimit3d.pretraining.settings",
+      "release_ast_sha256": "bcd4ded0d1cb77380caf9fba43a029ae8bdade78b78916c4e8a1af6d703928f6"
+    },
+    "zero_loss_touching_module_parameters": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "92bb72fdf562da2606b0c9c7b32e4a6bd174ffc9e2fecb3a92aab701cffdee51",
+      "module": "delimit3d.pretraining.contrastive",
+      "release_ast_sha256": "92bb72fdf562da2606b0c9c7b32e4a6bd174ffc9e2fecb3a92aab701cffdee51"
+    }
+  },
+  "original_runner_sha256": "5dba98718db19fece133beb0f9d6175916b565df7d8b2d045c71f46a0d1d4e82",
+  "original_source_sha256": "c93fcaa2b3647eb7ff49344cbb5a455733abf2dc72337b9c758943eb1ccbee73",
+  "runner_definitions": {
+    "_accumulate_rank_cumulative_health_update": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "092b8ab741baa64e72be06621565095bd0743c3a2f22d4834838794a6d0b828a",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "092b8ab741baa64e72be06621565095bd0743c3a2f22d4834838794a6d0b828a"
+    },
+    "_add_flat_objective_gradients": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "8167341b89d738d5914465a0020f2b155901f8b0d150783d6628b8ec3795d478",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "8167341b89d738d5914465a0020f2b155901f8b0d150783d6628b8ec3795d478"
+    },
+    "_add_manual_gradients": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "6858ca3d5bad29fef8a062343bd6e39d125d643d38d029b421767c5a7c08c956",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "6858ca3d5bad29fef8a062343bd6e39d125d643d38d029b421767c5a7c08c956"
+    },
+    "_append_jsonl": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "bbfe763405aeab92ecb37d44c7a4f02da9d3f8784e184c4fe3d9120ecf0e14e0",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "bbfe763405aeab92ecb37d44c7a4f02da9d3f8784e184c4fe3d9120ecf0e14e0"
+    },
+    "_append_rank_gradient_panel": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "feccee1fc8e0edbb3fc3947d7e079c72a2c5a1eb21eebe659222452604742f7d",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "feccee1fc8e0edbb3fc3947d7e079c72a2c5a1eb21eebe659222452604742f7d"
+    },
+    "_atomic_json": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "d73bbb0882c53d2cb567bb150949379b2cfe848b6f68b65497af3a6b6b5c79c9",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "d73bbb0882c53d2cb567bb150949379b2cfe848b6f68b65497af3a6b6b5c79c9"
+    },
+    "_atomic_jsonl_noclobber": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "7ba103841a0b62ddfd28bedc14187029a6a882fb14764d97022ba3a390221c0b",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "7ba103841a0b62ddfd28bedc14187029a6a882fb14764d97022ba3a390221c0b"
+    },
+    "_atomic_torch_save": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "6372c9b2c12e2a583f40309547a9ccc439e5c4fea582ffc9daf65f768463c820",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "6372c9b2c12e2a583f40309547a9ccc439e5c4fea582ffc9daf65f768463c820"
+    },
+    "_audit_lazy_sources": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "29f3396695336ce4b6799f41b8176bed4448a0ddd94950ba8630de522592cbea",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "29f3396695336ce4b6799f41b8176bed4448a0ddd94950ba8630de522592cbea"
+    },
+    "_batchnorm_state_report": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "785c13732f149a1a523f51f57ef48902c772811735a4e0da611da235014c5c6b",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "785c13732f149a1a523f51f57ef48902c772811735a4e0da611da235014c5c6b"
+    },
+    "_canonical_panel_schedule": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "7b98d1a7c69a975e5834a5b1e87893e7858987afe0381caa8215f328939d76d2",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "7b98d1a7c69a975e5834a5b1e87893e7858987afe0381caa8215f328939d76d2"
+    },
+    "_canonical_source_metadata": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "3eb961c7fbc56e3f029d1041a63f96fe78c01f641bea5c40844875c79987b9c3",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "3eb961c7fbc56e3f029d1041a63f96fe78c01f641bea5c40844875c79987b9c3"
+    },
+    "_canonical_string_sequence": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "81c78185403d3c3d7457a648a856720729363f167dd8e3d0e2d7d0d0cc2ef2e2",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "81c78185403d3c3d7457a648a856720729363f167dd8e3d0e2d7d0d0cc2ef2e2"
+    },
+    "_capture_rng_state": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "5dea90f836972007660274f9e623a336cb2361e0e2c6f47c4d168b96f6b896f2",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "5dea90f836972007660274f9e623a336cb2361e0e2c6f47c4d168b96f6b896f2"
+    },
+    "_checkpoint_payload": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "28386093b6dfee80c2200962632a4bff053b28c584513740bfef452b9bf60e04",
+      "module": "delimit3d.pretraining.checkpoint",
+      "release_ast_sha256": "28386093b6dfee80c2200962632a4bff053b28c584513740bfef452b9bf60e04"
+    },
+    "_clip_gradient_diagnostics": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0a0d47a034aaf55693ebc5b7584876b306e63c905a07f4559fe33aa1277b530c",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "0a0d47a034aaf55693ebc5b7584876b306e63c905a07f4559fe33aa1277b530c"
+    },
+    "_comma_separated_nonnegative_ints": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "a5413eaac28a9cbc4bf598f2a21f54bec339f9ef7149198c25098b3ab8bc8f10",
+      "module": "delimit3d.pretraining.arguments",
+      "release_ast_sha256": "a5413eaac28a9cbc4bf598f2a21f54bec339f9ef7149198c25098b3ab8bc8f10"
+    },
+    "_content_addressed_report": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "7aa2b19466c1c3e2d42852f00b04a997ad0f5e9a678768b8007447eb703389f5",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "7aa2b19466c1c3e2d42852f00b04a997ad0f5e9a678768b8007447eb703389f5"
+    },
+    "_final_evaluation_endpoint": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "defb69ffd49e024fa8994a7ff158d186e6a5f86829535872ad4c8a4b747ee25a",
+      "module": "delimit3d.pretraining.schedule",
+      "release_ast_sha256": "defb69ffd49e024fa8994a7ff158d186e6a5f86829535872ad4c8a4b747ee25a"
+    },
+    "_flat_objective_gradients": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "9e5e30522d102ccc5eb6d076bdbd489a23d71d5aedcfcf4823c44d5210a3b95f",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "9e5e30522d102ccc5eb6d076bdbd489a23d71d5aedcfcf4823c44d5210a3b95f"
+    },
+    "_global_auxiliary_budget_passed": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "68075fb2f7ee8e5e986dd75c46583c919a05424f825fb5ba95821f94ceca2924",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "68075fb2f7ee8e5e986dd75c46583c919a05424f825fb5ba95821f94ceca2924"
+    },
+    "_global_shared_gradient_report": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c03adf951555c9d233418d8da0e22d1f49300a8041351b63ca2895c522db1d80",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "c03adf951555c9d233418d8da0e22d1f49300a8041351b63ca2895c522db1d80"
+    },
+    "_gradient_norm": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "84f2031be91d574cfccc29c22ffc480a89f11cc6299b16feb2f2bd14d8d18dc8",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "84f2031be91d574cfccc29c22ffc480a89f11cc6299b16feb2f2bd14d8d18dc8"
+    },
+    "_gradient_objective_stage_counts": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "27786265019896babefe744c2d2d5dc12e5b64078427bb5cadeffd073bc54e47",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "27786265019896babefe744c2d2d5dc12e5b64078427bb5cadeffd073bc54e47"
+    },
+    "_install_global_flat_total_gradient": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "25c8278c747aac4b477e4b3d9a609fee0eaa53eee52d68e672203fe62df55ad4",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "25c8278c747aac4b477e4b3d9a609fee0eaa53eee52d68e672203fe62df55ad4"
+    },
+    "_install_global_pcgrad": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "f151632833167c6aa42f8927fd907eaba834de3b48c3a5812076228a5b747d25",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "f151632833167c6aa42f8927fd907eaba834de3b48c3a5812076228a5b747d25"
+    },
+    "_json_copy": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c415da3a1e6ef745b5769e5b4ff7b6b3acf4aa0c5ae82a9d3925a77f817805e4",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "c415da3a1e6ef745b5769e5b4ff7b6b3acf4aa0c5ae82a9d3925a77f817805e4"
+    },
+    "_legacy_multiscale_stage_metrics": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0b28691a507f3b398d817153b77ef731bd242ee3556de12f3855757c973b3a7d",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "0b28691a507f3b398d817153b77ef731bd242ee3556de12f3855757c973b3a7d"
+    },
+    "_load_dataset_source_audit": {
+      "ast_identical_to_original": false,
+      "ast_sha256": "f5a210ebe2ee8cb7f3f48e17511ba5c7f7bad026b0d1dd444fc60164d9a10aa6",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "592bbe203041d08697bd85fb469dc910208e47e7227d9de2271769c7a58adea2",
+      "release_change": "Accept and verify freshly sealed 2D-only data with dynamic scene counts and crop protocols."
+    },
+    "_load_logical_scene_group": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "8e81bec092171f0a3ffcf84033f885ce7dd633e73c6d2f6516719015cea4e34b",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "8e81bec092171f0a3ffcf84033f885ce7dd633e73c6d2f6516719015cea4e34b"
+    },
+    "_load_smoke_manifest_paths": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "8d02f804ba709a7b6b871319abbf612169ad7d7eebff78727aeed2fb0d5e48ff",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "8d02f804ba709a7b6b871319abbf612169ad7d7eebff78727aeed2fb0d5e48ff"
+    },
+    "_manual_objective_gradients": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "2a15420823e5b2a97bb6d63ce20ea176267958ef9c95851a0a11505cac40cbe5",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "2a15420823e5b2a97bb6d63ce20ea176267958ef9c95851a0a11505cac40cbe5"
+    },
+    "_mean_numeric_tree": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "7b3bcca8deaec5ec4bcb7785e37deec7d3accb7c4f1939be82742d96b266cab6",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "7b3bcca8deaec5ec4bcb7785e37deec7d3accb7c4f1939be82742d96b266cab6"
+    },
+    "_merge_count_dicts": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "79478121bba3f040e5a5cccfe71efc06f75d0efdfedd9d6dc708eed87d73da61",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "79478121bba3f040e5a5cccfe71efc06f75d0efdfedd9d6dc708eed87d73da61"
+    },
+    "_merge_rank_cumulative_health": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "d084eaabab949b2417a11a597d3152d486c8bfef0a41d669ac46da14eb0bac95",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "d084eaabab949b2417a11a597d3152d486c8bfef0a41d669ac46da14eb0bac95"
+    },
+    "_native_fixed_pack_cosine_gap": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0e67eefbd3a9485a49af4537acda4c9c0e151ea143567922d4fd63b7ca9bc96b",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "0e67eefbd3a9485a49af4537acda4c9c0e151ea143567922d4fd63b7ca9bc96b"
+    },
+    "_native_token_pure_fixed_pack_cosine_gap": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "baeb5e213d0fcb639dffe5101d356075d067c0ec6038e4ab40f4339180d02aac",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "baeb5e213d0fcb639dffe5101d356075d067c0ec6038e4ab40f4339180d02aac"
+    },
+    "_new_rank_cumulative_health": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "29c3f681beb92f0aa74aa7e551876bf697ea8f40da59503dd17c958007e1ad66",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "29c3f681beb92f0aa74aa7e551876bf697ea8f40da59503dd17c958007e1ad66"
+    },
+    "_preload_sources": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c86a3f378fdcdc1504ffa24b461d7a96facd5186b63e8ed87279a905391b2489",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "c86a3f378fdcdc1504ffa24b461d7a96facd5186b63e8ed87279a905391b2489"
+    },
+    "_resolve_seed_contract": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "347a944a7c70a2a2a8ff8ba63e929cf6a26aaed245fbbaea8e6556066204977c",
+      "module": "delimit3d.pretraining.arguments",
+      "release_ast_sha256": "347a944a7c70a2a2a8ff8ba63e929cf6a26aaed245fbbaea8e6556066204977c"
+    },
+    "_restore_rank_cumulative_health": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "876f0a6d02cb3ddaf867bc54357b736a8f446f42c9e52aa9e0164701adf5b2ee",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "876f0a6d02cb3ddaf867bc54357b736a8f446f42c9e52aa9e0164701adf5b2ee"
+    },
+    "_restore_rng_state": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "24fc5db92150256379a04800f2ea999537d29514529805293b499d2a052d7940",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "24fc5db92150256379a04800f2ea999537d29514529805293b499d2a052d7940"
+    },
+    "_run": {
+      "ast_identical_to_original": false,
+      "ast_sha256": "42bcb22480c698e49a34ff9d9612460d55df5af323adcf1668d036c958cf1677",
+      "module": "delimit3d.pretraining.trainer",
+      "release_ast_sha256": "57ff2d01b3c1687ceb25e3d355ec4ba1f7650f9403e7cfba87579343595195c3",
+      "release_change": "Accept prepared CLI arguments; verify portable release code/input records; admit only sealed SAM2 records for the SAM2 recipe."
+    },
+    "_scheduled_gradient_panel_updates": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "18d4983fd3f1e166a889fa6ca6dd119725cd35d8b465c5dd012056e3a4a09fa0",
+      "module": "delimit3d.pretraining.schedule",
+      "release_ast_sha256": "18d4983fd3f1e166a889fa6ca6dd119725cd35d8b465c5dd012056e3a4a09fa0"
+    },
+    "_semantic_config_sha256": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "3a2ac0f3ce7c50119da3bf566b2f23e1af8513c8d542e1a97d845df39f91911b",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "3a2ac0f3ce7c50119da3bf566b2f23e1af8513c8d542e1a97d845df39f91911b"
+    },
+    "_strict_finite_real": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "fbab0986fc03b3d5ac5fd1d827c71bb8a56ca2be0761504c876f5a45b75657c7",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "fbab0986fc03b3d5ac5fd1d827c71bb8a56ca2be0761504c876f5a45b75657c7"
+    },
+    "_strict_initial_load": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "9f03bd9bcfa212bc28272376fd7ca59fda01f3b806d22092e2f1cc1627157d7a",
+      "module": "delimit3d.pretraining.checkpoint",
+      "release_ast_sha256": "9f03bd9bcfa212bc28272376fd7ca59fda01f3b806d22092e2f1cc1627157d7a"
+    },
+    "_strict_nonnegative_counter": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "4977e171f2d83f965af4dad7b9b6e83cfa214020f536f856e74f6ce0b793f273",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "4977e171f2d83f965af4dad7b9b6e83cfa214020f536f856e74f6ce0b793f273"
+    },
+    "_strict_nonnegative_real": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "0f6f84bfc191ec5d859177ec68195b978119db431f2e347d1c4104c377cdf55b",
+      "module": "delimit3d.pretraining.health",
+      "release_ast_sha256": "0f6f84bfc191ec5d859177ec68195b978119db431f2e347d1c4104c377cdf55b"
+    },
+    "_summarize_hierarchy_records": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "5c52e5aef823b92069b3b793efbc61255be3295112e1c2c56ddf91086fbb950f",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "5c52e5aef823b92069b3b793efbc61255be3295112e1c2c56ddf91086fbb950f"
+    },
+    "_summarize_token_pure_records": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "1aeb88dbf12417e37b3bcd35d0294b5fad4db36d186d6a5fe2a01d627d037bdf",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "1aeb88dbf12417e37b3bcd35d0294b5fad4db36d186d6a5fe2a01d627d037bdf"
+    },
+    "_summarize_v2_sampling": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "46e589d5b8ce9c7b6ce8994cdd006d854469a32f1d900db8ae0fa673250a7438",
+      "module": "delimit3d.pretraining.validation",
+      "release_ast_sha256": "46e589d5b8ce9c7b6ce8994cdd006d854469a32f1d900db8ae0fa673250a7438"
+    },
+    "_synchronize_accumulated_gradients": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "d6a69dbe1efa4ef2aa512f0b4f03f6007adaefcfbd873fc28e08d728950c9521",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "d6a69dbe1efa4ef2aa512f0b4f03f6007adaefcfbd873fc28e08d728950c9521"
+    },
+    "_telemetry_auxiliary_budget": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "68d922d0212c8428559dbe6b4353a2b8485503999d2170fe8fa7e80e81ea77c2",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "68d922d0212c8428559dbe6b4353a2b8485503999d2170fe8fa7e80e81ea77c2"
+    },
+    "_telemetry_objective_cosine": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "ee21634f8c0b617a623448ddab0b0a3f17b5111c91e011737a03319d35a4b25c",
+      "module": "delimit3d.pretraining.gradients",
+      "release_ast_sha256": "ee21634f8c0b617a623448ddab0b0a3f17b5111c91e011737a03319d35a4b25c"
+    },
+    "_tensor_mapping_sha256": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "03b92735e2df713dd3e11bdddeb0e474aabf8c66a8aea5940b187de2df50edea",
+      "module": "delimit3d.pretraining.records",
+      "release_ast_sha256": "03b92735e2df713dd3e11bdddeb0e474aabf8c66a8aea5940b187de2df50edea"
+    },
+    "_update_for_completed_epoch": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "92feaa95e0f49df0a29e6894e975b6481196dcb0591b47fc80e766e193c2abf7",
+      "module": "delimit3d.pretraining.schedule",
+      "release_ast_sha256": "92feaa95e0f49df0a29e6894e975b6481196dcb0591b47fc80e766e193c2abf7"
+    },
+    "_updates_for_scene_visit_duration": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "d9121d40a998e3a6c802ca504c15b6f801e24b9b1b2bc09f450e9225613b7782",
+      "module": "delimit3d.pretraining.schedule",
+      "release_ast_sha256": "d9121d40a998e3a6c802ca504c15b6f801e24b9b1b2bc09f450e9225613b7782"
+    },
+    "_v2_frame_catalogs": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "a3d6a95efa2ea544b8e0e28bbe9addfeba89aebe909b0a7f3d561f6a3e3e4b62",
+      "module": "delimit3d.pretraining.dataset",
+      "release_ast_sha256": "a3d6a95efa2ea544b8e0e28bbe9addfeba89aebe909b0a7f3d561f6a3e3e4b62"
+    },
+    "main": {
+      "ast_identical_to_original": true,
+      "ast_sha256": "c95937387423c31e38bde76548202fc9f4da5b427882c294458d1b318b530bca",
+      "module": "delimit3d.pretraining.trainer",
+      "release_ast_sha256": "c95937387423c31e38bde76548202fc9f4da5b427882c294458d1b318b530bca"
+    },
+    "parse_args": {
+      "ast_identical_to_original": false,
+      "ast_sha256": "e5872de902bc11d1dcd66975e2081275dbe5c974b8696802ec331faffe4fe12d",
+      "module": "delimit3d.pretraining.arguments",
+      "release_ast_sha256": "f5cd6739100a790583d941c24c4540f63dff5264464ee34a57209cfb70943189",
+      "release_change": "Accept an explicit argv sequence for the public wrapper and apply shared YAML/JSON recipe defaults."
+    }
+  },
+  "schema": "delimit3d_pretraining_refactor/v1",
+  "verification": {
+    "intentionally_changed_definitions": 4,
+    "scope": "Original AST hashes identify extraction inputs; release hashes identify the current definitions.",
+    "unchanged_definitions": 106
+  }
+}

@@ -55,7 +55,7 @@ NORMALIZATION_POLICIES = ("batchnorm", "sync_batchnorm")
 def _state_container(payload: Any, path: Path) -> MutableMapping[str, torch.Tensor]:
     if not isinstance(payload, MutableMapping):
         raise TypeError(f"{path}: checkpoint payload is not mutable mapping")
-    for key in ("state_dict", "model_state_dict", "model"):
+    for key in ("backbone_state_dict", "state_dict", "model_state_dict", "model"):
         value = payload.get(key)
         if isinstance(value, MutableMapping):
             return value
@@ -136,12 +136,12 @@ def apply_recalibrated_buffers(
     return sorted(changed)
 
 
-def _load_backbone(checkpoint: Path, litept_root: Path, device: torch.device) -> tuple[LitePTBackbone, Any]:
+def _load_backbone(checkpoint: Path, litept_root: Path, device: torch.device, grid_size: float = 0.02) -> tuple[LitePTBackbone, Any]:
     payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
     model = LitePTBackbone(
         litept_root=str(litept_root),
         in_channels=6,
-        grid_size=0.02,
+        grid_size=grid_size,
         litept_variant="litept_s_star",
         multi_scale=False,
         feature_pyramid_mode="mask3d_fpn",
@@ -277,9 +277,10 @@ def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--grid-size", type=float, default=0.02)
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--train-split", type=Path, required=True)
     parser.add_argument("--normal-audit", type=Path, required=True)
@@ -297,11 +298,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-checkpoint", type=Path, required=True)
     parser.add_argument("--output-manifest", type=Path, required=True)
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv=None) -> int:
+    args = parse_args(argv)
     rank, world_size, device = _runtime_context(
         str(args.normalization_policy), int(args.world_size), str(args.device)
     )
@@ -327,7 +328,7 @@ def main() -> int:
         scene_count=int(args.scenes),
         seed=int(args.seed),
     )
-    model, payload = _load_backbone(checkpoint, litept_root, device)
+    model, payload = _load_backbone(checkpoint, litept_root, device, args.grid_size)
     if args.normalization_policy == "sync_batchnorm":
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model).to(device)
     before = {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}

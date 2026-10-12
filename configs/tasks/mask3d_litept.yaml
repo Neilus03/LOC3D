@@ -1,0 +1,2 @@
+extends: [mask3d.yaml, ../models/litept_sstar.yaml]
+name: mask3d_litept_rgbn6_lr01

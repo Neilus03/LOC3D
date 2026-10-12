@@ -647,8 +647,10 @@ def build_token_pure_dec0_contrastive_batch(
 
     Positive tokens contain only known points from their selected proposal.
     Negative tokens are fully known and contain no point from that proposal.
-    Full same-frame, cross-granularity relation membership then removes every
-    candidate sharing any teacher mask with either positive endpoint.
+    With overlap veto, full same-frame relation membership removes every
+    candidate sharing a teacher mask with either positive endpoint. The
+    selected-proposal policy permits those candidates while preserving the
+    selected-mask complement, known coverage and token-purity requirements.
     """
 
     if point_to_token.ndim != 1:
@@ -709,11 +711,14 @@ def build_token_pure_dec0_contrastive_batch(
     require_negative_proposal_membership = bool(
         getattr(batch, "require_negative_proposal_membership", False)
     )
+    allow_shared_proposal_negatives = bool(batch.allow_shared_proposal_negatives)
     if batch.algorithm_version not in (None, SAMPLER_ALGORITHM_VERSION):
         raise ValueError(
             f"Unsupported sampler algorithm version {batch.algorithm_version!r}"
         )
     if deferred_plan is not None:
+        if deferred_plan.allow_shared_proposal_negatives != allow_shared_proposal_negatives:
+            raise ValueError("Deferred token-loss shared-proposal policy drift")
         if batch.algorithm_version != SAMPLER_ALGORITHM_VERSION:
             raise ValueError(
                 "Deferred token loss requires the V2 sampler algorithm stamp"
@@ -921,6 +926,7 @@ def build_token_pure_dec0_contrastive_batch(
             proposal_point_indices=relation_token_members,
             require_candidate_membership=require_negative_proposal_membership,
             membership_index=relation_index,
+            allow_shared_proposal_negatives=allow_shared_proposal_negatives,
         )
         safe = safe_endpoints[: pairs.shape[0]] & safe_endpoints[pairs.shape[0] :]
         viable = safe.any(dim=1)
@@ -1158,6 +1164,7 @@ def build_token_pure_dec0_contrastive_batch(
         spatial_candidate_pool=int(batch.spatial_candidate_pool),
         feature_candidate_pool=feature_width,
         algorithm_version=SAMPLER_ALGORITHM_VERSION,
+        allow_shared_proposal_negatives=allow_shared_proposal_negatives,
         require_negative_proposal_membership=(
             require_negative_proposal_membership
         ),
@@ -1174,7 +1181,8 @@ def build_token_pure_dec0_contrastive_batch(
         "positive_pairs_unique_unordered_per_proposal": True,
         "positive_pairs_collapsed": 0,
         "negative_ids_unique_disjoint_per_row": True,
-        "teacher_co_membership_filtered_after_tokenization": True,
+        "teacher_co_membership_filtered_after_tokenization": not allow_shared_proposal_negatives,
+        "allow_shared_proposal_negatives": allow_shared_proposal_negatives,
         "zero_denominator": False,
     }
 

@@ -1,0 +1,7 @@
+extends: [agile3d.yaml, ../models/sonata_small.yaml]
+name: agile3d_sonata_native_lr01
+encoder_initialization:
+  kind: sonata
+  checkpoint: null
+model:
+  feature_dim: 992

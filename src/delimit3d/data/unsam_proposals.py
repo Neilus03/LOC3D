@@ -55,7 +55,14 @@ class UnSAMProposalSet:
         for name, (value, shape) in expected_vectors.items():
             if value.shape != shape:
                 raise ValueError(f"{name} shape {value.shape} != {shape}")
-        recomputed = self.masks.reshape(count, -1).sum(axis=1, dtype=np.int64)
+        # ``reshape(0, -1)`` is ambiguous to NumPy even though the spatial
+        # dimensions are known.  Empty teacher output is a valid observation:
+        # it contributes neither positive masks nor negative evidence.
+        recomputed = (
+            self.masks.reshape(count, -1).sum(axis=1, dtype=np.int64)
+            if count
+            else np.zeros(0, dtype=np.int64)
+        )
         if not np.array_equal(self.areas.astype(np.int64, copy=False), recomputed):
             raise ValueError("areas do not match the serialized masks")
 

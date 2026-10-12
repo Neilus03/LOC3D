@@ -1,67 +1,23 @@
 # Third-party notices
 
-Delimit3D is a research extraction from an internal CHORUS/LitePT workspace.
-The following external projects and derived components are required for the
-runtime or are represented by adapters in this repository:
+Original Delimit3D code retains the status in `LICENSE.md`. External projects, copied code and public pretrained weights keep their own licenses. Weights and full backbone/teacher checkouts are external to this package.
 
-- **LitePT**: the external LitePT checkout is supplied through
-  `DELIMIT3D_LITEPT_ROOT`; it is not vendored here. See the public
-  [LitePT repository](https://github.com/Neilus03/LitePT) for its upstream
-  license and notices.
-- **UnSAMv2 / SAM2**: the 2D teacher checkout and checkpoint remain external
-  under `DELIMIT3D_UNSAM_ROOT`. The source preparation adapter imports the
-  teacher at runtime and does not copy its weights.
-- **PyTorch, NumPy, SciPy, OpenCV, Pillow, imageio, plyfile**: installed as
-  environment dependencies and governed by their respective licenses.
-- **Mask3D-derived code**: Mask3D decoder code is intentionally excluded from
-  the core Delimit3D package. The historical CHORUS repository contains the
-  corresponding notice for old transfer experiments.
-- **AGILE3D-compatible evaluation**: the core repository currently implements
-  the fixed point-prompted readout protocol. Any future interactive decoder
-  code derived from AGILE3D will carry a separate, explicit notice.
+## Copied implementations
 
-Before public release, review every copied file and add the exact upstream
-license text required by LitePT, UnSAMv2/SAM2, and any future decoder/evaluator
-implementation.
+- **AGILE3D**: official dataset, simulated clicks, evaluation and decoder-derived code at revision `b73638da41edbabe52a1b578d52ddeb8fa552173`. Copyright Yuanwen Yue / ETH Zurich, MIT; full text in `third_party/AGILE3D.LICENSE`. Namespaced dataset/evaluator modules live in `tasks/agile3d/protocol/`; the native PyTorch decoder and explicit NumPy quantization bridge live in `evaluation/`. See `manifests/agile3d_extraction.json` and [upstream](https://github.com/ywyue/AGILE3D).
+- **Mask3D**: decoder, losses and segment/task logic derived from the executed Mask3D transfer implementation. Copyright Jonas Schult, MIT; full text in `third_party/Mask3D.LICENSE`. See `manifests/mask3d_extraction.json` and [upstream](https://github.com/JonasSchult/Mask3D).
+- **LitePT**: mesh normal preparation and runtime adaptations derive from LitePT. The full upstream notice is in `third_party/LitePT.LICENSE`. The external source and applied patch are locked in `src/delimit3d/runtime/assets/sources.lock.json`. See [upstream](https://github.com/Neilus03/LitePT).
 
+## External sources and weights
 
-- **AGILE3D-compatible multi-object decoder and click protocol**: the
-  Delimit3D interactive evaluator adapts the query decoder, positional/click
-  encoding, auxiliary-loss structure, and simulated-correction policy from
-  AGILE3D at revision
-  b73638da41edbabe52a1b578d52ddeb8fa552173.
-  Upstream repository: https://github.com/ywyue/AGILE3D
-  Upstream license: MIT (copyright Yuanwen Yue and ETH Zurich). The
-  adaptation is implemented natively in PyTorch because MinkowskiEngine is
-  not part of the Delimit3D runtime; LitePT provides the frozen token
-  interface.
+| Project | Locked source | Terms |
+| --- | --- | --- |
+| LitePT | `055c3fa4285a4feef679cffa69c9542e8b09e922` plus recorded patch | Upstream license and notices |
+| Concerto | `5b41117160cdd92c3538be1911277b17e7ef5871` | Upstream source/weight terms |
+| Sonata | `18c09ff8d713494f78a8213792262b910977a65d` | Apache 2.0 source; CC BY-NC 4.0 public weights |
+| SAM2 | `2b90b9f5ceec907a1c18123530e92e794ad901a4` | Upstream source/weight terms |
+| UnSAMv2 | `4f2ce5148bc9c769169b7c45ad28c7af28399ff0` | Upstream source/weight terms, including SAM2 components |
 
+Source/weight manifests record exact revisions and content hashes. Fetching a dependency does not change its license. Official Structured3D, ScanNet and AGILE3D benchmark data are obtained separately under their dataset terms.
 
-## Sonata / Point Transformer V3
-
-The Sonata adaptation path uses the public encoder-only Sonata implementation
-from `facebookresearch/sonata`, source revision
-`18c09ff8d713494f78a8213792262b910977a65d` (retrieved 2026-09-13). The source
-code is licensed under the Apache License 2.0; the public pretrained weights
-are distributed by Meta under CC-BY-NC 4.0. The external source checkout and
-weights remain under `/cluster/work/igp_psr/nedela` and are not vendored into
-this repository. The resolved checkpoint SHA-256 is recorded in the adaptation
-YAML and run provenance. See:
-
-- https://github.com/facebookresearch/sonata
-- https://github.com/facebookresearch/sonata/blob/main/LICENSE
-- https://huggingface.co/facebook/sonata
-
-## Point Transformer V3
-
-The public PTv3 adaptation path uses the detached Point Transformer V3 model
-from Pointcept at source revision
-`3229e9b7de1770c8ad17c316f8e349982de509f8`. The external source checkout and
-public ScanNet checkpoint remain outside this repository under the configured
-artifact root; the checkpoint SHA-256 and source revision are recorded in each
-run's provenance. The upstream implementation is released under the MIT
-license. See:
-
-- https://github.com/Pointcept/PointTransformerV3
-- https://huggingface.co/Pointcept/PointTransformerV3
-- https://github.com/Pointcept/PointTransformerV3/blob/main/LICENSE
+PyTorch, NumPy, SciPy, OpenCV, Pillow, imageio, plyfile, Open3D, spconv, FlashAttention, torch-scatter, torch-cluster, PointROPE and pointops remain governed by their respective licenses.

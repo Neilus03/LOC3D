@@ -32,7 +32,7 @@ def sha256_file(path: Path) -> str:
 def _payload_state(payload: Any, path: Path) -> dict[str, torch.Tensor]:
     if not isinstance(payload, dict):
         raise TypeError(f"{path}: checkpoint payload is not a mapping")
-    for key in ("state_dict", "model_state_dict", "model"):
+    for key in ("backbone_state_dict", "state_dict", "model_state_dict", "model"):
         value = payload.get(key)
         if isinstance(value, dict):
             return value

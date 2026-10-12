@@ -1,0 +1,41 @@
+{
+  "schema": "delimit3d_source_lock/v1",
+  "sources": {
+    "litept": {
+      "url": "https://github.com/Neilus03/LitePT.git",
+      "commit": "055c3fa4285a4feef679cffa69c9542e8b09e922",
+      "patch": "litept-runtime.patch",
+      "patched_files_sha256": {
+        "litept/model.py": "29375f64629b87fdded54fb4bf0fcb3023c67d83af938ba65bc76c749987e27c",
+        "litept/serialization/__init__.py": "e6461b37ccb5dcb24725943271259c4f74dac89d27b22becb97e48ce04c8a9b1",
+        "litept/serialization/default.py": "a6677332bb8e50916653801c610d98d5ba61f4f7a0c9529793117a80c48294bb",
+        "litept/serialization/hilbert.py": "60cb8365656312bb49a7a4c45859d35c60d764b613fab53bb0d97178a9c2f25a",
+        "litept/serialization/z_order.py": "81101b623cf80aedf376202d4b4cb9c5f8e74a320390bd33ee67af662e3e05a4",
+        "models/litept/litept.py": "7d18d9f355b429059ff3d920e04ce73688b8e7c0cae0fa9936c95826e60354ae",
+        "libs/pointrope/__init__.py": "da8bc0ca27e392c3ad5de3c60beb7642d6c9fe9b4e3a31de8a792b3ca07607e3",
+        "libs/pointrope/pointrope_cuda.py": "cdfd2ce7456efef01c26565ab4dc84571c8c7c3eec193b7d7c56a6d72e8e9fb7",
+        "libs/pointrope/pointrope_torch.py": "c063b084e20bb931c5d896b231b70f02f9c43df8fd697345409f9dc78f5dc419",
+        "libs/pointrope/setup.py": "d5ffd0a2e067e8433c551b0972968d105f17213c3a220c05e386f9b6b1be99ea",
+        "libs/pointrope/kernels.cu": "c76dae3c016566a86d6915f35af3ea976e5d2858fbb91cdf6b24214c144db6ed",
+        "libs/pointrope/pointrope.cpp": "c8c3e609306da50eb15ee79b1850460879b42a8829e7a166555e134bed908675"
+      },
+      "patch_sha256": "5f024b90cd54d614170e6951063d2d01b025ecbedc9cdb3edb8d80e64644b09a"
+    },
+    "concerto": {
+      "url": "https://github.com/Pointcept/Concerto.git",
+      "commit": "5b41117160cdd92c3538be1911277b17e7ef5871"
+    },
+    "sonata": {
+      "url": "https://github.com/facebookresearch/sonata.git",
+      "commit": "18c09ff8d713494f78a8213792262b910977a65d"
+    },
+    "sam2": {
+      "url": "https://github.com/facebookresearch/sam2.git",
+      "commit": "2b90b9f5ceec907a1c18123530e92e794ad901a4"
+    },
+    "unsamv2": {
+      "url": "https://github.com/yujunwei04/UnSAMv2.git",
+      "commit": "4f2ce5148bc9c769169b7c45ad28c7af28399ff0"
+    }
+  }
+}

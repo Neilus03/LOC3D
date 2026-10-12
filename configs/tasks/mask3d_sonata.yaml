@@ -1,0 +1,7 @@
+extends: [mask3d.yaml, ../models/sonata_small.yaml]
+name: mask3d_sonata_native_lr01
+model:
+  architecture: sonata_mask3d_class_agnostic
+initialization:
+  backbone_source: sonata
+  backbone_checkpoint: null

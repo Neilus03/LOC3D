@@ -1,0 +1,6 @@
+extends: [agile3d.yaml, ../models/litept_sstar.yaml]
+name: agile3d_litept_rgbn6_lr01
+paths:
+  litept_root: ${DELIMIT3D_LITEPT_ROOT}
+evaluation:
+  backbone_batchnorm_policy: train_no_update

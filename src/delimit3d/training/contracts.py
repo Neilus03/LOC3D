@@ -303,9 +303,15 @@ def frame_split_all_available(frame_ids: Sequence[str]) -> tuple[list[str], list
     return train, heldout
 
 
-def source_cells_for_family(family: str) -> tuple[str, ...]:
+def source_cells_for_family(
+    family: str, *, granularity: str | None = None
+) -> tuple[str, ...]:
     """Return the active source cells for one pretext arm."""
 
+    if granularity is not None:
+        if family != SOURCE_FAMILY_2D or granularity not in (*GRANULARITY_KEYS, "sam2"):
+            raise ValueError("Single granularity requires source family 2d and g02/g05/g08/sam2")
+        return (f"2d/{granularity}",)
     if family == SOURCE_FAMILY_2D3D:
         return SOURCE_CELLS
     if family == SOURCE_FAMILY_2D:
@@ -321,7 +327,7 @@ def normalize_source_cells(cells: Sequence[str] | None) -> tuple[str, ...]:
     normalized = tuple(str(cell) for cell in cells)
     if not normalized:
         raise ValueError("source cells must be non-empty")
-    unknown = [cell for cell in normalized if cell not in SOURCE_CELLS]
+    unknown = [cell for cell in normalized if cell not in (*SOURCE_CELLS, "2d/sam2")]
     if unknown:
         raise ValueError(f"Unknown source cells: {unknown}")
     if len(set(normalized)) != len(normalized):
@@ -444,6 +450,12 @@ def audit_scene_source_manifest(
 
     manifest_path = manifest_path.resolve(strict=True)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema_version") == "delimit3d_structured3d_2d_source/v1":
+        from delimit3d.data.source_2d import audit_2d_source
+        return audit_2d_source(manifest_path, expected_scene_id=expected_scene_id, verify_hashes=verify_hashes)
+    if manifest.get("schema_version") == "delimit3d_structured3d_sam2_scene_source/v2":
+        from delimit3d.data.sam2_source import audit_sam2_source
+        return audit_sam2_source(manifest_path, expected_scene_id=expected_scene_id, verify_hashes=verify_hashes)
     if manifest.get("schema_version") != SCENE_SOURCE_SCHEMA:
         raise ValueError(
             f"{manifest_path}: schema {manifest.get('schema_version')!r} "

@@ -1,0 +1,6 @@
+extends: ../models/sonata_small.yaml
+name: native_sonata_feature_segmentation
+probe:
+  grid_size: 0.05
+  coordinate_policy: center_xy_min_z
+  backbone_batchnorm_policy: eval
