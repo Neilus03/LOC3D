@@ -94,7 +94,8 @@ def _load_export(response, service, preview, scene, task, np):
              "Instance IDs and confidence scores do not align")
     _require(np.isfinite(scores).all() and np.all((scores >= 0) & (scores <= 1)),
              "Model returned invalid confidence scores")
-    _require(len(np.unique(ids)) == len(ids) and np.all(ids > 0), "Invalid instance IDs")
+    _require(np.issubdtype(ids.dtype, np.integer) and len(np.unique(ids)) == len(ids) and np.all(ids > 0),
+             "Invalid instance IDs")
     _require(set(np.unique(labels)).issubset({0, *map(int, ids)}), "Labels refer to missing instance IDs")
     _require(response["instance_count"] == len(ids), "Response instance count differs from the export")
     np.testing.assert_array_equal(response["instance_ids"], ids)
@@ -106,6 +107,7 @@ def _load_export(response, service, preview, scene, task, np):
         _require(int(arrays["mask_point_count"]) == point_count, "Packed-mask point count differs")
         _require(provenance["packed_masks_bitorder"] == "big", "Unknown packed-mask bit ordering")
         _require(np.all(scores[:-1] >= scores[1:]), "Mask3D proposals are not confidence ordered")
+        _require(np.all(scores >= provenance["score_threshold"]), "Mask3D retained a mask below the requested score")
         # Unpack one proposal at a time, retaining overlaps without allocating
         # an additional N-points x N-proposals array for a large input scene.
         expected = np.zeros(point_count, dtype=labels.dtype)
