@@ -36,6 +36,7 @@ dist/
 /reports/generated/
 /artifacts/
 /results/
+/configs/inference/*.local.*
 /mesh_visuals/
 *.aux
 *.fls

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "delimit3d"
-version = "0.2.0"
+version = "0.3.0"
 description = "Contrastive 3D pretraining from SAM2 and UnSAMv2 2D masks"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -33,6 +33,8 @@ delimit3d-evaluate = "delimit3d.tasks.cli:evaluate_main"
 delimit3d-probe = "delimit3d.probes.cli:main"
 delimit3d-export = "delimit3d.pretraining.export:main"
 delimit3d-calibrate-bn = "delimit3d.cli.recalibrate_bn:main"
+delimit3d-infer = "delimit3d.inference.cli:main"
+delimit3d-demo = "delimit3d.inference.cli:demo_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -42,6 +44,7 @@ license-files = ["LICENSE.md", "THIRD_PARTY_NOTICES.md", "third_party/*.LICENSE"
 
 [tool.setuptools.package-data]
 "delimit3d.runtime" = ["assets/*.json", "assets/*.patch", "assets/*.list"]
+"delimit3d.inference" = ["static/*.html", "static/*.css", "static/*.mjs"]
 
 [tool.pytest.ini_options]
 addopts = "-ra"

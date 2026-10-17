@@ -1,0 +1,65 @@
+{
+  "schema": "delimit3d_inference_verification/v1",
+  "date": "2026-10-17",
+  "scope": "Inference interface and checkpoint compatibility, not a new benchmark",
+  "python_regressions": {
+    "targeted_passed": 20,
+    "coverage": [
+      "scene IO and original point order",
+      "model registry refresh and replacement",
+      "model switch cycle cleanup",
+      "HTTP scene upload and export",
+      "voxel click mapping and latest-click constraints",
+      "Mask3D pretraining initialization"
+    ]
+  },
+  "javascript_tests_passed": 6,
+  "chromium_workflows_passed": 12,
+  "browser_inference_runner": "explicit test fixture; not trained-model inference",
+  "real_rgb_preview": {
+    "scene": "scene0568_00",
+    "input_points": 232453,
+    "display_points": 50000,
+    "predicted_masks_shown": false
+  },
+  "models": [
+    {
+      "model": "mask3d-unsamv2-e600",
+      "checkpoint_sha256": "da58e2b9aee788994f8e14fff6896ad283fdb66ffa812c6770b08faba9171057",
+      "checkpoint_epoch": 600,
+      "tensor_count": 397,
+      "parameter_count": 17774190,
+      "strict_cpu_load": true,
+      "gpu_forward_tested": false
+    },
+    {
+      "model": "agile3d-unsamv2-e1100",
+      "checkpoint_sha256": "08ecfee17ac70c7108361f22fbbdd6b98c7e99d3b5c4e92241a462cff37fafff",
+      "checkpoint_epoch": 1099,
+      "tensor_count": 386,
+      "parameter_count": 17421292,
+      "strict_cpu_load": true,
+      "gpu_forward_tested": false
+    },
+    {
+      "model": "mask3d-scratch-e600",
+      "checkpoint_sha256": "5d5a180cf1d00947f1fc95c412e9c5ef8194b6cd4ce16b70d2c4ac4d78955753",
+      "checkpoint_epoch": 600,
+      "tensor_count": 397,
+      "parameter_count": 17774190,
+      "strict_cpu_load": true,
+      "gpu_forward_tested": false
+    },
+    {
+      "model": "agile3d-scratch-e1100",
+      "checkpoint_sha256": "62cb9a1e60982da4e7362dad6c1a51897dcf810f75064232dcdeb08d637466b2",
+      "checkpoint_epoch": 1099,
+      "tensor_count": 386,
+      "parameter_count": 17421292,
+      "strict_cpu_load": true,
+      "gpu_forward_tested": false
+    }
+  ],
+  "native_gpu_status": "pending dedicated allocation at publication; do not treat strict CPU loading as a forward-pass test",
+  "native_validation_command": "python tests/native_inference_workflow.py --registry /path/to/models.yaml --scene /path/to/scene.npz --output /path/to/fresh-check"
+}
