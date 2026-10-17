@@ -77,22 +77,37 @@ def _extract_backbone_state(checkpoint: Any) -> tuple[Mapping[str, torch.Tensor]
         full_state = checkpoint["model_state_dict"]
         if not isinstance(full_state, Mapping):
             raise TypeError("checkpoint['model_state_dict'] must be a mapping")
-        stripped = {
-            str(key).removeprefix("module."): value
-            for key, value in full_state.items()
-        }
+        stripped: OrderedDict[str, torch.Tensor] = OrderedDict()
+        for key, value in full_state.items():
+            normalized = str(key).removeprefix("module.")
+            if normalized in stripped:
+                raise RuntimeError(f"Duplicate normalized checkpoint key: {normalized}")
+            if not torch.is_tensor(value):
+                raise TypeError(f"Non-tensor checkpoint entry: {key}")
+            stripped[normalized] = value
         backbone = OrderedDict(
             (key.removeprefix("backbone."), value)
             for key, value in stripped.items()
             if key.startswith("backbone.")
         )
         ignored = sorted(key for key in stripped if not key.startswith("backbone."))
-        invalid_ignored = [key for key in ignored if not key.startswith("projector.")]
+        # Native contrastive scratch/pretraining checkpoints also contain this
+        # learned loss scalar. It is not part of the encoder or task decoder.
+        invalid_ignored = [
+            key for key in ignored
+            if not (key.startswith("projector.") or key == "criterion.log_temperature")
+        ]
         if invalid_ignored:
             raise RuntimeError(
                 "Dedicated backbone initialization refuses non-backbone state other "
-                f"than the contrastive projector: {invalid_ignored[:20]}"
+                "than the contrastive projector and loss temperature: "
+                f"{invalid_ignored[:20]}"
             )
+        temperature = stripped.get("criterion.log_temperature")
+        if temperature is not None and (
+            temperature.numel() != 1 or not torch.isfinite(temperature).all()
+        ):
+            raise RuntimeError("Pretraining loss temperature must be one finite scalar")
         if not backbone:
             raise RuntimeError("model_state_dict contains no backbone.* tensors")
         return backbone, "model_state_dict.backbone"

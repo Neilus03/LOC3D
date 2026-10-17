@@ -1,0 +1,17 @@
+schema: delimit3d_model_registry/v1
+# Copy this file, then point each entry at the matching full trained task
+# checkpoint and resolved training configuration. Paths relative to this file
+# and ${ENVIRONMENT_VARIABLES} are supported. Missing weights remain disabled.
+models:
+  - id: unsamv2-mask3d
+    name: UnSAMv2 · LitePT-S* + Mask3D
+    task: mask3d
+    description: Automatic class-agnostic instance masks. Requires RGB and oriented normals.
+    config: ${DELIMIT3D_MASK3D_CONFIG}
+    checkpoint: ${DELIMIT3D_MASK3D_CHECKPOINT}
+  - id: unsamv2-agile3d
+    name: UnSAMv2 · LitePT-S* + AGILE3D
+    task: agile3d
+    description: Interactive instance masks from foreground and background clicks.
+    config: ${DELIMIT3D_AGILE3D_CONFIG}
+    checkpoint: ${DELIMIT3D_AGILE3D_CHECKPOINT}

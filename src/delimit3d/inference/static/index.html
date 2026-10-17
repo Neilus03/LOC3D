@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#131b27">
+  <title>Delimit3D · Model playground</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="/" aria-label="Delimit3D home"><svg viewBox="0 0 36 38" aria-hidden="true"><path d="M18 2 33 10.5v17L18 36 3 27.5v-17Z"/><path d="m3 10.5 15 9 15-9M18 19.5V36M11 6l15 9v8l-8 4.5"/></svg><span>Delimit<span class="brand-number">3D</span><small>MODEL PLAYGROUND</small></span></a>
+    <div class="header-end"><span class="local-tag"><span class="local-dot"></span>Local session</span><button id="help-toggle" class="button quiet small" type="button" aria-expanded="false" aria-controls="help">Help <span aria-hidden="true">?</span></button></div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Inference controls">
+      <div class="sidebar-intro"><span class="eyebrow">EXPLORE YOUR MODELS</span><h1>From points<br>to objects.</h1><p>Automatic masks or interactive clicks.<br>One view of your 3D scene.</p></div>
+
+      <section class="control-section">
+        <div class="section-heading"><span class="step">01</span><h2>Choose a model</h2><button id="refresh-models" class="icon-button" type="button" title="Refresh model availability" aria-label="Refresh model availability">↻</button></div>
+        <label for="model" class="sr-only">Trained model</label>
+        <select id="model" disabled><option>Loading models…</option></select>
+        <div class="model-meta"><span id="model-kind" class="pill">—</span><span id="model-state" class="availability">Connecting</span></div>
+        <p id="model-description" class="hint">Checking the local model registry.</p>
+        <p id="model-reason" class="notice" hidden></p>
+      </section>
+
+      <section class="control-section">
+        <div class="section-heading"><span class="step">02</span><h2>Add a scene</h2></div>
+        <label class="drop-zone" id="drop-zone" for="file"><svg width="25" height="25" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><strong id="upload-label">Drop a point cloud here</strong><span id="upload-hint">or choose a file · .npz / .ply</span><input type="file" id="file" accept=".npz,.ply" class="sr-only"></label>
+        <p class="hint">XYZ and RGB are required. Models with RGBN6 inputs also need point normals.</p>
+        <div id="examples-controls" class="examples-controls" hidden><label for="example" class="hint">Or explore a prepared scene</label><div class="example-row"><select id="example" aria-label="Prepared example scene"></select><button id="load-example" class="button small" type="button">Load</button></div></div>
+      </section>
+
+      <section id="automatic-controls" class="control-section">
+        <div class="section-heading"><span class="step">03</span><h2>Segment the scene</h2></div>
+        <div class="label-row"><label for="threshold">Minimum mask score</label><output for="threshold" id="threshold-value">0.50</output></div>
+        <input type="range" id="threshold" min="0" max="1" step="0.05" value="0.5">
+        <p class="hint">Keep masks above this score. Changes apply on the next run.</p>
+      </section>
+
+      <section id="interactive-controls" class="control-section" hidden>
+        <div class="section-heading"><span class="step">03</span><h2>Guide the segmentation</h2></div>
+        <div class="label-row"><label for="object">Active object</label><button id="new-object" type="button" class="text-button">+ New object</button></div>
+        <select id="object"><option value="1">Object 1</option></select>
+        <div class="segmented prompt-modes" aria-label="Prompt type"><button id="positive" type="button" aria-pressed="true" class="active">+ Object</button><button id="negative" type="button" aria-pressed="false">− Background</button></div>
+        <p class="hint">Click a visible point to add a prompt. Add object clicks first, then background clicks to refine.</p>
+        <div class="click-actions"><span id="click-count">0 prompts</span><button id="undo" class="text-button" type="button" disabled>Undo</button><button id="reset" class="text-button" type="button" disabled>Reset</button></div>
+      </section>
+
+      <div class="run-area"><button id="run" class="button primary" type="button" disabled><span id="run-text">Run segmentation</span><span aria-hidden="true">↗</span></button><p id="run-hint" class="hint">Choose an available model and add a scene.</p></div>
+      <div class="sidebar-footer">Delimit3D <span>·</span> Research model explorer</div>
+    </aside>
+
+    <section class="viewer-area" aria-label="3D point cloud viewer">
+      <div class="viewer-heading"><div><span class="eyebrow">SCENE VIEW</span><h2 id="scene-name">Your next scene starts here</h2></div><span id="task-badge" class="pill">Point cloud</span></div>
+      <div class="viewport" id="viewport">
+        <canvas id="canvas" aria-label="Interactive 3D point cloud. Drag to orbit, right-drag or shift-drag to pan, scroll to zoom." tabindex="0"></canvas>
+        <canvas id="markers" aria-hidden="true"></canvas>
+        <div id="empty-state" class="empty-state"><div class="empty-cube" aria-hidden="true"><svg viewBox="0 0 240 210"><g fill="none"><path d="m120 19 87 49v96l-87 49-87-49V68Z"/><path d="m33 68 87 49 87-49M120 117v96m0-194v98M33 164l87-47 87 47"/><path d="m61 51 87 49v97M91 34l87 49v97M33 100l87 49 87-49M33 132l87 49 87-49m-58-98-87 49v97m117-130-87 49v97"/></g><circle cx="120" cy="117" r="5"/><circle cx="207" cy="68" r="4"/><circle cx="33" cy="164" r="4"/></svg></div><h3>A new perspective on your data</h3><p>Load a point cloud to explore it in 3D.<br>Choose a trained model to find or refine objects.</p><button id="empty-upload" type="button" class="button light">Choose a point cloud <span aria-hidden="true">+</span></button></div>
+        <div id="viewer-toolbar" class="viewer-toolbar" hidden><div class="segmented view-modes" aria-label="Point colors"><button id="rgb-view" type="button" class="active" aria-pressed="true">RGB</button><button id="instance-view" type="button" aria-pressed="false" disabled>Instances</button></div><button id="fit" class="viewer-button" type="button" title="Fit scene (F)">Fit scene <span aria-hidden="true">⊞</span></button><label class="point-size" for="point-size">Point size<input id="point-size" type="range" min="1" max="6" step="0.5" value="2.5"></label></div>
+        <div id="click-mode-indicator" class="click-mode-indicator" hidden><span id="click-mode-dot"></span><span id="click-mode-text">Click to prompt Object 1</span></div>
+        <div id="busy" class="busy" hidden><div class="spinner" aria-hidden="true"></div><span id="busy-text">Loading scene…</span></div>
+        <div class="axis" aria-hidden="true"><span class="axis-z">Z</span><span class="axis-y">Y</span><span class="axis-x">X</span><i></i></div>
+        <div class="viewer-bottom"><span id="navigation-hint">Drag to orbit <b>·</b> Shift + drag to pan <b>·</b> Scroll to zoom</span><span id="display-count"></span></div>
+      </div>
+
+      <div class="result-strip"><div class="result-status"><span id="status-dot" class="status-dot"></span><div><strong id="status-title">Ready to explore</strong><p id="status-detail" role="status" aria-live="polite">Add a scene to get started.</p></div></div><div class="result-numbers"><div><span>POINTS</span><strong id="point-count">—</strong></div><div><span>OBJECTS</span><strong id="object-count">—</strong></div><a id="download" class="button download disabled" aria-disabled="true" download>Download masks <span aria-hidden="true">↓</span></a></div></div>
+      <details id="provenance" class="provenance" hidden><summary>Prediction details</summary><pre id="provenance-text"></pre></details>
+      <div id="help" class="help-panel" hidden><h3>A few things to know</h3><p><strong>Scene files.</strong> Use NPZ with <code>points</code> (N × 3) and <code>colors</code>, or PLY with <code>x/y/z</code> and <code>red/green/blue</code>. RGBN6 models additionally require <code>normals</code> in NPZ or <code>nx/ny/nz</code> in PLY. Model-specific inputs and checkpoint availability are checked by the server.</p><p><strong>Moving around.</strong> Drag to rotate; right-drag or Shift + drag to pan; scroll to zoom. Press F while the viewer is focused to fit the scene. Clicks select the nearest visible point within the cursor radius.</p><p><strong>Interactive models.</strong> Select an object, add positive clicks, and use background clicks for exclusions. Run again after changing prompts. Alt + click temporarily adds a background prompt.</p><p><strong>Results.</strong> The viewer may display a sample of the scene. Prompts refer to original point indices and downloaded predictions cover the full input. Colors identify instance masks; they do not assign semantic classes. The server keeps the two most recently loaded scenes in memory. Load an older scene again if it expires.</p></div>
+    </section>
+  </main>
+  <script type="module" src="/static/app.mjs"></script>
+</body>
+</html>

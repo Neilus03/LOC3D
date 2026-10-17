@@ -1,6 +1,12 @@
 # Release status
 
-The separate release checkout provides the seven supported commands and explicit SAM2/UnSAMv2/task/probe recipes. This file describes code verification, not the state or scores of ongoing research runs.
+**Updated 17 October 2026.** The GitHub release was last merged on 12 October at `ea5dfe3`. It already included both SAM2 negative policies, strict checkpoint recovery, native Mask3D/AGILE3D adapters and the corrected BatchNorm inference policy. This week's new evidence and the supported inference direction are recorded in [the weekly update](docs/weekly_update_20261017.md), with a [compact evidence snapshot](docs/weekly_update_20261017.json).
+
+The release keeps training, evaluation and feature probing separate from inference with a trained task checkpoint. An UnSAMv2 or SAM2 encoder alone is not a trained instance or interactive segmentation model: Mask3D/AGILE3D also require the corresponding trained decoder. The current trained historical UnSAMv2 models and the newer SAM2 pretraining experiments remain distinct entries.
+
+The 17 October maintenance fixes native scratch/pretraining checkpoint initialization for Mask3D: the known contrastive loss-temperature scalar is checked and excluded alongside the projector, while all encoder tensors still load strictly and task decoder tensors are refused. The new regression tests cover exact encoder loading, unchanged decoder weights and malformed or ambiguous checkpoint rejection.
+
+The verification records below describe the **12 October base release**, not tests of subsequent changes or completion of full research experiments. Current change validation belongs in the change's review record.
 
 The base release was verified at commit `1f4876b`: 228 CPU cases and 19 CUDA cases across isolated allocations, plus public two-GPU training/recovery with all 32 runtime checks passing. Model and optimizer-state tensors agreed within rtol 1e-5 / atol 1e-6; recovery job 16816629 completed with exit code zero.
 
