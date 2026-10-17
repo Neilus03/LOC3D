@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "delimit3d"
-version = "0.3.0"
+version = "0.3.1"
 description = "Contrastive 3D pretraining from SAM2 and UnSAMv2 2D masks"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"

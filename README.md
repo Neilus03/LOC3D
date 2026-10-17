@@ -64,6 +64,9 @@ Every command has `--help`. Config inheritance merges mappings and replaces list
 The workbench runs beside a CUDA GPU, with model selection, 3D orbit/pan/zoom,
 foreground/background clicks, multiple interactive objects, score filtering,
 and prediction downloads. All browser assets are included; no CDN is required.
+An optional [private hosted workbench](apps/inference-site/README.md) connects
+to an outbound GPU worker, shows connection status and allocation expiry, and
+lets the browser run inference without an SSH tunnel.
 
 Copy [the model registry](configs/inference/models.example.yaml) and set each
 entry to a **full trained task checkpoint** and its matching task configuration.
