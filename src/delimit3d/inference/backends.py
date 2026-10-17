@@ -130,6 +130,8 @@ class ModelRunner:
             raise RuntimeError("CUDA is unavailable. Start inference inside a GPU allocation using the documented LitePT environment.")
         if self.device.type != "cuda":
             raise ValueError("LitePT inference requires a CUDA device; CPU is supported for input validation and UI tests only")
+        from delimit3d.evaluation.features import configure_attention_backend
+        self.attention_backend = configure_attention_backend(self.device, "auto")
         self.config = expand_environment(merge_config(
             load_config(entry["config"], expand_env=False), entry.get("config_overrides", {})), strict=False)
         self.config["task"] = self.task
@@ -189,8 +191,13 @@ class ModelRunner:
                 raise ValueError("Checkpoint model/readout contract differs from the selected inference configuration")
         self.model.load_state_dict(_checkpoint_state(payload), strict=True)
         self.model.eval().requires_grad_(False).to(self.device)
+        pointrope_modules = {type(module).__module__ for module in self.model.backbone.modules()
+                             if type(module).__name__ == "PointROPE"}
+        self.pointrope_backend = "torch" if any(name.endswith("pointrope_torch") for name in pointrope_modules) else "cuda"
         from delimit3d.runtime.records import file_sha256
         self.provenance = {"model_id": entry["id"], "task": self.task,
+            "attention_backend": self.attention_backend,
+            "pointrope_backend": self.pointrope_backend,
             "checkpoint_sha256": file_sha256(checkpoint),
             "resolved_config_sha256": hashlib.sha256(json.dumps(self.config, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
             "inference_seed": self.seed, "serialization_policy": "seeded_per_scene_torch_rng_restored",

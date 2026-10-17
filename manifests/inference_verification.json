@@ -1,26 +1,28 @@
 {
   "schema": "delimit3d_inference_verification/v1",
   "date": "2026-10-17",
-  "scope": "Inference interface and checkpoint compatibility, not a new benchmark",
+  "scope": "Trained-model GPU inference and hosted browser functionality; not a new accuracy benchmark",
   "python_regressions": {
-    "targeted_passed": 20,
     "coverage": [
       "scene IO and original point order",
       "model registry refresh and replacement",
       "model switch cycle cleanup",
       "HTTP scene upload and export",
       "voxel click mapping and latest-click constraints",
-      "Mask3D pretraining initialization"
-    ]
+      "Mask3D pretraining initialization",
+      "outbound worker HTTP transport and job retry without repeated inference",
+      "worker allocation deadlines and expired jobs"
+    ],
+    "full_suite_passed": 280,
+    "full_suite_skipped": 19
   },
-  "javascript_tests_passed": 6,
-  "chromium_workflows_passed": 12,
-  "browser_inference_runner": "explicit test fixture; not trained-model inference",
+  "javascript_tests_passed": 21,
+  "browser_inference_runner": "Four real registered trained models on CUDA through the private hosted workbench",
   "real_rgb_preview": {
     "scene": "scene0568_00",
     "input_points": 232453,
     "display_points": 50000,
-    "predicted_masks_shown": false
+    "predicted_masks_shown": true
   },
   "models": [
     {
@@ -30,7 +32,18 @@
       "tensor_count": 397,
       "parameter_count": 17774190,
       "strict_cpu_load": true,
-      "gpu_forward_tested": false
+      "gpu_forward_tested": true,
+      "native_checks": {
+        "full_original_point_export": true,
+        "preview_matches_original_indices": true,
+        "normalization_buffers_unchanged": true,
+        "rng_states_unchanged": true,
+        "same_scene_cache_reused": true,
+        "reencoded_labels_identical": true,
+        "packed_mask_shape_and_assignment": true,
+        "score_threshold_reuses_proposals": true
+      },
+      "hosted_browser_tested": true
     },
     {
       "model": "agile3d-unsamv2-e1100",
@@ -39,7 +52,19 @@
       "tensor_count": 386,
       "parameter_count": 17421292,
       "strict_cpu_load": true,
-      "gpu_forward_tested": false
+      "gpu_forward_tested": true,
+      "native_checks": {
+        "full_original_point_export": true,
+        "preview_matches_original_indices": true,
+        "normalization_buffers_unchanged": true,
+        "rng_states_unchanged": true,
+        "same_scene_cache_reused": true,
+        "reencoded_labels_identical": true,
+        "sparse_object_ids_preserved": true,
+        "latest_click_wins_at_voxel_resolution": true,
+        "prompt_edits_reuse_encoded_scene": true
+      },
+      "hosted_browser_tested": true
     },
     {
       "model": "mask3d-scratch-e600",
@@ -48,7 +73,18 @@
       "tensor_count": 397,
       "parameter_count": 17774190,
       "strict_cpu_load": true,
-      "gpu_forward_tested": false
+      "gpu_forward_tested": true,
+      "native_checks": {
+        "full_original_point_export": true,
+        "preview_matches_original_indices": true,
+        "normalization_buffers_unchanged": true,
+        "rng_states_unchanged": true,
+        "same_scene_cache_reused": true,
+        "reencoded_labels_identical": true,
+        "packed_mask_shape_and_assignment": true,
+        "score_threshold_reuses_proposals": true
+      },
+      "hosted_browser_tested": true
     },
     {
       "model": "agile3d-scratch-e1100",
@@ -57,9 +93,100 @@
       "tensor_count": 386,
       "parameter_count": 17421292,
       "strict_cpu_load": true,
-      "gpu_forward_tested": false
+      "gpu_forward_tested": true,
+      "native_checks": {
+        "full_original_point_export": true,
+        "preview_matches_original_indices": true,
+        "normalization_buffers_unchanged": true,
+        "rng_states_unchanged": true,
+        "same_scene_cache_reused": true,
+        "reencoded_labels_identical": true,
+        "sparse_object_ids_preserved": true,
+        "latest_click_wins_at_voxel_resolution": true,
+        "prompt_edits_reuse_encoded_scene": true
+      },
+      "hosted_browser_tested": true
     }
   ],
-  "native_gpu_status": "pending dedicated allocation at publication; do not treat strict CPU loading as a forward-pass test",
-  "native_validation_command": "python tests/native_inference_workflow.py --registry /path/to/models.yaml --scene /path/to/scene.npz --output /path/to/fresh-check"
+  "native_gpu_status": "passed",
+  "native_validation_command": "python tests/native_inference_workflow.py --registry /path/to/models.yaml --scene /path/to/scene.npz --output /path/to/fresh-check",
+  "prior_fixture_chromium_workflows_passed": 12,
+  "native_gpu_verification": {
+    "status": "passed",
+    "started_at": "2026-10-17T19:33:36.502510+00:00",
+    "finished_at": "2026-10-17T19:34:34.303118+00:00",
+    "gpu": "NVIDIA GeForce RTX 2080 Ti",
+    "torch_version": "2.4.1+cu124",
+    "python_version": "3.12.8",
+    "numpy_version": "2.4.3",
+    "point_count": 232453,
+    "display_point_count": 50000,
+    "validated_model_count": 4,
+    "validated_switch_count": 4,
+    "first_model_reload_labels_identical": true,
+    "source_sha256": {
+      "tests/native_inference_workflow.py": "964cec6a8a12ba0400648035075066c9cf8426594300e6bb63b538d1257765cf",
+      "src/delimit3d/inference/backends.py": "d15a3968faed2ec3d9596efa19841f1012391a7922981548d31d581eac4e6c87",
+      "src/delimit3d/inference/service.py": "5a9d10a7914a735c71de907b44833f86820c9ab6084a0dc2dd8cccb478475c77",
+      "src/delimit3d/inference/scene.py": "84e6419d49e643a1d693649c0bcfe6a2e600a00a6e7f912c32d927e64ca4aa5b"
+    },
+    "attention_backend": "sdpa",
+    "pointrope_backend": "torch",
+    "scene": "scene0568_00",
+    "scope": "GPU forwards using Torch SDPA and the pinned Torch CUDA PointROPE implementation; does not validate the incompatible compiled PointROPE GPU kernel"
+  },
+  "pointrope_reference_check": {
+    "status": "passed",
+    "scope": "pinned PyTorch PointROPE versus native C++ CPU reference, float32",
+    "cases": [
+      {
+        "shape": [
+          1,
+          2,
+          31,
+          36
+        ],
+        "maximum_absolute_error": 3.591179847717285e-05
+      },
+      {
+        "shape": [
+          2,
+          4,
+          17,
+          18
+        ],
+        "maximum_absolute_error": 2.1338462829589844e-05
+      },
+      {
+        "shape": [
+          1,
+          8,
+          53,
+          24
+        ],
+        "maximum_absolute_error": 3.55839729309082e-05
+      }
+    ]
+  },
+  "hosted_browser_checks": {
+    "status": "passed",
+    "finished_at": "2026-10-17T19:40:44.069Z",
+    "models_tested": [
+      "mask3d-unsamv2-e600",
+      "mask3d-scratch-e600",
+      "agile3d-unsamv2-e1100",
+      "agile3d-scratch-e1100"
+    ],
+    "prepared_example": true,
+    "file_upload": true,
+    "automatic_segmentation": true,
+    "interactive_two_object_clicks": true,
+    "undo_reset": true,
+    "mobile_no_horizontal_overflow": true,
+    "javascript_errors": [],
+    "full_resolution_exports": true,
+    "export_point_count": 232453,
+    "private_access_anonymous_http_status": 403,
+    "download_qa_note": "Authenticated export bytes verified through HTTP and browser attachment navigation. Playwright service-header injection requires omitting the HTML download attribute in the QA DOM; application code is unchanged."
+  }
 }

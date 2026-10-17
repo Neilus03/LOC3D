@@ -24,3 +24,4 @@ jobs:
           OMP_NUM_THREADS: '2'
           OPENBLAS_NUM_THREADS: '2'
       - run: node --test tests/test_inference_ui.mjs
+      - run: node --test apps/inference-site/tests/bridge.test.mjs

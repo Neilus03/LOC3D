@@ -48,6 +48,14 @@ workflows remain available separately. Original initialization checkpoints,
 optimizer states, training datasets and decoder templates are unnecessary for
 full-task inference.
 
+Inference selects FlashAttention on compatible Ampere-or-newer GPUs and the
+existing Torch SDPA implementation on older CUDA GPUs. If the installed
+PointROPE extension was compiled for a different GPU architecture, the pinned
+LitePT dependency also supports `POINTROPE_FORCE_TORCH=1`, which computes the
+same positional encoding with CUDA tensors. Set it before starting the process;
+it does not require rebuilding or modifying the shared training environment.
+The prediction provenance records the attention and PointROPE implementations.
+
 Register scratch and pretrained checkpoints as separate entries for model
 selection. A SAM2 entry is appropriate only when it points to an actual trained
 SAM2-initialized downstream model. Displaying a model choice is not evidence
@@ -80,8 +88,9 @@ zeros. This matters when moving from ScanNet to other scenes.
 
 PLY vertices require `x/y/z`, `red/green/blue`, and, for RGBN6, `nx/ny/nz`.
 An optional `segment_id` property supplies scan segments. Mesh faces are ignored.
-The default upload limits are one million points and 128 MiB per file. Uploads
-are local to the process and are not published.
+The default upload limits are one million points and 128 MiB per file. With the
+local server, uploads stay in that process. With a private hosted workbench,
+uploads and downloadable predictions pass through its private object storage.
 
 Mask3D uses supplied scan segments when present. Without them it pools over
 5 cm voxels (or the configured grid) and records
@@ -127,6 +136,36 @@ ssh -N -J user@login-host -L 7860:127.0.0.1:7860 user@gpu-node
 Keep the allocation and tunnel running while using the workbench. The static
 frontend has no external CDN dependencies; inference requires the Python CUDA
 service. Cloudflare/static hosting alone cannot execute these trained models.
+
+### Private hosted workbench
+
+The optional outbound GPU worker connects a hosted interface to an allocated
+GPU without opening an inbound port on the cluster. The browser submits a job,
+the worker runs the same inference service used locally, and the browser polls
+for the full result. Checkpoints stay on the GPU host. Keep the hosted site
+private and configure the same `DELIMIT3D_BRIDGE_TOKEN` as a server secret and a
+worker environment variable; never include credentials in browser code.
+The [hosted workbench template](../apps/inference-site/README.md) includes the
+queue, authentication boundary, embedded UI, storage limits and deployment checks.
+
+```bash
+python -m delimit3d.inference.remote_worker \
+  --url https://your-private-workbench.example \
+  --registry /path/to/models.yaml --example /path/to/scene.npz \
+  --output /path/to/inference-results
+```
+
+Sites service access additionally uses `DELIMIT3D_BRIDGE_HEADERS`, a JSON object
+containing its `OAI-Sites-Authorization` header. Supply secrets through a
+protected environment file or secret manager. The worker sends credentials only
+to its configured HTTPS origin and refuses redirects. It sends heartbeats while
+inference runs and retries result delivery without repeating completed inference.
+
+The hosted UI reports whether the GPU is connected and, for Slurm jobs, when
+the allocation expires. An offline worker cannot make predictions. After a
+worker restart, load the scene again; its in-memory scene cache is not durable.
+The underlying model and task selection, original point order, and full-scene
+downloads are the same as in the local UI.
 
 ## Command-line predictions
 
@@ -186,10 +225,17 @@ semantic names to masks requires a separately configured labeler; see the
 ## Verification
 
 The [inference verification record](../manifests/inference_verification.json)
-distinguishes CPU/browser checks and strict loading of four real completed
-checkpoints from GPU forward-pass verification. At publication the dedicated
-GPU check was still queued; checkpoint compatibility is not a successful native
-forward-pass result. Rerun the portable check inside a GPU allocation:
+records successful GPU inference with all four pretrained/scratch Mask3D and
+AGILE3D checkpoints on a 232,453-point scene, four model switches, state and
+cache checks, click corrections and full-resolution mask exports. All four also
+passed real predictions through the private hosted browser, including scene
+upload and download validation. The CPU suite passed 280 tests, with 19 opt-in
+or CUDA checks skipped; the separate GPU workflow completed successfully.
+
+The verified GPU was an RTX 2080 Ti using Torch SDPA and the pinned Torch CUDA
+PointROPE implementation. This validates that inference path; it does not
+validate the incompatible installed PointROPE binary on that GPU or establish
+benchmark accuracy. Rerun the portable check inside your GPU allocation:
 
 ```bash
 python tests/native_inference_workflow.py --registry /path/to/models.yaml \

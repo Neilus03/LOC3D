@@ -12,15 +12,25 @@ function status(title, detail, kind = '') {
 }
 function errorMessage(error) { return error instanceof Error ? error.message : String(error); }
 async function api(path, options = {}) {
-  let response;
-  try { response = await fetch(path, { ...options, headers: { ...options.headers } }); }
-  catch { throw new Error('The local server could not be reached. Check that it is running, then try again.'); }
-  const text = await response.text();
-  let data;
-  try { data = JSON.parse(text); }
-  catch { throw new Error(response.ok ? 'The server returned an unreadable response.' : `The request failed (${response.status}). Check the server log for details.`); }
-  if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || data.detail || `The request failed (${response.status}).`);
-  return data;
+  const deadline = Date.now() + 25 * 60 * 1000;
+  let requestPath = path, requestOptions = options;
+  while (true) {
+    let response;
+    try { response = await fetch(requestPath, { ...requestOptions, headers: { ...requestOptions.headers } }); }
+    catch { throw new Error('The inference service could not be reached. Check your connection, then try again.'); }
+    const text = await response.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { throw new Error(response.ok ? 'The server returned an unreadable response.' : `The request failed (${response.status}). Please try again.`); }
+    if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || data.detail || `The request failed (${response.status}).`);
+    if (response.status !== 202) return data;
+    if (Date.now() >= deadline) throw new Error('This request is taking longer than expected. Refresh the model status before trying again.');
+    const next = new URL(data.status_url || requestPath, window.location.href);
+    if (next.origin !== window.location.origin || !next.pathname.startsWith('/api/jobs/')) throw new Error('The server returned an invalid progress link.');
+    if (state.busy && data.message) $('busy-text').textContent = data.message;
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    requestPath = next.pathname; requestOptions = {};
+  }
 }
 function setBusy(value, message = '') {
   state.busy = value; $('busy').hidden = !value; $('busy-text').textContent = message;
@@ -47,7 +57,7 @@ function updateControls() {
   $('reset').disabled = state.busy || !state.clicks.length;
   $('run').disabled = state.busy || !available || !hasScene || !viewer || (interactive && !foregroundCount);
   $('run-text').textContent = state.busy ? 'Working…' : interactive ? (state.result ? 'Update segmentation' : 'Segment with prompts') : 'Run segmentation';
-  $('run-hint').textContent = !viewer ? 'A working 3D viewer is required.' : !model ? 'Register a trained model to enable inference.' : !available ? 'This model is not available. See the details above.' : !hasScene ? 'Add a scene to get started.' : interactive && !foregroundCount ? 'Add at least one object prompt to run.' : state.stale ? 'Changes are ready. Run to update the masks.' : interactive ? 'Add prompts, then run to see the masks.' : 'Inference runs on the local server.';
+  $('run-hint').textContent = !viewer ? 'A working 3D viewer is required.' : !model ? 'Register a trained model to enable inference.' : !available ? 'This model is not available. See the details above.' : !hasScene ? 'Add a scene to get started.' : interactive && !foregroundCount ? 'Add at least one object prompt to run.' : state.stale ? 'Changes are ready. Run to update the masks.' : interactive ? 'Add prompts, then run to see the masks.' : 'Inference runs on the connected GPU.';
   $('click-count').textContent = `${state.clicks.length} prompt${state.clicks.length === 1 ? '' : 's'}`;
   const canPrompt = interactive && hasScene && !state.busy;
   if (viewer) viewer.interactive = canPrompt;
@@ -120,6 +130,29 @@ async function loadExamples() {
     $('examples-controls').hidden = false;
   } catch { /* Prepared scenes are optional; file upload remains available. */ }
 }
+let gpuWasOnline;
+async function refreshGPUStatus() {
+  try {
+    const response = await fetch('/api/status');
+    if (!response.ok) return; // The local server does not expose hosted worker status.
+    const data = await response.json();
+    if (typeof data.online !== 'boolean') return;
+    const tag = document.querySelector('.local-tag');
+    const until = data.available_until ? new Date(data.available_until) : null;
+    const availability = until && Number.isFinite(until.getTime()) ? ` · available until ${until.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}` : '';
+    tag.textContent = data.online ? 'GPU online' : 'GPU offline';
+    let detail = $('gpu-detail');
+    if (!detail) { detail = document.createElement('p'); detail.id = 'gpu-detail'; detail.className = 'hint'; document.querySelector('.sidebar-intro').append(detail); }
+    detail.textContent = data.online ? `GPU online${data.gpu_name ? ` · ${data.gpu_name}` : ''}${availability}` : 'The GPU worker is offline. Refresh the model status when it returns.';
+    tag.title = data.online ? 'The GPU is connected and accepting requests.' : 'The GPU worker is disconnected. Refresh the model status when it returns.';
+    tag.style.color = data.online ? '' : '#ea6268';
+    if (gpuWasOnline !== data.online && !state.busy) {
+      await Promise.all([loadModels(), ...(data.online ? [loadExamples()] : [])]);
+    }
+    if (!state.busy) gpuWasOnline = data.online;
+  } catch { /* Keep the last known state during a brief connection failure. */ }
+}
+
 function acceptScene(scene) {
   if (!Array.isArray(scene.points) || !scene.points.length || !Array.isArray(scene.point_ids) || scene.point_ids.length !== scene.points.length) throw new Error('The server returned an incomplete scene. Display points and original point indices must match.');
   viewer.setScene(scene);
@@ -178,7 +211,7 @@ async function predict() {
     $('object-count').title = result.instance_count == null ? 'Distinct objects in the displayed points' : 'Predicted objects in the full scene';
     if (result.download_url) {
       const url = new URL(result.download_url, window.location.href);
-      if (url.origin !== window.location.origin) throw new Error('The server returned a download outside this local session.');
+      if (url.origin !== window.location.origin) throw new Error('The server returned a download outside this session.');
       $('download').href = url.href; $('download').classList.remove('disabled'); $('download').setAttribute('aria-disabled', 'false');
     }
     $('provenance-text').textContent = JSON.stringify(result.provenance || { model: model.name }, null, 2); $('provenance').hidden = false;
@@ -216,4 +249,5 @@ $('download').addEventListener('click', e => { if ($('download').getAttribute('a
 try { viewer = new PointViewer($('canvas'), $('markers'), onPick, message => { viewer = null; updateControls(); status('Viewer unavailable', message, 'error'); }); }
 catch (error) { status('Viewer unavailable', errorMessage(error), 'error'); $('empty-state').querySelector('p').textContent = errorMessage(error); }
 updateControls();
-await Promise.all([loadModels(), loadExamples()]);
+await Promise.all([loadModels(), loadExamples(), refreshGPUStatus()]);
+setInterval(refreshGPUStatus, 20000);
