@@ -3,6 +3,7 @@ import io
 import json
 from pathlib import Path
 import threading
+import weakref
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 
@@ -117,6 +118,10 @@ def test_http_rejects_cross_site_and_serves_real_point_order(registry, tmp_path)
             response = client.getresponse()
             assert response.status == 200
             assert len(json.loads(response.read())["models"]) == 2
+            client.request("POST", "/api/scenes", b"not an NPZ archive", {"X-Filename": "broken.npz"})
+            response = client.getresponse()
+            assert response.status == 400
+            response.read()
             client.request("POST", "/api/scenes", scene_bytes(), {"X-Filename": "sample.npz"})
             response = client.getresponse()
             scene = json.loads(response.read())
@@ -151,3 +156,17 @@ def test_availability_refresh_and_replaced_checkpoint_invalidate_model(registry,
     assert not service.models()["models"][0]["available"]
     (registry.parent / "weights.pt").write_bytes(b"restored checkpoint")
     assert service.models()["models"][0]["available"]
+
+
+def test_model_switch_collects_hook_cycles_before_loading_replacement(registry, tmp_path):
+    previous = []
+    class CyclicRunner(FixtureRunner):
+        def __init__(self, entry, device):
+            assert all(reference() is None for reference in previous)
+            self.hook_owner = self
+            previous.append(weakref.ref(self))
+    service = InferenceService(registry, tmp_path / "out", device="cpu", runner_factory=CyclicRunner)
+    scene = service.add_scene(load_scene(scene_bytes(), filename="test.npz"))
+    service.predict({"model_id": "a", "scene_id": scene["scene_id"]})
+    service.predict({"model_id": "b", "scene_id": scene["scene_id"]})
+    assert previous[0]() is None and previous[1]() is service.runner

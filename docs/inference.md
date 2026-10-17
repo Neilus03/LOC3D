@@ -182,3 +182,20 @@ This workbench is exploratory inference, not a benchmark evaluator. Use the
 existing evaluation commands for CA-AP or official click metrics. Attaching
 semantic names to masks requires a separately configured labeler; see the
 [weekly update](weekly_update_20261017.md#semantic-labels-after-instance-segmentation).
+
+## Verification
+
+The [inference verification record](../manifests/inference_verification.json)
+distinguishes CPU/browser checks and strict loading of four real completed
+checkpoints from GPU forward-pass verification. At publication the dedicated
+GPU check was still queued; checkpoint compatibility is not a successful native
+forward-pass result. Rerun the portable check inside a GPU allocation:
+
+```bash
+python tests/native_inference_workflow.py --registry /path/to/models.yaml \
+  --scene /path/to/scene.npz --output /path/to/fresh-inference-check
+```
+
+This uses the registered trained models and real input scene, checks point
+mapping, prompt corrections, state preservation, mask export and model switching,
+and writes a separate verification record. It is not an accuracy benchmark.

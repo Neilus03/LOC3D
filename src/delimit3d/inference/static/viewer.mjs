@@ -120,9 +120,12 @@ export class PointViewer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer); gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW); this.requestDraw();
   }
   fit() { this.yaw = -1.1; this.pitch = 0.7; this.distance = 4.1; this.target = [0, 0, 0]; this.requestDraw(); }
-  camera() { return cameraMatrix(this.yaw, this.pitch, this.distance, this.target, this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight)); }
+  camera() {
+    const aspect = this.canvas.clientWidth / Math.max(1, this.canvas.clientHeight);
+    return cameraMatrix(this.yaw, this.pitch, this.distance * Math.max(1, 1 / aspect), this.target, aspect);
+  }
   pan(dx, dy) {
-    const { right, up } = this.camera(), scale = this.distance * 0.83 / Math.max(1, this.canvas.clientHeight);
+    const { right, up } = this.camera(), scale = this.distance * 0.83 / Math.max(1, Math.min(this.canvas.clientWidth, this.canvas.clientHeight));
     this.target = this.target.map((v, k) => v - right[k] * dx * scale + up[k] * dy * scale);
   }
   bindEvents() {

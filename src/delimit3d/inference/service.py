@@ -3,8 +3,10 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from datetime import datetime, timezone
+import gc
 import json
 from pathlib import Path
+import sys
 import threading
 import uuid
 
@@ -95,6 +97,13 @@ class InferenceService:
             # Release the previous model before allocating the next one.
             self.runner = None
             self.runner_id = None
+            # Backbone forward hooks capture their owner. Collect those cycles
+            # before loading another model so the old CUDA tensors are freed.
+            gc.collect()
+            torch = sys.modules.get("torch")
+            if torch is not None and str(self.device).startswith("cuda") and torch.cuda.is_initialized():
+                with torch.cuda.device(self.device):
+                    torch.cuda.empty_cache()
             if self.runner_factory is None:
                 from .backends import ModelRunner
                 factory = ModelRunner

@@ -6,6 +6,7 @@ import json
 import mimetypes
 from pathlib import Path
 import traceback
+import zipfile
 from urllib.parse import unquote, urlsplit
 
 from .scene import load_scene
@@ -51,7 +52,7 @@ def make_handler(service):
                 pass
             except PermissionError as exc:
                 self._json({"error": str(exc)}, 403)
-            except (ValueError, KeyError, FileNotFoundError) as exc:
+            except (ValueError, KeyError, FileNotFoundError, zipfile.BadZipFile) as exc:
                 self._json({"error": str(exc)}, 400)
             except Exception as exc:
                 traceback.print_exc()

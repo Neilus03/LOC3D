@@ -74,6 +74,8 @@ function resetPrompts() {
 }
 function showModel(reset = true) {
   const model = selectedModel();
+  $('model').title = model?.name || 'Trained model';
+  $('model-state').title = model?.available ? 'Checkpoint files are available. The runtime is checked when you run the model.' : '';
   $('model-kind').textContent = model ? (isInteractive(model) ? 'Click-guided' : 'Automatic') : 'No models';
   $('model-state').textContent = model ? (model.available ? 'Available' : 'Unavailable') : 'Setup needed';
   $('model-state').className = `availability ${model?.available ? 'ready' : 'unavailable'}`;
