@@ -110,7 +110,9 @@ torchrun --standalone --nproc_per_node=2 scripts/pretrain.py \
 
 Use [sam2_overlap_veto.yaml](configs/pretrain/sam2_overlap_veto.yaml) for the overlap-veto comparison, with its separate fixed evaluation pack. Both recipes and resume requirements are described in [the pretraining guide](docs/pretraining.md#sam2-dec0). Existing runs must resume with their original policy.
 
-These portable presets retain a 500k raw-point fragment limit. The selected-proposal epoch-150 research checkpoint reported in the evidence update used a 100k cap; running this preset does not reproduce that exact experiment. The [research direction](docs/research.md#preserve-recipe-identity) explains these identities.
+The selected-proposal preset uses **100k raw points per training scene visit**, matching the epoch-150 checkpoint. Its fixed evaluation retains the reference 500k limit. The legacy overlap-veto preset keeps 500k training visits; comparing these two defaults does not isolate negative policy alone. See [recipe identities](docs/research.md#preserve-recipe-identity).
+
+**Pretrained weights:** download the [SAM2 overlap-allowed, 100k, epoch-150 encoder](docs/weights.md) for feature extraction or downstream training. The download command verifies its SHA-256. These are encoder weights, not a trained Mask3D/AGILE3D decoder or a resumable optimizer checkpoint.
 
 The full-scene recipes have substantial memory requirements. Follow the recipe-specific preparation and calibration steps before a production launch.
 
@@ -119,6 +121,7 @@ The full-scene recipes have substantial memory requirements. Follow the recipe-s
 - [Research direction](docs/research.md): current method, hypotheses and comparison boundaries.
 - [23 October experiment update](docs/research_update_20261023.md): verified evidence and exact experiment identities.
 - [Prepare data](docs/data.md): 2D-only Structured3D packs, fixed evaluation and ScanNet inputs.
+- [Download pretrained weights](docs/weights.md): exact epoch-150 identity, checksums and loading.
 - [Pretrain](docs/pretraining.md): SAM2 and both earlier UnSAMv2 objectives, calibration, export and resume.
 - [Train and evaluate tasks](docs/tasks.md): native adapters, frozen/trainable controls, losses and click protocols.
 - [Feature segmentation](docs/probes.md): cosine retrieval and spherical K-means without task decoders.

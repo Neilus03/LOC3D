@@ -18,6 +18,7 @@ from delimit3d.identity import project_name, project_slug
 
 from delimit3d.training.contracts import EXPERIMENT_ID, sha256_file
 from delimit3d.data.partfield_contrastive import negative_policy_name
+from delimit3d.data.sam2_source import recorded_point_limit, validate_point_limit
 
 from delimit3d.training.adaptation import LitePTContrastiveModel, MULTISCALE_LEVEL_LOSS_WEIGHTS, MULTISCALE_LEVEL_NAMES
 
@@ -43,6 +44,9 @@ def validate_negative_policy_resume(previous, current, checkpoint=None):
             raise ValueError("SAM2 negative policy stamp disagrees with its boolean")
         return flag
 
+    validate_point_limit(previous, recorded_point_limit(current))
+    if checkpoint is not None and ("sam2_maximum_raw_points" in checkpoint or "sam2_scene_visit_contract" in checkpoint):
+        validate_point_limit(checkpoint, recorded_point_limit(previous))
     before, after = read(previous), read(current)
     if checkpoint is not None and (
         "allow_shared_proposal_negatives" in checkpoint or "negative_policy" in checkpoint
@@ -87,7 +91,8 @@ def _checkpoint_payload(
         )
     is_v2 = str(getattr(args, "sampling_mode", "")) == V2_SAMPLING_MODE
     flag = getattr(args, "allow_shared_proposal_negatives", False)
-    validate_negative_policy_resume(resolved, {"allow_shared_proposal_negatives": flag})
+    validate_negative_policy_resume(resolved, {"allow_shared_proposal_negatives": flag,
+        "sam2_maximum_raw_points": getattr(args, "sam2_maximum_raw_points", 500_000)})
     auxiliary_prefixes = (
         "multiscale_projectors.",
         "multiscale_criteria.",
@@ -118,7 +123,8 @@ def _checkpoint_payload(
         "update": int(update),
         "checkpoint_kind": str(checkpoint_kind),
         "resumable": checkpoint_kind == "resumable_epoch_boundary",
-        **({"allow_shared_proposal_negatives": flag, "negative_policy": negative_policy_name(flag)}
+        **({"allow_shared_proposal_negatives": flag, "negative_policy": negative_policy_name(flag),
+            "sam2_maximum_raw_points": getattr(args, "sam2_maximum_raw_points", 500_000)}
            if getattr(args, "source_granularity", None) == "sam2" else {}),
         "seed": int(args.seed),
         "model_state_dict": model.state_dict(),

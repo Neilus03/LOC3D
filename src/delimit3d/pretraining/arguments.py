@@ -53,6 +53,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="SAM2 dec0: allow known, pure negatives outside the selected mask despite another shared mask. Disable to use overlap veto.",
     )
     parser.add_argument("--grid-size", type=float, default=0.02)
+    parser.add_argument("--sam2-maximum-raw-points", type=int, choices=(100_000, 500_000), default=500_000,
+                        help="SAM2 training fragment limit; fixed evaluation stays at 500k.")
     parser.add_argument("--flush-logical-batch-at-eval", action="store_true",
                         help="SAM2 only: flush an actual-size tail at exact evaluation/checkpoint epochs.")
     parser.add_argument(
@@ -505,7 +507,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     from delimit3d.training.pretraining_config import parse_with_config
 
-    return parse_with_config(parser, argv)
+    args = parse_with_config(parser, argv)
+    if args.sam2_maximum_raw_points != 500_000 and args.source_granularity != "sam2":
+        parser.error("SAM2 training point limits require source_granularity=sam2")
+    return args
 
 
 def _resolve_seed_contract(args: argparse.Namespace) -> tuple[int, int]:

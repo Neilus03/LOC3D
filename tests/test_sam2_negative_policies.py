@@ -252,8 +252,10 @@ def test_training_fixed_evaluation_and_full_optimizer_recovery(flag, tmp_path, m
                 for cell, state in states.items()}
     states = update(continuous, optimizer, 0)
     args = argparse.Namespace(seed=42, sampling_mode="coverage_multigranular_v2",
-                              source_granularity="sam2", allow_shared_proposal_negatives=flag)
+                              source_granularity="sam2", allow_shared_proposal_negatives=flag,
+                              sam2_maximum_raw_points=100000 if flag else 500000)
     resolved = {"allow_shared_proposal_negatives": flag, "negative_policy": negative_policy_name(flag),
+                "sam2_maximum_raw_points": args.sam2_maximum_raw_points,
                 "initialization": {"public_checkpoint_used": False}}
     checkpoint = _checkpoint_payload(epoch=1, update=1, model=continuous, optimizer=optimizer,
         args=args, resolved=resolved, evaluation=None, evaluation_history={},
@@ -262,6 +264,7 @@ def test_training_fixed_evaluation_and_full_optimizer_recovery(flag, tmp_path, m
     for epoch in (1, 2): states = update(continuous, optimizer, epoch, next_states(states, epoch))
     saved = torch.load(path, weights_only=False)
     assert saved["allow_shared_proposal_negatives"] is flag
+    assert saved["sam2_maximum_raw_points"] == args.sam2_maximum_raw_points
     validate_negative_policy_resume(saved["resolved_config"], resolved, saved)
     recovered = model(); recovered.load_state_dict(saved["model_state_dict"], strict=True)
     resumed_optimizer = torch.optim.AdamW(recovered.parameters(), lr=.0001)

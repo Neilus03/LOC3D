@@ -101,11 +101,14 @@ def fixed_eval_main(argv):
     parser.add_argument("--grid-size", type=float, required=True)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--pretraining-contract", type=Path,
-        help="Read the negative policy from the SAM2 pretraining recipe.")
+        help="Use the SAM2 recipe negative policy and its fixed 500k evaluation protocol.")
+    parser.add_argument("--sam2-maximum-raw-points", type=int, choices=(100000, 500000), default=None)
     parser.add_argument("--allow-shared-proposal-negatives", action=argparse.BooleanOptionalAction,
         default=None, help="Use selected-proposal negatives; otherwise use overlap veto.")
     args = parser.parse_args(argv)
     policy = args.allow_shared_proposal_negatives
+    maximum_points = args.sam2_maximum_raw_points
+    from delimit3d.data.sam2_source import validate_point_limit
     if args.pretraining_contract is not None:
         from delimit3d.runtime.config import load_config
         recipe = load_config(args.pretraining_contract, expand_env=False)
@@ -117,25 +120,37 @@ def fixed_eval_main(argv):
         if args.teacher == "sam2" and recipe.get("source_granularity") != "sam2":
             parser.error("SAM2 fixed evaluation requires a SAM2 pretraining contract")
         policy = configured_policy
+        configured_limit = 500_000  # Fixed evaluation stays at the reference 500k limit.
+        if maximum_points is not None and maximum_points != configured_limit:
+            parser.error("Point limit differs from the supplied pretraining contract")
+        maximum_points = configured_limit
     policy = False if policy is None else policy
+    maximum_points = 500_000 if maximum_points is None else maximum_points
+    if maximum_points != 500_000 and args.teacher != "sam2":
+        parser.error("SAM2 point limits are restricted to SAM2 fixed evaluation")
     if policy and args.teacher != "sam2":
         parser.error("Selected-proposal negatives are restricted to SAM2 fixed evaluation")
     from delimit3d.training.contracts import load_scene_ids, TWO_D_CELLS
-    from delimit3d.pretraining.sources import load_scene_source
+    from delimit3d.pretraining.sources import load_scene_source, scene_source_for_visit
     from delimit3d.pretraining.settings import sampling_config_for_profile
     from delimit3d.pretraining.fixed_eval import (
         prepare_fixed_holdout_eval_pack, validate_fixed_eval_negative_policy,
     )
     manifest_path = args.output / "manifest.json"
     if manifest_path.is_file():
-        validate_fixed_eval_negative_policy(json.loads(manifest_path.read_text()),
+        manifest = json.loads(manifest_path.read_text())
+        validate_fixed_eval_negative_policy(manifest,
             allow_shared_proposal_negatives=policy)
+        if args.teacher == "sam2":
+            validate_point_limit(manifest, maximum_points)
     scenes = [load_scene_source(args.source_root / scene / "source_manifest.json",
+        sam2_maximum_raw_points=maximum_points,
         coordinate_normalization_policy="structured3d_local_y_up_to_scannet_z_up_v1") for scene in load_scene_ids(args.holdout_split)]
     sampling = sampling_config_for_profile("pf_hnm_512_v1")
     plans = None
     if args.teacher == "sam2":
         from delimit3d.training.sam2_pretraining import admit_sam2_holdout
+        scenes = [scene_source_for_visit(scene, epoch=0, global_seed=args.seed) for scene in scenes]
         scenes, plans = admit_sam2_holdout(scenes, sampling=sampling, seed=args.seed,
             grid_size=args.grid_size, report_path=args.output.with_name(args.output.name + "_admission.json"),
             allow_shared_proposal_negatives=policy)
@@ -143,6 +158,7 @@ def fixed_eval_main(argv):
         sampling=sampling, sampling_profile="pf_hnm_512_v1",
         seed=args.seed, cells=("2d/sam2",) if args.teacher == "sam2" else TWO_D_CELLS,
         grid_size=args.grid_size, precomputed_token_plans=plans,
+        sam2_maximum_raw_points=maximum_points,
         allow_shared_proposal_negatives=policy)
     print(json.dumps(report, indent=2))
 

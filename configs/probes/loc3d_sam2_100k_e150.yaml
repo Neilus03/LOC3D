@@ -1,0 +1,5 @@
+extends: litept.yaml
+name: loc3d_sam2_overlap_allowed_100k_e150_features
+probe:
+  grid_size: 0.02
+  backbone_batchnorm_policy: eval

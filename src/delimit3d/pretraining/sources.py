@@ -118,8 +118,8 @@ def scene_source_for_visit(
     """Resolve one clean crop without changing logical scene optimization mass."""
 
     if isinstance(scene, SceneSource):
-        if scene.source_variant_id == "geometry_median_partition_epoch_rotation_500k/v1":
-            from delimit3d.data.sam2_source import sam2_scene_for_visit
+        from delimit3d.data.sam2_source import maximum_points_for_policy, sam2_scene_for_visit
+        if maximum_points_for_policy(scene.source_variant_id) is not None:
             return sam2_scene_for_visit(scene, epoch=epoch, global_seed=global_seed)
         return scene
     if scene.crop_rotation_policy != "deterministic_epoch_rotation_v1":
@@ -541,6 +541,7 @@ def _load_clean_multicrop_scene_source(
 def load_scene_source(
     manifest_path: Path,
     *,
+    sam2_maximum_raw_points: int = 500_000,
     input_features: str = "rgbn6",
     coordinate_normalization_policy: str = "native",
     verify_hashes: bool = True,
@@ -571,6 +572,7 @@ def load_scene_source(
             resolved_manifest, input_features=input_features,
             coordinate_normalization_policy=coordinate_normalization_policy,
             verify_hashes=verify_hashes, color_mean=color_mean, color_std=color_std,
+            maximum_raw_points=sam2_maximum_raw_points,
         )
     if initial_manifest.get("schema_version") == CLEAN_TRAINING_SOURCE_SCHEMA:
         return _load_clean_multicrop_scene_source(

@@ -69,7 +69,7 @@ python scripts/prepare_data.py --action seal --source-root "$DELIMIT3D_SOURCE_RO
 python scripts/prepare_data.py --action fixed-eval --teacher sam2 --grid-size 0.02 \
   --source-root "$DELIMIT3D_SOURCE_ROOT" --holdout-split "$DELIMIT3D_VAL_SPLIT" \
   --pretraining-contract configs/pretrain/sam2_selected_proposal_negatives.yaml \
-  --output "${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives"
+  --output "${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives_100k"
 python scripts/prepare_data.py --action code-record --output "$DELIMIT3D_CODE_MANIFEST"
 ```
 
@@ -87,6 +87,8 @@ python scripts/prepare_data.py --action fixed-eval --teacher sam2 --grid-size 0.
 `--pretraining-contract` selects the negative policy from the recipe. An explicit conflicting policy flag is rejected. Each training recipe validates the saved policy, including deferred native-token rebuilding; the packs cannot be interchanged.
 
 Generate the code record after editing recipes and before calibration/training. It includes source, configs, entry points, dependency patches, packaging and environment profiles.
+
+The SAM2 fixed-evaluation command selects the epoch-zero geometry fragment before holdout admission, exactly as training evaluation does. With a pretraining contract, fixed evaluation uses the reference 500k limit even when training uses 100k. The pack records its evaluation cap and rejects incompatible reuse.
 
 ## ScanNet inputs for Mask3D
 

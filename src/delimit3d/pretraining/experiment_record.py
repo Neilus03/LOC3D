@@ -5,6 +5,7 @@ from pathlib import Path
 import time
 from delimit3d.runtime.records import file_sha256, write_json
 from delimit3d.data.partfield_contrastive import negative_policy_name
+from delimit3d.data.sam2_source import validate_point_limit
 
 SCHEMA = "delimit3d_pretraining_execution/v1"
 
@@ -52,6 +53,8 @@ def validate_execution_record(payload, args):
     policy = negative_policy_name(flag)
     if flag != getattr(args, "allow_shared_proposal_negatives", False) or payload.get("negative_policy", policy) != policy:
         raise ValueError("Execution record negative policy differs from the recipe")
+    if getattr(args, "source_granularity", None) == "sam2":
+        validate_point_limit(payload, getattr(args, "sam2_maximum_raw_points", 500_000))
     return payload
 
 
@@ -62,7 +65,8 @@ def prepare_execution_record(args):
     expected = {"schema_version": SCHEMA, "passed": True, "trust_root": input_bindings(args)}
     flag = getattr(args, "allow_shared_proposal_negatives", False)
     if getattr(args, "source_granularity", None) == "sam2":
-        expected.update(allow_shared_proposal_negatives=flag, negative_policy=negative_policy_name(flag))
+        expected.update(allow_shared_proposal_negatives=flag, negative_policy=negative_policy_name(flag),
+                        sam2_maximum_raw_points=getattr(args, "sam2_maximum_raw_points", 500_000))
     if int(os.environ.get("RANK", "0")) == 0:
         if path.exists() and json.loads(path.read_text()) != expected:
             raise ValueError("Existing execution record differs; choose a fresh run directory")
