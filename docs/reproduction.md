@@ -9,7 +9,7 @@ The supported public workflows live in seven scripts. A small historical section
 | `tools/reproduce/fixed9_pretrain.py` | Original fixed-nine, common-eligible-subset six-arm UnSAMv2 ablation |
 | `tools/reproduce/run_feature_segmentation_scannet10.py` | Original direct feature cosine/K-means comparison with model-specific preprocessing |
 | `tools/reproduce/run_articulate3d_parts.py` | Historical Articulate3D part evaluator |
-| `configs/reproduce/sam2_pf69_2gpu_original.json` | Exact original main SAM2 recipe bytes |
+| `configs/reproduce/sam2_pf69_2gpu_original.json` | Exact original SAM2 overlap-veto recipe bytes |
 | `configs/reproduce/unsamv2_g05_dec0_336ep_original.json` | Earlier single-granularity dec0 recipe |
 
 The fixed-nine ablation preserves its quota, cell/stage routes, 4883-update schedule and geometry admission gates. Its one-GPU/local-BN contract differs from the main two-rank/SyncBN hierarchy recipe. Its complete contract, geometry report and initialization are required artifacts; `--help` describes the paths. Queue launchers are intentionally outside the release.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Delimit3D pretraining. See --help and configs/pretrain/."""
+"""Run LOC3D pretraining. See --help and configs/pretrain/."""
 from pathlib import Path
 import sys
 

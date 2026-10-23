@@ -1,6 +1,6 @@
-# Delimit3D private GPU workbench
+# LOC3D private GPU workbench
 
-This dependency-free Cloudflare Worker serves the Delimit3D point-cloud UI and
+This dependency-free Cloudflare Worker serves the LOC3D point-cloud UI and
 queues work for an outbound GPU worker. Checkpoints stay on the GPU machine.
 The source is intended for an owner-private Site; the hosting platform must
 protect every browser route. Do not publish this app with anonymous access.
@@ -10,7 +10,7 @@ The GPU worker uses the same secret and the platform's private service-access
 header. Keep both credentials outside source control and browser code.
 
 Start the worker with `python -m delimit3d.inference.remote_worker --help` in the
-Delimit3D CUDA environment. Provide its HTTPS URL, model registry, example scene,
+LOC3D CUDA environment. Provide its HTTPS URL, model registry, example scene,
 and output directory. GPU availability and the allocation deadline appear in
 the UI. A disconnected GPU cannot process requests.
 

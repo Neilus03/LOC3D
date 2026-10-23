@@ -1,0 +1,1467 @@
+{
+  "schema": "loc3d_research_update/v1",
+  "reviewed_date": "2026-10-23",
+  "timezone": "Europe/Zurich",
+  "archived_experiment_snapshot_utc": "2026-10-22T07:58:26.792240+00:00",
+  "verification_scope": "Existing reports and completion receipts re-read and hashed; experiments and independent scientific evaluations were not rerun. Source identifiers are research-checkout-relative or external-study-relative; generated reports are not bundled in this release. No live-running claim.",
+  "metrics_units": "percent unless explicitly noted",
+  "automatic_full_data": [
+    {
+      "arm": "scratch",
+      "label": "Scratch LitePT-S*",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 57.82906746,
+        "AP50": 78.32704921,
+        "AP25": 90.35106678
+      },
+      "evidence": [
+        "evidence.json"
+      ]
+    },
+    {
+      "arm": "frozen",
+      "label": "Historical UnSAMv2, frozen",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 25.79240971,
+        "AP50": 49.55859621,
+        "AP25": 78.20486755
+      },
+      "evidence": [
+        "evidence.json"
+      ]
+    },
+    {
+      "arm": "lr01",
+      "label": "Historical UnSAMv2, encoder LR 0.1x",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 54.06212928,
+        "AP50": 75.94335624,
+        "AP25": 89.49299578
+      },
+      "evidence": [
+        "evidence.json"
+      ]
+    },
+    {
+      "arm": "equal_lr",
+      "label": "Historical UnSAMv2, equal LR",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 59.21107614,
+        "AP50": 80.0225448,
+        "AP25": 91.15643618
+      },
+      "evidence": [
+        "evidence.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_frozen",
+      "label": "Concerto Small, frozen",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 26.34384742,
+        "AP50": 49.20389476,
+        "AP25": 73.69904183
+      },
+      "evidence": [
+        "evidence.json",
+        "mask3d__concerto_native_frozen_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_trainable",
+      "label": "Concerto Small, encoder LR 0.1x",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 44.54782408,
+        "AP50": 68.16893857,
+        "AP25": 84.78463463
+      },
+      "evidence": [
+        "evidence.json",
+        "mask3d__concerto_native_trainable_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_equal_lr",
+      "label": "SAM2 overlap-veto e100, equal LR",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 58.08115985,
+        "AP50": 79.10821979,
+        "AP25": 90.84137349
+      },
+      "evidence": [
+        "evidence.json",
+        "mask3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_lr01",
+      "label": "SAM2 overlap-veto e100, encoder LR 0.1x",
+      "epoch": 600,
+      "validation_scenes": 312,
+      "metrics_percent": {
+        "AP": 51.24714494,
+        "AP50": 73.26990188,
+        "AP25": 87.90248448
+      },
+      "evidence": [
+        "evidence.json",
+        "mask3d__sam2_overlap_veto_e100_lr01_COMPLETE.json"
+      ]
+    }
+  ],
+  "interactive_single_object_new_completed": [
+    {
+      "arm": "concerto_native_frozen",
+      "epoch": 1100,
+      "objects": 10357,
+      "rows": 217497,
+      "metrics_percent": {
+        "IoU@1": 59.07559174,
+        "IoU@5": 77.93416872
+      },
+      "checkpoint_sha256": "2a0f45db592de916450caa9d4cda6f93e25825bc9b24df558e6eec2425bd809d",
+      "evidence": [
+        "agile3d__concerto_native_frozen_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_trainable",
+      "epoch": 1100,
+      "objects": 10357,
+      "rows": 217497,
+      "metrics_percent": {
+        "IoU@1": 64.92925602,
+        "IoU@5": 80.05264906
+      },
+      "checkpoint_sha256": "6fc500feea96e3a4cbb44e0db6aac7b8d6b77d9fd3da65a40f8ec8c6ecc3f530",
+      "evidence": [
+        "agile3d__concerto_native_trainable_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_equal_lr",
+      "epoch": 1100,
+      "objects": 10357,
+      "rows": 217497,
+      "metrics_percent": {
+        "IoU@1": 65.35312336,
+        "IoU@5": 81.19578286
+      },
+      "checkpoint_sha256": "a807acd7f5f6c85dc8a7bd4fc42d156330e731a3979f2d67988075dffa7c3443",
+      "evidence": [
+        "agile3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_lr01",
+      "epoch": 1100,
+      "objects": 10357,
+      "rows": 217497,
+      "metrics_percent": {
+        "IoU@1": 63.39363472,
+        "IoU@5": 80.84079343
+      },
+      "checkpoint_sha256": "19f8df4c30ede39b90abccd8032ef2cfac27ac27ad71688bdd0e0352b620b764",
+      "evidence": [
+        "agile3d__sam2_overlap_veto_e100_lr01_COMPLETE.json"
+      ]
+    }
+  ],
+  "custom_limited_scene_data": {
+    "split": "custom seed-42 scene subsets; not official ScanNet Data-Efficient scene lists",
+    "equal_peak_encoder_decoder_lr": 0.0001,
+    "grid_m": 0.05,
+    "results": [
+      {
+        "arm": "scratch",
+        "data_percent": 1,
+        "seed": 42,
+        "training_scenes": 12,
+        "epochs": 600,
+        "optimizer_updates": 1800,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 0.12921944,
+          "CA-AP25": 7.10778986,
+          "CA-AP50": 0.42640963
+        },
+        "checkpoint_sha256": "c5168c27a76b9a715c1c1dac8370cef948f9abfb2742c063b61f972d6565d178",
+        "manifest_sha256": "c4b4486970e8b7e7efe3e87d3b43c7ac68e5384a5745695ce4318c488c8c7cbb",
+        "evidence": [
+          "mask3d_lowdata__scratch_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sonata_small",
+        "data_percent": 1,
+        "seed": 42,
+        "training_scenes": 12,
+        "epochs": 600,
+        "optimizer_updates": 1800,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 0.10866135,
+          "CA-AP25": 2.53848809,
+          "CA-AP50": 0.34006221
+        },
+        "checkpoint_sha256": "253a76f493b0576a6cccb6bfc64c542090be8715a28f4d8a5ea4c6b97fd2ec00",
+        "manifest_sha256": "c4b4486970e8b7e7efe3e87d3b43c7ac68e5384a5745695ce4318c488c8c7cbb",
+        "evidence": [
+          "mask3d_lowdata__sonata_small_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "concerto_small",
+        "data_percent": 1,
+        "seed": 42,
+        "training_scenes": 12,
+        "epochs": 600,
+        "optimizer_updates": 1800,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 1.20148212,
+          "CA-AP25": 15.73492363,
+          "CA-AP50": 3.32482894
+        },
+        "checkpoint_sha256": "4dd7e60cec6393c01a4e0ccaf5a0276c6bf97410b4cf9944a23ed5f5fd553f5f",
+        "manifest_sha256": "c4b4486970e8b7e7efe3e87d3b43c7ac68e5384a5745695ce4318c488c8c7cbb",
+        "evidence": [
+          "mask3d_lowdata__concerto_small_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_veto_e100_equal_lr",
+        "data_percent": 1,
+        "seed": 42,
+        "training_scenes": 12,
+        "epochs": 600,
+        "optimizer_updates": 1800,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 2.32300207,
+          "CA-AP25": 20.52100376,
+          "CA-AP50": 6.13231676
+        },
+        "checkpoint_sha256": "04b710ce220efa50b27c2c42d8ef476420bc9e90c08c3a215c9d22d8bfa27452",
+        "manifest_sha256": "c4b4486970e8b7e7efe3e87d3b43c7ac68e5384a5745695ce4318c488c8c7cbb",
+        "evidence": [
+          "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "scratch_5pct",
+        "data_percent": 5,
+        "seed": 42,
+        "training_scenes": 60,
+        "epochs": 600,
+        "optimizer_updates": 7200,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 13.48132577,
+          "CA-AP25": 51.4327356,
+          "CA-AP50": 27.07773932
+        },
+        "checkpoint_sha256": "871cbd72d60726316f5938bf971f953285503efd9aec4cf78dc8a9d99c2004ec",
+        "manifest_sha256": "834bbcc3a4760d9fa9dd25e903c32fef6dc45b72dcd2dbcff35d5f4f8d57f93c",
+        "evidence": [
+          "mask3d_lowdata__scratch_5pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sonata_small_5pct",
+        "data_percent": 5,
+        "seed": 42,
+        "training_scenes": 60,
+        "epochs": 600,
+        "optimizer_updates": 7200,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 5.08640621,
+          "CA-AP25": 33.58968611,
+          "CA-AP50": 11.84935901
+        },
+        "checkpoint_sha256": "a1f0d05f7502ea8a1d11cafe546f90f5990eaa7c14fde697c8bc9646ad04c8b2",
+        "manifest_sha256": "834bbcc3a4760d9fa9dd25e903c32fef6dc45b72dcd2dbcff35d5f4f8d57f93c",
+        "evidence": [
+          "mask3d_lowdata__sonata_small_5pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "concerto_small_5pct",
+        "data_percent": 5,
+        "seed": 42,
+        "training_scenes": 60,
+        "epochs": 600,
+        "optimizer_updates": 7200,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 11.48300007,
+          "CA-AP25": 50.25218738,
+          "CA-AP50": 25.12494487
+        },
+        "checkpoint_sha256": "837aa163ebb09c7af7ca8b42688cc7370f744c76191161ac68dd31244b5bf92a",
+        "manifest_sha256": "834bbcc3a4760d9fa9dd25e903c32fef6dc45b72dcd2dbcff35d5f4f8d57f93c",
+        "evidence": [
+          "mask3d_lowdata__concerto_small_5pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_veto_e100_equal_lr_5pct",
+        "data_percent": 5,
+        "seed": 42,
+        "training_scenes": 60,
+        "epochs": 600,
+        "optimizer_updates": 7200,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 27.24003845,
+          "CA-AP25": 66.93029523,
+          "CA-AP50": 45.92308376
+        },
+        "checkpoint_sha256": "13c35b12361f0190c32761f649433bd3d2ca8c78e60a73532b821155562c35bd",
+        "manifest_sha256": "834bbcc3a4760d9fa9dd25e903c32fef6dc45b72dcd2dbcff35d5f4f8d57f93c",
+        "evidence": [
+          "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_5pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "scratch_10pct",
+        "data_percent": 10,
+        "seed": 42,
+        "training_scenes": 120,
+        "epochs": 600,
+        "optimizer_updates": 14400,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 31.82496103,
+          "CA-AP25": 71.87219977,
+          "CA-AP50": 50.0779243
+        },
+        "checkpoint_sha256": "f79e0cc2356c162f61d01481b3e021bc2b4e296fad53c5116bc8dc177f1889dd",
+        "manifest_sha256": "5c89a6e8024b298d17bea9ff0030669405a82267ab04cba2b3b57efd034bc5e7",
+        "evidence": [
+          "mask3d_lowdata__scratch_10pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sonata_small_10pct",
+        "data_percent": 10,
+        "seed": 42,
+        "training_scenes": 120,
+        "epochs": 600,
+        "optimizer_updates": 14400,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 14.58070481,
+          "CA-AP25": 56.08244789,
+          "CA-AP50": 29.09578178
+        },
+        "checkpoint_sha256": "6ce5e24856807a11103dcac3b021ae3b10330c635a22533758797e393ec908b7",
+        "manifest_sha256": "5c89a6e8024b298d17bea9ff0030669405a82267ab04cba2b3b57efd034bc5e7",
+        "evidence": [
+          "mask3d_lowdata__sonata_small_10pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "concerto_small_10pct",
+        "data_percent": 10,
+        "seed": 42,
+        "training_scenes": 120,
+        "epochs": 600,
+        "optimizer_updates": 14400,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 23.06717472,
+          "CA-AP25": 66.18122395,
+          "CA-AP50": 41.2038831
+        },
+        "checkpoint_sha256": "34959bb397be5e28e17984778a88fb9b12ea39f0324ae6e0bba88a639d84154d",
+        "manifest_sha256": "5c89a6e8024b298d17bea9ff0030669405a82267ab04cba2b3b57efd034bc5e7",
+        "evidence": [
+          "mask3d_lowdata__concerto_small_10pct_COMPLETE.json"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_veto_e100_equal_lr_10pct",
+        "data_percent": 10,
+        "seed": 42,
+        "training_scenes": 120,
+        "epochs": 600,
+        "optimizer_updates": 14400,
+        "validation_scenes": 312,
+        "metrics_percent": {
+          "CA-AP": 39.26978291,
+          "CA-AP25": 78.18720526,
+          "CA-AP50": 59.71715755
+        },
+        "checkpoint_sha256": "5b233baced0a4099d872bdbe6828e69eac3f1f63cc0fa0c0b4edbd0b8098606a",
+        "manifest_sha256": "5c89a6e8024b298d17bea9ff0030669405a82267ab04cba2b3b57efd034bc5e7",
+        "evidence": [
+          "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_10pct_COMPLETE.json"
+        ]
+      }
+    ]
+  },
+  "custom_5pct_selected_proposal_repeats": {
+    "initializer": "SAM2 selected-proposal negatives, LitePT-S*, pretraining epoch 150/update 36630, 100000-point cap",
+    "downstream_seeds": [
+      43,
+      44
+    ],
+    "pretraining_seeds_varied": false,
+    "scene_subsets_varied": false,
+    "results": [
+      {
+        "arm": "scratch",
+        "seed": 43,
+        "epoch": 600,
+        "training_scenes": 60,
+        "validation_scenes": 312,
+        "optimizer_updates": 7200,
+        "series_manifest_sha256": "a6b3ee636d86d4955e88fed81b496e3e8eb85eed61dd9117bb47a82b5ab137b5",
+        "metrics_percent": {
+          "CA-AP": 14.58758505,
+          "CA-AP25": 53.64958491,
+          "CA-AP50": 29.23554381
+        },
+        "checkpoint_sha256": "70778eb30fca8358dff1b2afe498b59f69caf691b729a232c372882b1435405d",
+        "evidence": [
+          "repeat_scratch_43.json"
+        ]
+      },
+      {
+        "arm": "scratch",
+        "seed": 44,
+        "epoch": 600,
+        "training_scenes": 60,
+        "validation_scenes": 312,
+        "optimizer_updates": 7200,
+        "series_manifest_sha256": "a6b3ee636d86d4955e88fed81b496e3e8eb85eed61dd9117bb47a82b5ab137b5",
+        "metrics_percent": {
+          "CA-AP": 15.55670702,
+          "CA-AP25": 54.9740238,
+          "CA-AP50": 30.88381596
+        },
+        "checkpoint_sha256": "2045601e67fb463309904c224572d64daa24a59dea3e8086e3dd096bea9d3669",
+        "evidence": [
+          "repeat_scratch_44.json"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_allowed_100k_e150",
+        "seed": 43,
+        "epoch": 600,
+        "training_scenes": 60,
+        "validation_scenes": 312,
+        "optimizer_updates": 7200,
+        "series_manifest_sha256": "c1aac5b5f4688e8fe9e3752b149008128f13936f6a3fcb8ef7fb81003163fcee",
+        "metrics_percent": {
+          "CA-AP": 31.57674115,
+          "CA-AP25": 70.76521657,
+          "CA-AP50": 51.40924041
+        },
+        "checkpoint_sha256": "3abf461100756a28eec5a7720e4daa8438005e9f8b0ec9f4d38e92088cb5a0ac",
+        "evidence": [
+          "repeat_sam2_overlap_allowed_100k_e150_43.json"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_allowed_100k_e150",
+        "seed": 44,
+        "epoch": 600,
+        "training_scenes": 60,
+        "validation_scenes": 312,
+        "optimizer_updates": 7200,
+        "series_manifest_sha256": "c1aac5b5f4688e8fe9e3752b149008128f13936f6a3fcb8ef7fb81003163fcee",
+        "metrics_percent": {
+          "CA-AP": 30.2870405,
+          "CA-AP25": 68.24545851,
+          "CA-AP50": 49.18718808
+        },
+        "checkpoint_sha256": "22794ecd1956970d13d838a219a8c4d92fe99744177e3deda37a15c4a710ec68",
+        "evidence": [
+          "repeat_sam2_overlap_allowed_100k_e150_44.json"
+        ]
+      }
+    ],
+    "statistics_percent": {
+      "scratch": {
+        "mean": 15.072146035171624,
+        "sample_sd": 0.6852727185353767,
+        "n": 2
+      },
+      "sam2_overlap_allowed_100k_e150": {
+        "mean": 30.9318908238799,
+        "sample_sd": 0.9119560737721543,
+        "n": 2
+      },
+      "paired_deltas": [
+        16.989156098855332,
+        14.730333478561223
+      ]
+    },
+    "contract_evidence": "repeat_contract_audit.json"
+  },
+  "official_annotation_custom_ca_ap_pilot": [
+    {
+      "arm": "scratch",
+      "points_per_scene": 200,
+      "epochs": 20,
+      "optimizer_schedule_steps": 4820,
+      "metrics_percent": {
+        "CA-AP": 4.00803279,
+        "CA-AP25": 22.81057082,
+        "CA-AP50": 9.29147035
+      },
+      "checkpoint_sha256": "c73943086a8e032f0226315c7d0221907451950158395b10c5cdcbc71cc5b08d",
+      "manifest_sha256": "eff8a5f56c74a311abe3634cfdfc2e944757b0eaf75ec5cc1fe50f81490e4c72",
+      "evidence": [
+        "LA_200_scratch_COMPLETE.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto",
+      "points_per_scene": 200,
+      "epochs": 20,
+      "optimizer_schedule_steps": 4820,
+      "metrics_percent": {
+        "CA-AP": 8.20835552,
+        "CA-AP25": 23.79366519,
+        "CA-AP50": 14.77637091
+      },
+      "checkpoint_sha256": "9809fb835e3de9233f37e97b817297ef0c0d47e25598b4eaf0bfde001f119562",
+      "manifest_sha256": "eff8a5f56c74a311abe3634cfdfc2e944757b0eaf75ec5cc1fe50f81490e4c72",
+      "evidence": [
+        "LA_200_sam2_overlap_veto_COMPLETE.json"
+      ]
+    }
+  ],
+  "official_annotation_600_epoch_study": {
+    "status": "two_200_point_arms_complete_other_cells_without_final_receipts_on_20261023",
+    "completed_results": [
+      {
+        "arm": "scratch",
+        "points_per_scene": 200,
+        "epoch": 600,
+        "completed_utc": "2026-10-23T07:18:58.516877+00:00",
+        "validation_scenes": 312,
+        "validation_milestones_checked": 20,
+        "supervision_epochs_checked": 600,
+        "optimizer_schedule_steps": 144600,
+        "effective_optimizer_updates": 144599,
+        "empty_supervision_batches": 1,
+        "metrics_percent": {
+          "CA-AP": 17.41563354,
+          "CA-AP25": 31.0239193,
+          "CA-AP50": 25.58139972
+        },
+        "checkpoint_sha256": "8a5a6e4e813a8df204fca06afb50857c1a9ea2346b945a19785d3038b706293c",
+        "manifest_sha256": "660afde280af4019547673d820115d343640001034dfca821c2f9f062e67d6b0",
+        "supervision_audit_sha256": "d9872940eaa0765464db8928d26ef9e4db81d00c7df78e8bc2069df9db1a0c68",
+        "evidence": [
+          "la600_scratch_COMPLETE.json",
+          "la600_scratch_eval_epoch_0600.json",
+          "la600_scratch_supervision.jsonl"
+        ]
+      },
+      {
+        "arm": "sam2_overlap_veto",
+        "points_per_scene": 200,
+        "epoch": 600,
+        "completed_utc": "2026-10-23T08:12:25.647316+00:00",
+        "validation_scenes": 312,
+        "validation_milestones_checked": 20,
+        "supervision_epochs_checked": 600,
+        "optimizer_schedule_steps": 144600,
+        "effective_optimizer_updates": 144599,
+        "empty_supervision_batches": 1,
+        "metrics_percent": {
+          "CA-AP": 19.14716321,
+          "CA-AP25": 33.56864296,
+          "CA-AP50": 27.7111732
+        },
+        "checkpoint_sha256": "9aae9bbc2d8c15f79a6441598518224d1ad38e777dda36bd1711645298b329c7",
+        "manifest_sha256": "660afde280af4019547673d820115d343640001034dfca821c2f9f062e67d6b0",
+        "supervision_audit_sha256": "d9872940eaa0765464db8928d26ef9e4db81d00c7df78e8bc2069df9db1a0c68",
+        "evidence": [
+          "la600_sam2_overlap_veto_COMPLETE.json",
+          "la600_sam2_overlap_veto_eval_epoch_0600.json",
+          "la600_sam2_overlap_veto_supervision.jsonl"
+        ]
+      }
+    ],
+    "launch_snapshot_date": "2026-10-22",
+    "points_per_scene": [
+      20,
+      50,
+      100,
+      200
+    ],
+    "methods": [
+      "scratch LitePT-S*",
+      "SAM2 overlap-veto e100 LitePT-S*",
+      "Sonata Small",
+      "Concerto Small",
+      "Utonia Small"
+    ],
+    "epochs": 600,
+    "scheduled_optimizer_slots": 144600,
+    "seed": 42,
+    "peak_encoder_and_decoder_lr": 0.0001,
+    "validation_epochs": [
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90,
+      100,
+      150,
+      200,
+      250,
+      300,
+      350,
+      400,
+      450,
+      500,
+      550,
+      600
+    ],
+    "checkpoint_selection": "final_epoch_600_only",
+    "scientific_protocol_sha256": "8a3d4d7fc1c8fc8f74177ac2720a5e0f1d7ed9114aafe9309c0aa99fa2dae708",
+    "official_annotation_zip_sha256": "c265f249c446155d32e751576288f599caed46ee11a32ecaccd51e037d14cbd6",
+    "evidence": [
+      "STATUS.md",
+      "PROTOCOL.md"
+    ],
+    "implementation_revision": "Shared sparse-training output-allocation correction; unused dense raw-point auxiliary copies omitted, original voxel matching/loss and dense evaluation retained."
+  },
+  "custom_frozen_part_probe": {
+    "dataset": "42 official Articulate3D validation scenes",
+    "metric_boundary": "Known-parent query-assisted feature retrieval/selectivity; not predicted-mask segmentation AP",
+    "completed_model_grid_scene_pairs": 504,
+    "results": [
+      {
+        "method": "litept_public",
+        "label": "LitePT-S* public",
+        "checkpoint_sha256": "86408c6371555aeee2a8eda1184b55a411f9748784c275349149b509b661d518",
+        "grid_m": 0.05,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 61.98099360249749,
+        "part_matched_auc_percent": 57.897546231963624
+      },
+      {
+        "method": "concerto_small",
+        "label": "Concerto Small",
+        "checkpoint_sha256": "251441d92ac7d9cff9e0c3ae22bdf2dc416d1c9dbb7a75f1922c08bfd1a18868",
+        "grid_m": 0.05,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 58.44216324898306,
+        "part_matched_auc_percent": 56.7504473126206,
+        "source_label": "Concerto-S"
+      },
+      {
+        "method": "sonata_small",
+        "label": "Sonata Small",
+        "checkpoint_sha256": "ee5dae277dde1d164499579a6b17d0bd38df4e4286b0f1ba21a82f8cc14270d1",
+        "grid_m": 0.05,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 56.297192388920855,
+        "part_matched_auc_percent": 54.33635787672869,
+        "source_label": "Sonata-S"
+      },
+      {
+        "method": "utonia_small",
+        "label": "Utonia Small",
+        "checkpoint_sha256": "3d7afb731771556ebdf20abd1b6a1f022d9b9f105db8446f5eff02037f7fceb9",
+        "grid_m": 0.05,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 56.72563361352664,
+        "part_matched_auc_percent": 54.53233022114763
+      },
+      {
+        "method": "litept_sam2_overlap_veto_e0150",
+        "label": "SAM2 overlap-veto e150 (500k cap)",
+        "checkpoint_sha256": "207cacfff0c54c3658e42215cec6076357e8b19d133e6169e97e01ac308d51de",
+        "grid_m": 0.05,
+        "pretraining_epoch": 150,
+        "pretraining_point_cap": 500000,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 67.19166981902384,
+        "part_matched_auc_percent": 62.31236005000482,
+        "source_label": "SAM2 overlap-veto · epoch 150"
+      },
+      {
+        "method": "litept_sam2_selected_proposal_100k_e0150",
+        "label": "SAM2 selected-proposal negatives e150 (100k cap)",
+        "checkpoint_sha256": "bd11b9c19e21b4c220bd23bff0402fb73ad9a86197ef4ee5c3e4ee81229a447c",
+        "grid_m": 0.05,
+        "pretraining_epoch": 150,
+        "pretraining_point_cap": 100000,
+        "eligible_parts": 819,
+        "part_retrieval_ap_percent": 67.3414319044416,
+        "part_matched_auc_percent": 62.584946311948045,
+        "source_label": "SAM2 overlap allowed · epoch 150 · 100k training cap"
+      },
+      {
+        "method": "litept_public",
+        "label": "LitePT-S* public",
+        "checkpoint_sha256": "86408c6371555aeee2a8eda1184b55a411f9748784c275349149b509b661d518",
+        "grid_m": 0.02,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 65.10320282858727,
+        "part_matched_auc_percent": 63.40868544992703
+      },
+      {
+        "method": "concerto_small",
+        "label": "Concerto Small",
+        "checkpoint_sha256": "251441d92ac7d9cff9e0c3ae22bdf2dc416d1c9dbb7a75f1922c08bfd1a18868",
+        "grid_m": 0.02,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 61.41562462771778,
+        "part_matched_auc_percent": 64.7806073197033,
+        "source_label": "Concerto-S"
+      },
+      {
+        "method": "sonata_small",
+        "label": "Sonata Small",
+        "checkpoint_sha256": "ee5dae277dde1d164499579a6b17d0bd38df4e4286b0f1ba21a82f8cc14270d1",
+        "grid_m": 0.02,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 58.18191310951143,
+        "part_matched_auc_percent": 60.05450257227045,
+        "source_label": "Sonata-S"
+      },
+      {
+        "method": "utonia_small",
+        "label": "Utonia Small",
+        "checkpoint_sha256": "3d7afb731771556ebdf20abd1b6a1f022d9b9f105db8446f5eff02037f7fceb9",
+        "grid_m": 0.02,
+        "pretraining_epoch": null,
+        "pretraining_point_cap": null,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 59.88145788471131,
+        "part_matched_auc_percent": 62.41066393459833
+      },
+      {
+        "method": "litept_sam2_overlap_veto_e0150",
+        "label": "SAM2 overlap-veto e150 (500k cap)",
+        "checkpoint_sha256": "207cacfff0c54c3658e42215cec6076357e8b19d133e6169e97e01ac308d51de",
+        "grid_m": 0.02,
+        "pretraining_epoch": 150,
+        "pretraining_point_cap": 500000,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 73.26169209581055,
+        "part_matched_auc_percent": 72.43987905161445,
+        "source_label": "SAM2 overlap-veto · epoch 150"
+      },
+      {
+        "method": "litept_sam2_selected_proposal_100k_e0150",
+        "label": "SAM2 selected-proposal negatives e150 (100k cap)",
+        "checkpoint_sha256": "bd11b9c19e21b4c220bd23bff0402fb73ad9a86197ef4ee5c3e4ee81229a447c",
+        "grid_m": 0.02,
+        "pretraining_epoch": 150,
+        "pretraining_point_cap": 100000,
+        "eligible_parts": 1445,
+        "part_retrieval_ap_percent": 73.58266325817405,
+        "part_matched_auc_percent": 72.97129512033116,
+        "source_label": "SAM2 overlap allowed · epoch 150 · 100k training cap"
+      }
+    ],
+    "evidence": [
+      "parts_COMPLETE.json",
+      "parts_summary.json",
+      "parts_metrics.csv"
+    ]
+  },
+  "custom_frozen_object_probe": {
+    "scenes": 10,
+    "objects": 390,
+    "grid_m": 0.05,
+    "metric_boundary": "Scene-mean macro IoU; shared GT query anchors for cosine, GT foreground K for clustering; native-system comparison",
+    "results": [
+      {
+        "method": "concerto_small",
+        "label": "Concerto-S",
+        "feature_dimension": 992,
+        "cosine_scene_mean_macro_iou_percent": 31.4345506,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 22.22528029
+      },
+      {
+        "method": "litept_delimit3d_e0100",
+        "label": "Delimit3D UnSAMv2 · LitePT-S* · epoch 100",
+        "feature_dimension": 72,
+        "cosine_scene_mean_macro_iou_percent": 40.97024134,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 31.10358013
+      },
+      {
+        "method": "litept_public",
+        "label": "LitePT-S* public",
+        "feature_dimension": 72,
+        "cosine_scene_mean_macro_iou_percent": 36.6229797,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 24.71916345
+      },
+      {
+        "method": "litept_sam2_overlap_veto_e0150",
+        "label": "Delimit3D SAM2 overlap-veto · LitePT-S* · epoch 150",
+        "feature_dimension": 72,
+        "cosine_scene_mean_macro_iou_percent": 36.7971799,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 27.51792193
+      },
+      {
+        "method": "litept_sam2_selected_proposal_100k_e0150",
+        "label": "Delimit3D SAM2 selected-proposal negatives · LitePT-S* · 100,000-point training cap · epoch 150",
+        "feature_dimension": 72,
+        "cosine_scene_mean_macro_iou_percent": 34.64344375,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 26.38699742
+      },
+      {
+        "method": "sonata_small",
+        "label": "Sonata-S",
+        "feature_dimension": 992,
+        "cosine_scene_mean_macro_iou_percent": 25.6589609,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 16.64556868
+      },
+      {
+        "method": "utonia_small",
+        "label": "Utonia Small",
+        "feature_dimension": 972,
+        "cosine_scene_mean_macro_iou_percent": 26.98576043,
+        "spherical_kmeans_scene_mean_macro_iou_percent": 19.49336466
+      }
+    ],
+    "evidence": [
+      "objects_COMPLETE.json",
+      "objects_summary.json",
+      "objects_verification.json",
+      "utonia_objects_COMPLETE.json",
+      "utonia_objects_summary.json",
+      "utonia_objects_verification.json"
+    ]
+  },
+  "cross_dataset_single_object": [
+    {
+      "arm": "sam2_overlap_veto_e100_lr01",
+      "dataset": "s3dis",
+      "objects": 2330,
+      "rows": 48930,
+      "metrics_percent": {
+        "IoU@1": 53.9438529,
+        "IoU@5": 82.19511067
+      },
+      "result_sha256": "ec908a8f737482f8bbea2520d5f7d3f9ce165bd4f605deb276515deb9dd85971",
+      "model_lock_sha256": "40bdc9527b5eb276fc44a527010de18d6c23e9061a8bc8bf906ee7075fdb9768",
+      "evidence": [
+        "cross_sam2_overlap_veto_e100_lr01_s3dis.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_lr01",
+      "dataset": "kitti360",
+      "objects": 3421,
+      "rows": 71841,
+      "metrics_percent": {
+        "IoU@1": 20.36978565,
+        "IoU@5": 47.77288645
+      },
+      "result_sha256": "cfea68b915b17c7290c2ad569bc581540592a193288ba38758e1bf8f2f893c5c",
+      "model_lock_sha256": "40bdc9527b5eb276fc44a527010de18d6c23e9061a8bc8bf906ee7075fdb9768",
+      "evidence": [
+        "cross_sam2_overlap_veto_e100_lr01_kitti360.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_lr01",
+      "dataset": "scannetpp",
+      "objects": 2661,
+      "rows": 55881,
+      "metrics_percent": {
+        "IoU@1": 41.40370975,
+        "IoU@5": 62.77335583
+      },
+      "result_sha256": "246e1eab06ba1e903101e59f346ae8e8ed33dc7bdafad11bf775036178170e61",
+      "model_lock_sha256": "40bdc9527b5eb276fc44a527010de18d6c23e9061a8bc8bf906ee7075fdb9768",
+      "evidence": [
+        "cross_sam2_overlap_veto_e100_lr01_scannetpp.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_trainable",
+      "dataset": "s3dis",
+      "objects": 2330,
+      "rows": 48930,
+      "metrics_percent": {
+        "IoU@1": 57.51928915,
+        "IoU@5": 78.8114532
+      },
+      "result_sha256": "f7febbc8b54f6a876c186b67d50a8fcca7bdd20c5733f8ad74fe4e44ba27b3f4",
+      "model_lock_sha256": "ceac14b98145301dfe5b4985de2a353606345a3f5c87c3280e02c89e9021be8a",
+      "evidence": [
+        "cross_concerto_native_trainable_s3dis.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_trainable",
+      "dataset": "kitti360",
+      "objects": 3421,
+      "rows": 71841,
+      "metrics_percent": {
+        "IoU@1": 39.00599005,
+        "IoU@5": 72.14331885
+      },
+      "result_sha256": "d46d37dad86d104b0cf2dc4b3977f53fe549d3edd820b23e8c68fc5442f6735e",
+      "model_lock_sha256": "ceac14b98145301dfe5b4985de2a353606345a3f5c87c3280e02c89e9021be8a",
+      "evidence": [
+        "cross_concerto_native_trainable_kitti360.json"
+      ]
+    },
+    {
+      "arm": "concerto_native_trainable",
+      "dataset": "scannetpp",
+      "objects": 2661,
+      "rows": 55881,
+      "metrics_percent": {
+        "IoU@1": 41.32578634,
+        "IoU@5": 60.006191
+      },
+      "result_sha256": "1f77084a6db63b452e4b5d1d8815e00ba29ea65b85920d0130408bd9e4b1e20b",
+      "model_lock_sha256": "ceac14b98145301dfe5b4985de2a353606345a3f5c87c3280e02c89e9021be8a",
+      "evidence": [
+        "cross_concerto_native_trainable_scannetpp.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_equal_lr",
+      "dataset": "s3dis",
+      "objects": 2330,
+      "rows": 48930,
+      "metrics_percent": {
+        "IoU@1": 55.96959582,
+        "IoU@5": 81.05575401
+      },
+      "result_sha256": "a54625e53c995dc4225b779fd1e983d1e5455d0b09996bbe29ce99e52e041d0c",
+      "model_lock_sha256": "b250b47ba9bd167a86f362f4fa0b81966dae8c43450a6f8881c75707dfe5ebeb",
+      "evidence": [
+        "cross_veto_equal_lr_s3dis.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_equal_lr",
+      "dataset": "kitti360",
+      "objects": 3421,
+      "rows": 71841,
+      "metrics_percent": {
+        "IoU@1": 14.39055766,
+        "IoU@5": 38.5278323
+      },
+      "result_sha256": "5b27f7c75c3057d0ed6b539ff6217d6f710a2e9b556f3971fe74f776b99ee1ff",
+      "model_lock_sha256": "b250b47ba9bd167a86f362f4fa0b81966dae8c43450a6f8881c75707dfe5ebeb",
+      "evidence": [
+        "cross_veto_equal_lr_kitti360.json"
+      ]
+    },
+    {
+      "arm": "sam2_overlap_veto_e100_equal_lr",
+      "dataset": "scannetpp",
+      "objects": 2661,
+      "rows": 55881,
+      "metrics_percent": {
+        "IoU@1": 40.33277705,
+        "IoU@5": 62.02042118
+      },
+      "result_sha256": "499c9b6b0f9855eede5394cbca8415fd7cd95629d29ec9907ee33ca5b8604471",
+      "model_lock_sha256": "b250b47ba9bd167a86f362f4fa0b81966dae8c43450a6f8881c75707dfe5ebeb",
+      "evidence": [
+        "cross_veto_equal_lr_scannetpp.json"
+      ]
+    }
+  ],
+  "supervised_semantics_after_adaptation": [
+    {
+      "features": "three_d",
+      "dimension": 144,
+      "classes": 18,
+      "training_scenes": 1201,
+      "training_objects": 15664,
+      "validation_scenes": 312,
+      "gt_objects": 4329,
+      "all_gt_accuracy_percent": 80.11088011,
+      "all_gt_mean_class_accuracy_percent": 73.65498276,
+      "matched_predicted_objects_iou_075": 2658,
+      "matched_accuracy_percent": 86.6440933,
+      "matched_coverage_percent": 61.3998614,
+      "evidence": [
+        "three_d_report.json",
+        "three_d_VERIFIED.json",
+        "three_d_TRAIN_COMPLETE.json"
+      ]
+    },
+    {
+      "features": "rgb_plus_3d",
+      "dimension": 912,
+      "classes": 18,
+      "training_scenes": 1201,
+      "training_objects": 15664,
+      "validation_scenes": 312,
+      "gt_objects": 4329,
+      "all_gt_accuracy_percent": 92.21529222,
+      "all_gt_mean_class_accuracy_percent": 90.02860521,
+      "matched_predicted_objects_iou_075": 2658,
+      "matched_accuracy_percent": 95.33483822,
+      "matched_coverage_percent": 61.3998614,
+      "evidence": [
+        "rgb_plus_3d_report.json",
+        "rgb_plus_3d_VERIFIED.json",
+        "rgb_plus_3d_TRAIN_COMPLETE.json"
+      ]
+    }
+  ],
+  "final_results_not_available_in_checked_roots": [
+    {
+      "arm": "agile3d/sam2_selected_proposal_100k_e150_equal_lr",
+      "target_epoch": 1100,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "agile3d/sam2_selected_proposal_100k_e150_lr01",
+      "target_epoch": 1100,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d/sam2_selected_proposal_100k_e150_equal_lr",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d/sam2_selected_proposal_100k_e150_lr01",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d_lowdata/scratch_20pct",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d_lowdata/sonata_small_20pct",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d_lowdata/concerto_small_20pct",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d_lowdata/sam2_overlap_veto_e100_equal_lr_20pct",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d_lowdata/utonia_small_20pct",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "agile3d/sam2_selected_proposal_100k_e150_frozen",
+      "target_epoch": 1100,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    },
+    {
+      "arm": "mask3d/sam2_selected_proposal_100k_e150_frozen",
+      "target_epoch": 600,
+      "status": "no_final_completion_receipt_in_checked_run_root_on_20261023"
+    }
+  ],
+  "sources": {
+    "evidence.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/evidence.json",
+      "sha256": "9743260b5c4d557951b7db237a176717160feae112a38bdda42498e317c6456f"
+    },
+    "results_and_sources.txt": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/results_and_sources.txt",
+      "sha256": "3ec8480a67df4d85841438b8fbdc440da96624149e46f2fc594b9aed5ae0f599"
+    },
+    "mask3d__concerto_native_frozen_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d__concerto_native_frozen_COMPLETE.json",
+      "sha256": "7413764b12a3f12520cb591f786ba70896ad25227520dc4f98345cb350b913a8",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d__concerto_native_trainable_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d__concerto_native_trainable_COMPLETE.json",
+      "sha256": "09dcb9e7634f81d5291ae9ce55d0545aed5035cbf0573382cd696ed0f018e473",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json",
+      "sha256": "85be522ac87be1b62221c5d6a2d882de216380b0f1242371398a1e7fb36a6a8c",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d__sam2_overlap_veto_e100_lr01_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d__sam2_overlap_veto_e100_lr01_COMPLETE.json",
+      "sha256": "3026dc031b6ecd81ee78216e7023ff3899b594231550a99ff12acc50161d262f",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "agile3d__concerto_native_frozen_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/agile3d__concerto_native_frozen_COMPLETE.json",
+      "sha256": "e65c0171913b88f301e04d79b3a7e93cc90f50ae00ff51e7dabcb9e592b8d452",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "agile3d__concerto_native_trainable_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/agile3d__concerto_native_trainable_COMPLETE.json",
+      "sha256": "52d8440de234979b460744a4082cb77736508c1eb0e39a810a89fc0532a3ee7f",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "agile3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/agile3d__sam2_overlap_veto_e100_equal_lr_COMPLETE.json",
+      "sha256": "4c03764d2555ddc92bebfd5e2fa326eb7df6e63b01893477075caadb0cdf3d03",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "agile3d__sam2_overlap_veto_e100_lr01_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/agile3d__sam2_overlap_veto_e100_lr01_COMPLETE.json",
+      "sha256": "3477f36bb286ec0d5ce891f0364833058923b9fa1da1f3aaf3054e18c58604e0",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__scratch_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__scratch_COMPLETE.json",
+      "sha256": "13677a24af5d96bbe969f7c7992da9205e72b08f63bdda65da9bf6a3371b1900",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sonata_small_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sonata_small_COMPLETE.json",
+      "sha256": "e651efc9d91663253e3045dee1ff80f2647f1deaee2dac32e0518170ddea7141",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__concerto_small_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__concerto_small_COMPLETE.json",
+      "sha256": "3fb5976e118008f99550fb44b217d0152aa0b9021bf7e03e2133f7a50b0950b9",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_COMPLETE.json",
+      "sha256": "f2a860e4c5a17d402623c9bf2acdb76529ca9480137c41b291a6def318953437",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__scratch_5pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__scratch_5pct_COMPLETE.json",
+      "sha256": "47f06bbe02963c0077ea519e218e0b971ed080153e44d212e0a677d7ad228ef5",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sonata_small_5pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sonata_small_5pct_COMPLETE.json",
+      "sha256": "d74457d31828c7df56154ad6db7064cfb94c13bd18e1999d533679b5f46793aa",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__concerto_small_5pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__concerto_small_5pct_COMPLETE.json",
+      "sha256": "f63ed70c32c8640ba3408a9ef29f86bbc13559dd6034a841955d37deb930a251",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_5pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_5pct_COMPLETE.json",
+      "sha256": "ac69762205004209261c813f71b5a63c87d489aaa50feff723c80bf8bf0e1dba",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__scratch_10pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__scratch_10pct_COMPLETE.json",
+      "sha256": "3dec7ca336afa108305a34df8428ec2f2fab17ec7ece2bb489290c76c62ce8ea",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sonata_small_10pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sonata_small_10pct_COMPLETE.json",
+      "sha256": "a9648cda952d39386f5f305b033b7e005f7cb05360bc565ba5a0b0d2b52666ab",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__concerto_small_10pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__concerto_small_10pct_COMPLETE.json",
+      "sha256": "1728aa4b4a982c87c20586b3d485d644921639033b68937e843d445020b2845a",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_10pct_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/mask3d_lowdata__sam2_overlap_veto_e100_equal_lr_10pct_COMPLETE.json",
+      "sha256": "96c75339ecc8e8984dc82f066b172ff2c9f6cc89ccfc6524e3301d492f5f8b38",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "repeat_scratch_43.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/repeat_scratch_43.json",
+      "sha256": "b1fd9a7c19e68da4caeaa9f6897d40ca222db49f0b52deada6ca24dc45908fa2",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "repeat_scratch_44.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/repeat_scratch_44.json",
+      "sha256": "093c4c579b9978a0a8a82e747f822c661b6e8270de0d1e469d14b053176cbea0",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "repeat_sam2_overlap_allowed_100k_e150_43.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/repeat_sam2_overlap_allowed_100k_e150_43.json",
+      "sha256": "68a226808723d0c69a5274527fecc607b064a5eb8377ea9ec23c89b4198a11fb",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "repeat_sam2_overlap_allowed_100k_e150_44.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/repeat_sam2_overlap_allowed_100k_e150_44.json",
+      "sha256": "7b10a322b690bfb31f4b6461843478902b2038bf5a384264dc8069bcff2a7652",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "repeat_contract_audit.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/repeat_contract_audit.json",
+      "sha256": "dcfdaf7bc15bf8ede1af48763cf76c5fe773d2ab40387c799e02d0bae0d8e377",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "LA_200_scratch_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/LA_200_scratch_COMPLETE.json",
+      "sha256": "7b4f37720e36b28a8d5af12f1185873439826ba06a2356e21f84aa3d2e6da60e",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "LA_200_sam2_overlap_veto_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/LA_200_sam2_overlap_veto_COMPLETE.json",
+      "sha256": "0a9cfaec595fa2cd0d3402689825694e14edc24243554e2ccb5565975e23f925",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "LA_PILOT_GATE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/LA_PILOT_GATE.json",
+      "sha256": "a7bc617e15038aa2448cc0698da1ff984d162c607a8b1b7607b99bdca0df5945",
+      "archived_source_hash_verified": true
+    },
+    "STATUS.md": {
+      "research_checkout_path": "reports/scannet_la600_20261022_v1/STATUS.md",
+      "sha256": "5100417283474e3e35267cc2400d870fac30dbfc17575c6ad6cc3de73d1f93ad"
+    },
+    "PROTOCOL.md": {
+      "research_checkout_path": "reports/scannet_la600_20261022_v1/PROTOCOL.md",
+      "sha256": "e74dfb78982a967da95f255875e826f89e7130e28b26425d808f8519c13deb90"
+    },
+    "la600_persistent_backup": {
+      "external_study_relative_path": "reports/PERSISTENT_BACKUP.json",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "b9db5552247623b771d4314ad4b9fdc26f80f79186550a091ac4845f119b1516",
+      "source_rechecked_20261023": true
+    },
+    "la600_scratch_COMPLETE.json": {
+      "external_study_relative_path": "runs/points200/scratch/COMPLETE.json",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "23b03e5dac3040978dafc464c1c2004be79d4c94dc3267502b9351e1625032d7",
+      "source_rechecked_20261023": true
+    },
+    "la600_scratch_eval_epoch_0600.json": {
+      "external_study_relative_path": "runs/points200/scratch/eval_epoch_0600.json",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "5ccef8deee621989d30ce4e03840954dbe77195a4fc577985692abb150a7f19e",
+      "source_rechecked_20261023": true
+    },
+    "la600_scratch_supervision.jsonl": {
+      "external_study_relative_path": "runs/points200/scratch/supervision.jsonl",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "d9872940eaa0765464db8928d26ef9e4db81d00c7df78e8bc2069df9db1a0c68",
+      "source_rechecked_20261023": true
+    },
+    "la600_sam2_overlap_veto_COMPLETE.json": {
+      "external_study_relative_path": "runs/points200/sam2_overlap_veto/COMPLETE.json",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "bf12600e2666b9340f08a0290f440da80d8b992c43506fefccd59b12293fd4c3",
+      "source_rechecked_20261023": true
+    },
+    "la600_sam2_overlap_veto_eval_epoch_0600.json": {
+      "external_study_relative_path": "runs/points200/sam2_overlap_veto/eval_epoch_0600.json",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "4b155fa2bb1f846466cd69f68a84f2282582debecb7177f6eea4f6f89a7f0d3d",
+      "source_rechecked_20261023": true
+    },
+    "la600_sam2_overlap_veto_supervision.jsonl": {
+      "external_study_relative_path": "runs/points200/sam2_overlap_veto/supervision.jsonl",
+      "study_id": "delimit3d_scannet_la600_pf69_20261022_v2",
+      "sha256": "d9872940eaa0765464db8928d26ef9e4db81d00c7df78e8bc2069df9db1a0c68",
+      "source_rechecked_20261023": true
+    },
+    "parts_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/parts_COMPLETE.json",
+      "sha256": "1abb8250325738b68a0a408bbffdd4aa30f5fd50e836e443c06020c1a1fd66da",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "parts_summary.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/parts_summary.json",
+      "sha256": "c0901f0ddd7667c8a1baf4e51690d58871258d4475723b28da21ba37dce1d379",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "parts_metrics.csv": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/parts_metrics.csv",
+      "sha256": "270890e5350f8afb04b8ad0e9707b07d4ab0e5ea94d087628aff2c0c2b035fe1",
+      "archived_source_hash_verified": true
+    },
+    "objects_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/objects_COMPLETE.json",
+      "sha256": "dea8d0a6995db71170f67feb47699eb78a064f2aa5d749dc86aeeba29ef85069",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "objects_summary.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/objects_summary.json",
+      "sha256": "a3d6bd25440ab6d0eb0ace3d332652791090fbf61c804d0cf505f44cedffb134",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "objects_verification.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/objects_verification.json",
+      "sha256": "4bc5f56e065dbe780cf981f1f9219071eb36165845022f95bff869200c61f461",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "utonia_objects_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/utonia_objects_COMPLETE.json",
+      "sha256": "f85369b32439ed2b8de8fe7dcce470e751ad4225097d3d822ce5a5ad5dc26080",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "utonia_objects_summary.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/utonia_objects_summary.json",
+      "sha256": "85bfa301abe03fd89f771be31d9335e3a92e4c3fc1fff17ffd3716c7c587eb36",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "utonia_objects_verification.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/utonia_objects_verification.json",
+      "sha256": "d48e272d124707f860beaca9db9751b297b130d7ef80763ce3f3f4a8e9b0f7af",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_sam2_overlap_veto_e100_lr01_s3dis.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_sam2_overlap_veto_e100_lr01_s3dis.json",
+      "sha256": "0d370610bd4c1110372f526a019f02b3ed54750d118d3d1fa44b9dc584cba612",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_sam2_overlap_veto_e100_lr01_kitti360.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_sam2_overlap_veto_e100_lr01_kitti360.json",
+      "sha256": "fdf4fe9244198673d9b28781374ff370eb12e07fb869e00435bf9b634445b4b1",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_sam2_overlap_veto_e100_lr01_scannetpp.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_sam2_overlap_veto_e100_lr01_scannetpp.json",
+      "sha256": "5a61f0d6bd1add489492e03a6632afb1e6da0b80370cbf07c48e654d7e228e1e",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_concerto_native_trainable_s3dis.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_concerto_native_trainable_s3dis.json",
+      "sha256": "72c29381ead47b7f08ce7fa398923efbc61a1ba0a54066d4fb273bd2eab6137e",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_concerto_native_trainable_kitti360.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_concerto_native_trainable_kitti360.json",
+      "sha256": "8dd16d83ddd88e650d5064a5086c8b454ae24cbb5f275aad273d8176d4062fe4",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_concerto_native_trainable_scannetpp.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_concerto_native_trainable_scannetpp.json",
+      "sha256": "1cc53c7909dff2c2b590e44f46f999961fafab59decea0ee7e84d499b22d7cd6",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_veto_equal_lr_s3dis.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_veto_equal_lr_s3dis.json",
+      "sha256": "b026a480e93c0f168bc4c425006ff138fed507752fc2de85c7028b3117021e35",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_veto_equal_lr_kitti360.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_veto_equal_lr_kitti360.json",
+      "sha256": "5c16bcc2ea469d786a50ec199b41dbf2945b5fa3c8ad2c4de1e8e7bcd2c3a395",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "cross_veto_equal_lr_scannetpp.json": {
+      "research_checkout_path": "reports/presentations/20261022_loc3d_progress/sources/cross_veto_equal_lr_scannetpp.json",
+      "sha256": "8b43e73403cc5afe4162e5bba8e122edf46a9b6d0ad41899d0a4c43230d1cf25",
+      "archived_source_hash_verified": true,
+      "original_source_hash_rechecked_20261023": true
+    },
+    "three_d_report.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/three_d_report.json",
+      "sha256": "8b86f50fa873cfdd9955dbbf823d434eaea84faf0be319146e63dea12fe645a2",
+      "original_source_hash_rechecked_20261023": true
+    },
+    "three_d_VERIFIED.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/three_d_VERIFIED.json",
+      "sha256": "695774e3c3f75e3cda4290657551ec61e4f38d812eb71c5274766956ec5b901f"
+    },
+    "three_d_TRAIN_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/three_d_TRAIN_COMPLETE.json",
+      "sha256": "1fd4a5bc84a1590b5289acbc5c7f994b844bfaf7956fd598f310ed58f20adf2f"
+    },
+    "rgb_plus_3d_report.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/rgb_plus_3d_report.json",
+      "sha256": "d63dd872a4d22bcb32a429a78fa8c16133b810b369e894bb13a51a7207193684",
+      "original_source_hash_rechecked_20261023": true
+    },
+    "rgb_plus_3d_VERIFIED.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/rgb_plus_3d_VERIFIED.json",
+      "sha256": "03f4cf247714f9e9f8447e9fee11a9bc631b8a22476d2aaf196dee690b030a21"
+    },
+    "rgb_plus_3d_TRAIN_COMPLETE.json": {
+      "research_checkout_path": "reports/presentations/20261022_semantics_after_geometry/sources/rgb_plus_3d_TRAIN_COMPLETE.json",
+      "sha256": "15ecf176eadb095ad78b44c3d004228efae0da4fb2cfe501ddee8d36b847ffda"
+    }
+  }
+}

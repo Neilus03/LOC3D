@@ -68,20 +68,20 @@ python scripts/prepare_data.py --action seal --source-root "$DELIMIT3D_SOURCE_RO
   --output "$DELIMIT3D_SOURCE_AUDIT"
 python scripts/prepare_data.py --action fixed-eval --teacher sam2 --grid-size 0.02 \
   --source-root "$DELIMIT3D_SOURCE_ROOT" --holdout-split "$DELIMIT3D_VAL_SPLIT" \
-  --pretraining-contract configs/pretrain/sam2_overlap_veto.yaml \
-  --output "$DELIMIT3D_FIXED_EVAL"
+  --pretraining-contract configs/pretrain/sam2_selected_proposal_negatives.yaml \
+  --output "${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives"
 python scripts/prepare_data.py --action code-record --output "$DELIMIT3D_CODE_MANIFEST"
 ```
 
 For UnSAMv2 use `--teacher unsamv2`, and the training recipe's grid (.02 or .05). Sealing checks disjoint splits, scene identity, every artifact hash and the crop protocol. Fixed evaluation records native token plans. SAM2 admission tests the heldout scenes before publication; the historical pack admitted 322 of 326. A newly generated pack must report its own admission count.
 
-Prepare a separate pack for selected-proposal negatives from the same SAM2 source:
+For the overlap-veto comparison, prepare its separate pack from the same SAM2 source:
 
 ```bash
 python scripts/prepare_data.py --action fixed-eval --teacher sam2 --grid-size 0.02 \
   --source-root "$DELIMIT3D_SOURCE_ROOT" --holdout-split "$DELIMIT3D_VAL_SPLIT" \
-  --pretraining-contract configs/pretrain/sam2_selected_proposal_negatives.yaml \
-  --output "${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives"
+  --pretraining-contract configs/pretrain/sam2_overlap_veto.yaml \
+  --output "$DELIMIT3D_FIXED_EVAL"
 ```
 
 `--pretraining-contract` selects the negative policy from the recipe. An explicit conflicting policy flag is rejected. Each training recipe validates the saved policy, including deferred native-token rebuilding; the packs cannot be interchanged.

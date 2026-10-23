@@ -18,7 +18,7 @@ STATIC = Path(__file__).with_name("static")
 
 def make_handler(service):
     class Handler(BaseHTTPRequestHandler):
-        server_version = "Delimit3D"
+        server_version = "LOC3D"
 
         def _headers(self, status, kind, length):
             self.send_response(status)
@@ -124,7 +124,7 @@ def serve(service, *, host="127.0.0.1", port=7860):
     if host not in {"localhost", "127.0.0.1"}:
         raise ValueError("Use a loopback address and an SSH tunnel for remote GPU access")
     with ThreadingHTTPServer((host, port), make_handler(service)) as server:
-        print(f"Delimit3D workbench: http://localhost:{server.server_port}", flush=True)
+        print(f"LOC3D workbench: http://localhost:{server.server_port}", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

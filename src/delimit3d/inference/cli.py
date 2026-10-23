@@ -9,7 +9,7 @@ import sys
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Use trained Delimit3D models on your own point clouds.")
+    parser = argparse.ArgumentParser(description="Use trained LOC3D models on your own point clouds.")
     commands = parser.add_subparsers(dest="command", required=True)
     listing = commands.add_parser("list", help="Inspect the configured model registry without loading CUDA.")
     listing.add_argument("--registry", type=Path, required=True)

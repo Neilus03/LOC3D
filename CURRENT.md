@@ -1,4 +1,14 @@
-# Release status
+# LOC3D project and release status
+
+**Updated 23 October 2026.** LOC3D is the current public name for the project. The Python package and commands remain `delimit3d`; existing environment variables, default artifact locations, checkpoints and historical run identities retain their compatibility names.
+
+The [research direction](docs/research.md) describes the current selected-proposal SAM2 method, open questions and the distinction between native-system comparisons and controlled initialization comparisons. The [23 October evidence update](docs/research_update_20261023.md) and its [hashed snapshot](docs/research_update_20261023.json) supersede the 17 October research-status snapshot where newer completion artifacts exist. Dated evidence is not a live training dashboard.
+
+Version 0.3.2 updates method naming, recipe guidance, experiment evidence and the workbench's visible project name. It also exposes the tested semantic-classifier helper described in [the probe guide](docs/probes.md). This helper does not package the experimental multi-view RGB semantic pipeline. Utonia and the newest low-annotation runners remain research implementations outside the unified release commands; see [code audit provenance](manifests/research_code_refresh_20261023.json).
+
+The 17 October trained-model inference functionality remains available. Full Mask3D or AGILE3D task checkpoints are required; an encoder checkpoint alone is insufficient. This maintenance update does not rerun GPU inference or benchmarks, submit training, alter running experiments, or publish the paper draft. Current CPU and interface validation is recorded in the update's pull request; the GPU checks below remain dated evidence for their original versions.
+
+## Earlier release verification
 
 **Updated 17 October 2026.** This update builds on the 12 October GitHub release at `ea5dfe3`, which already included both SAM2 negative policies, strict checkpoint recovery, native Mask3D/AGILE3D adapters and the corrected BatchNorm inference policy. This week's new evidence is recorded in [the weekly update](docs/weekly_update_20261017.md), with a [compact evidence snapshot](docs/weekly_update_20261017.json).
 

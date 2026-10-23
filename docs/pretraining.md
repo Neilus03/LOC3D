@@ -22,12 +22,14 @@ These recipes inherit `base.yaml`. CLI flags override values before environment 
 
 ## SAM2 dec0
 
-The two SAM2 policies use separate recipes:
+The current LOC3D method uses **selected-proposal negatives**. Overlap veto is a separate comparison; historical runs retain their original policy. Both policies are implemented and use separate recipes:
 
 - **Overlap veto** (`allow_shared_proposal_negatives: false`): a negative must be outside the selected mask and share no same-frame mask with either positive endpoint. `sam2_dec0.yaml` retains this default for compatibility.
 - **Selected-proposal negatives** (`allow_shared_proposal_negatives: true`): a negative must remain outside the selected mask, but another broader mask may contain it and the positive endpoints. Known mask coverage, native token purity, unique pairs and disjoint negative families are still required.
 
-The selected-proposal policy is restricted to SAM2 dec0-only V2 pretraining. It does not change the older UnSAMv2 recipes. The policy is stored in execution records, resolved run settings, fixed-evaluation manifests/records and checkpoints. Mixing policies in a batch, using the other policy's evaluation pack, or changing policy during resume is rejected.
+The portable trainer retains a **500k raw-point fragment limit** for these presets. The epoch-150 selected-proposal research checkpoint in the [23 October evidence update](research_update_20261023.md) used a **100k cap**. The formulation is shared, but the portable preset is not an exact reproduction of that checkpoint's training contract. A different cap requires its own verified implementation, data/code records and fixed-evaluation contract.
+
+The selected-proposal policy is restricted to SAM2 dec0-only V2 pretraining. It does not change the older UnSAMv2 recipes. Membership in another overlapping proposal is allowed outside the selected proposal; this does not assert that every such pair belongs to different semantic objects. The policy is stored in execution records, resolved run settings, fixed-evaluation manifests/records and checkpoints. Mixing policies in a batch, using the other policy's evaluation pack, or changing policy during resume is rejected.
 
 Prepare each policy's fixed pack using its recipe as described in [data.md](data.md). The selected-proposal recipe uses `${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives`; the veto uses `$DELIMIT3D_FIXED_EVAL`. Legacy fixed packs without a policy flag are treated as overlap veto. Native fixed-panel losses and gaps use different negatives between policies, so compare their downstream features under the same independent evaluation protocol.
 

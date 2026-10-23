@@ -47,7 +47,7 @@ python -m pip install -r environment/data.txt
 
 The locked SAM2 and UnSAMv2 sources require Torch >=2.5.1 and both expose a package named `sam2`. Install each teacher in its own environment with `environment/teacher.txt`. Neither environment replaces the student runtime.
 
-Fetch the source and weights using the student preparation command, then in the relevant teacher environment install the source and Delimit3D:
+Fetch the source and weights using the student preparation command, then in the relevant teacher environment install the source and LOC3D:
 
 ```bash
 # SAM2 teacher environment

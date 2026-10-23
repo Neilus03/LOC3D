@@ -1,8 +1,14 @@
-# Delimit3D
+# LOC3D
 
-Delimit3D is a **contrastive pretraining strategy for 3D representations using projected 2D masks**. The main recipe trains **LitePT-S*** from scratch with SAM2 supervision. RGB, geometry, normals and camera poses are inputs; 3D object or part labels are not training supervision.
+LOC3D learns **object- and part-aware 3D representations from projected 2D masks**. The main recipe trains **LitePT-S*** from scratch on 2,930 Structured3D scenes, using frozen SAM2 proposals and a contrastive objective through a projection head on native dec0 features. Positives share a selected proposal; negatives lie outside it and may share another, broader proposal. The overlapping masks provide local relations rather than a global scene partition.
 
-The repository also supports the earlier **UnSAMv2 multigranular and multiscale recipes**, transfer through **Mask3D** and **AGILE3D**, and direct feature segmentation with cosine similarity or spherical K-means.
+RGB, geometry and normals are encoder inputs; camera poses support projection during data preparation. No 3D object or part labels supervise pretraining. The projection head and 2D teacher are absent when reusing the encoder. Downstream supervised training and semantic classifiers use their own explicitly stated annotations.
+
+**LOC3D is the current project name.** The Python package, installed commands, `DELIMIT3D_*` environment variables and legacy default artifact paths retain `delimit3d` for compatibility. Historical experiments keep their original names and recipes.
+
+Start with the [research direction](docs/research.md) and [23 October experiment update](docs/research_update_20261023.md). The update distinguishes completed custom evaluations, frozen-feature diagnostics, pilot experiments and work without final results.
+
+The repository also supports the **SAM2 overlap-veto comparison**, earlier **UnSAMv2 multigranular and multiscale recipes**, transfer through **Mask3D** and **AGILE3D**, and direct feature segmentation with cosine similarity or spherical K-means. Their results are not interchangeable with the main selected-proposal recipe.
 
 ## What is supported
 
@@ -15,7 +21,7 @@ The repository also supports the earlier **UnSAMv2 multigranular and multiscale 
 | Trained-model inference | LitePT-S* + Mask3D automatic instances; LitePT-S* + AGILE3D foreground/background clicks |
 | Browser workbench | Select registered checkpoints, load NPZ/PLY scenes, explore 3D predictions and download full-resolution results |
 
-Concerto and Sonata are pretrained baselines. Their native PTv3 feature dimensions and task adapters are retained. A comparison between these models and LitePT-S* includes differences in architecture, pretraining and feature interfaces.
+Concerto and Sonata are pretrained baselines. Their native PTv3 feature dimensions and task adapters are retained. A comparison between these models and LitePT-S* includes differences in architecture, pretraining and feature interfaces. Utonia Small appears in the research experiment records; its adapter and the newer low-annotation runners are not yet integrated into these portable commands.
 
 ## Repository layout
 
@@ -91,23 +97,27 @@ checkpoint compatibility, click input, GPU hosting and export details.
 Preview recipes without data or GPU allocation:
 
 ```bash
-python scripts/pretrain.py --config configs/pretrain/sam2_overlap_veto.yaml --show-config
+python scripts/pretrain.py --config configs/pretrain/sam2_selected_proposal_negatives.yaml --show-config
 python scripts/train.py --config configs/tasks/mask3d_concerto.yaml --show-config
 ```
 
-After preparing and sealing data, launch the main pretraining recipe:
+After preparing and sealing data, launch the portable selected-proposal recipe:
 
 ```bash
 torchrun --standalone --nproc_per_node=2 scripts/pretrain.py \
-  --config configs/pretrain/sam2_overlap_veto.yaml
+  --config configs/pretrain/sam2_selected_proposal_negatives.yaml
 ```
 
-Use [sam2_selected_proposal_negatives.yaml](configs/pretrain/sam2_selected_proposal_negatives.yaml) for the alternative negative policy, with its separate fixed evaluation pack. Both recipes and resume requirements are described in [the pretraining guide](docs/pretraining.md#sam2-dec0).
+Use [sam2_overlap_veto.yaml](configs/pretrain/sam2_overlap_veto.yaml) for the overlap-veto comparison, with its separate fixed evaluation pack. Both recipes and resume requirements are described in [the pretraining guide](docs/pretraining.md#sam2-dec0). Existing runs must resume with their original policy.
+
+These portable presets retain a 500k raw-point fragment limit. The selected-proposal epoch-150 research checkpoint reported in the evidence update used a 100k cap; running this preset does not reproduce that exact experiment. The [research direction](docs/research.md#preserve-recipe-identity) explains these identities.
 
 The full-scene recipes have substantial memory requirements. Follow the recipe-specific preparation and calibration steps before a production launch.
 
 ## Workflow guides
 
+- [Research direction](docs/research.md): current method, hypotheses and comparison boundaries.
+- [23 October experiment update](docs/research_update_20261023.md): verified evidence and exact experiment identities.
 - [Prepare data](docs/data.md): 2D-only Structured3D packs, fixed evaluation and ScanNet inputs.
 - [Pretrain](docs/pretraining.md): SAM2 and both earlier UnSAMv2 objectives, calibration, export and resume.
 - [Train and evaluate tasks](docs/tasks.md): native adapters, frozen/trainable controls, losses and click protocols.
