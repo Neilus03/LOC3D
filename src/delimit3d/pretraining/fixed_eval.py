@@ -23,6 +23,7 @@ from delimit3d.training.contracts import GRANULARITY_KEYS, SOURCE_CELLS, TWO_D_C
 
 from delimit3d.data.partfield_contrastive import SAMPLER_ALGORITHM_VERSION, SAMPLER_PRESELECTION_POLICY, ContrastiveTripletBatch, DeferredTokenLossPlan, validate_token_positive_pair_payload
 from delimit3d.data.partfield_contrastive import negative_policy_name
+from delimit3d.data.sam2_source import fragment_policy, validate_point_limit
 
 from delimit3d.data.contrastive_sampler_v2 import (
     DeterministicCoverageState,
@@ -970,6 +971,7 @@ def validate_fixed_holdout_eval_pack(
     cells: Sequence[str] | None = None,
     grid_size: float = 0.02,
     allow_shared_proposal_negatives: bool = False,
+    sam2_maximum_raw_points: int = 500_000,
 ) -> dict[str, Any]:
     active_cells = normalize_source_cells(cells)
     policy = negative_policy_name(allow_shared_proposal_negatives)
@@ -989,6 +991,8 @@ def validate_fixed_holdout_eval_pack(
     coordinate_policy = next(iter(coordinate_policies))
     manifest_path = (pack_dir / "manifest.json").resolve(strict=True)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if active_cells == ("2d/sam2",):
+        validate_point_limit(manifest, sam2_maximum_raw_points)
     validate_fixed_eval_negative_policy(
         manifest, allow_shared_proposal_negatives=allow_shared_proposal_negatives
     )
@@ -1171,8 +1175,13 @@ def prepare_fixed_holdout_eval_pack(
     grid_size: float = 0.02,
     precomputed_token_plans: Mapping[str, Any] | None = None,
     allow_shared_proposal_negatives: bool = False,
+    sam2_maximum_raw_points: int = 500_000,
 ) -> dict[str, Any]:
     active_cells = normalize_source_cells(cells)
+    if active_cells == ("2d/sam2",):
+        fragment_policy(sam2_maximum_raw_points)
+        if any(len(scene.points) > sam2_maximum_raw_points for scene in scenes):
+            raise ValueError("SAM2 fixed evaluation requires capped scene visits")
     policy = negative_policy_name(allow_shared_proposal_negatives)
     if allow_shared_proposal_negatives and active_cells != ("2d/sam2",):
         raise ValueError("Selected-proposal fixed evaluation requires SAM2")
@@ -1199,6 +1208,7 @@ def prepare_fixed_holdout_eval_pack(
             cells=active_cells,
             grid_size=grid_size,
             allow_shared_proposal_negatives=allow_shared_proposal_negatives,
+            sam2_maximum_raw_points=sam2_maximum_raw_points,
         )
     if pack_dir.exists() and any(pack_dir.iterdir()):
         raise FileExistsError(
@@ -1305,6 +1315,8 @@ def prepare_fixed_holdout_eval_pack(
         )
     manifest = {
         "schema_version": FIXED_EVAL_PACK_SCHEMA,
+        **({"sam2_maximum_raw_points": sam2_maximum_raw_points}
+           if active_cells == ("2d/sam2",) else {}),
         "allow_shared_proposal_negatives": allow_shared_proposal_negatives,
         "negative_policy": policy,
         "sampling_profile": sampling_profile,
@@ -1403,6 +1415,7 @@ def prepare_fixed_holdout_eval_pack(
         cells=active_cells,
         grid_size=grid_size,
         allow_shared_proposal_negatives=allow_shared_proposal_negatives,
+        sam2_maximum_raw_points=sam2_maximum_raw_points,
     )
 
 

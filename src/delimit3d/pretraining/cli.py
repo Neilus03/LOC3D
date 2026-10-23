@@ -20,6 +20,7 @@ def main(argv=None):
     preview.add_argument("--config", type=Path, required=True)
     preview.add_argument("--show-config", action="store_true", help="Print the merged recipe without loading a model.")
     preview.add_argument("--allow-shared-proposal-negatives", action=argparse.BooleanOptionalAction, default=None)
+    preview.add_argument("--sam2-maximum-raw-points", type=int, choices=(100_000, 500_000))
     preview.add_argument("--source-root", type=Path)
     preview.add_argument("--train-split", type=Path)
     preview.add_argument("--holdout-split", type=Path)

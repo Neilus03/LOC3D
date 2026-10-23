@@ -36,11 +36,12 @@ def source_main(argv):
 
 def weight_main(argv):
     parser = argparse.ArgumentParser(description="Download a checkpoint and require its locked content hash.")
-    parser.add_argument("--weight", choices=("concerto_small", "sonata_small", "sam2_1_hiera_large", "unsamv2_plus"), required=True)
+    root = Path(__file__).resolve().parent / "assets"
+    weights = json.loads((root / "weights.lock.json").read_text())["weights"]
+    parser.add_argument("--weight", choices=tuple(weights), required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    root = Path(__file__).resolve().parent / "assets"
-    record = json.loads((root / "weights.lock.json").read_text())["weights"][args.weight]
+    record = weights[args.weight]
     if args.output.exists():
         if file_sha256(args.output) != record["sha256"]:
             raise ValueError("Existing checkpoint differs; use a fresh output path")

@@ -10,6 +10,8 @@ backbone_lr: 0.0001
 grad_clip_norm: 5
 source_granularity: sam2
 allow_shared_proposal_negatives: false
+# Training points per scene visit; fixed evaluation remains 500000.
+sam2_maximum_raw_points: 500000
 sampling_mode: coverage_multigranular_v2
 multiscale_supervision: false
 multiscale_loss_weight: 0

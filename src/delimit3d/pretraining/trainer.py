@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from delimit3d.data.sam2_source import fragment_policy as sam2_fragment_policy
+
 
 import datetime
 
@@ -850,6 +852,7 @@ def _run(args=None) -> None:
             smoke_scenes = [
                 load_scene_source(
                     path,
+                    sam2_maximum_raw_points=args.sam2_maximum_raw_points,
                     input_features=args.input_features,
                     coordinate_normalization_policy=(
                         args.coordinate_normalization_policy
@@ -871,6 +874,7 @@ def _run(args=None) -> None:
         elif source_loading_mode == "preload":
             local_scenes = _preload_sources(
                 scene_ids=local_scene_ids,
+                sam2_maximum_raw_points=args.sam2_maximum_raw_points,
                 source_root=args.source_root,
                 smoke_manifest=None,
                 expected_manifest_hashes=expected_manifest_hashes,
@@ -899,6 +903,7 @@ def _run(args=None) -> None:
                 [
                     load_scene_source(
                         path,
+                        sam2_maximum_raw_points=500_000,
                         input_features=args.input_features,
                         coordinate_normalization_policy=(
                             args.coordinate_normalization_policy
@@ -912,6 +917,7 @@ def _run(args=None) -> None:
                 if smoke
                 else _preload_sources(
                     scene_ids=holdout_scene_ids,
+                    sam2_maximum_raw_points=500_000,
                     source_root=args.source_root,
                     smoke_manifest=None,
                     expected_manifest_hashes=expected_manifest_hashes,
@@ -976,6 +982,7 @@ def _run(args=None) -> None:
                     token_plans = None
                 report_broadcast[0] = prepare_fixed_holdout_eval_pack(
                     pack_dir=args.fixed_eval_pack,
+                    sam2_maximum_raw_points=500_000,
                     scenes=holdout_scenes,
                     sampling=evaluation_sampling,
                     sampling_profile=evaluation_sampling_profile,
@@ -1412,8 +1419,11 @@ def _run(args=None) -> None:
             ),
             "source_dataset_audit": source_audit_report,
             **({"sam2_scene_visit_contract": {
-                "maximum_raw_points": 500000,
-                "fragment_policy": "geometry_median_partition_epoch_rotation_500k/v1",
+                "maximum_raw_points": args.sam2_maximum_raw_points,
+                "fragment_policy": sam2_fragment_policy(args.sam2_maximum_raw_points),
+                **({"evaluation_maximum_raw_points": 500_000,
+                    "evaluation_fragment_policy": sam2_fragment_policy(500_000)}
+                   if args.sam2_maximum_raw_points != 500_000 else {}),
                 "canonical_pack_mode": "full_scene",
                 "logical_scene_visits_per_epoch": 1,
                 "evaluation_fragment_epoch": 0,
@@ -2519,6 +2529,7 @@ def _run(args=None) -> None:
                         raise RuntimeError("Logical source-loader pool is missing")
                     group_scenes = _load_logical_scene_group(
                         scene_indices=[index for _, index in pending_visits],
+                        sam2_maximum_raw_points=args.sam2_maximum_raw_points,
                         scene_ids=local_scene_ids,
                         source_root=args.source_root,
                         expected_manifest_hashes=expected_manifest_hashes,

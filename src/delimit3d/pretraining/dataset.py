@@ -27,6 +27,7 @@ from delimit3d.data.contrastive_sampler_v2 import FrameProposalCatalog
 
 def _preload_sources(
     *,
+    sam2_maximum_raw_points: int = 500_000,
     scene_ids: list[str],
     source_root: Path,
     smoke_manifest: Path | None,
@@ -47,6 +48,7 @@ def _preload_sources(
         )
         scene = load_scene_source(
             manifest_path,
+            sam2_maximum_raw_points=sam2_maximum_raw_points,
             input_features=input_features,
             coordinate_normalization_policy=coordinate_normalization_policy,
             color_mean=color_mean,
@@ -106,6 +108,7 @@ def _audit_lazy_sources(
 
 def _load_logical_scene_group(
     *,
+    sam2_maximum_raw_points: int = 500_000,
     scene_indices: list[int],
     scene_ids: list[str],
     source_root: Path,
@@ -121,6 +124,7 @@ def _load_logical_scene_group(
     futures = [
         executor.submit(
             _preload_sources,
+            sam2_maximum_raw_points=sam2_maximum_raw_points,
             scene_ids=[scene_ids[scene_index]],
             source_root=source_root,
             smoke_manifest=None,

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "delimit3d"
-version = "0.3.2"
+version = "0.3.3"
 description = "LOC3D: object- and part-aware 3D representations from projected 2D masks"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"

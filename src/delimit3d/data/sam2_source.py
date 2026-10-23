@@ -12,10 +12,42 @@ import numpy as np
 SCENE_SCHEMA = "delimit3d_structured3d_sam2_scene_source/v2"
 CACHE_SCHEMA = "delimit3d_structured3d_sam2_projection_cache/v1"
 SOURCE_CELL = "2d/sam2"
-# The measured 526,742-point B* FP32 backward used 14.4 GB on a 24 GB 4090.
-# Keep a conservative raw-point ceiling, including worst-case voxel occupancy.
+# Keep the legacy limit for old recipes and source identities.
+# The current selected-proposal recipe explicitly selects 100,000 points.
 MAX_VISIT_POINTS = 500_000
 FRAGMENT_POLICY = "geometry_median_partition_epoch_rotation_500k/v1"
+
+
+SUPPORTED_POINT_LIMITS = (100_000, 500_000)
+
+
+def fragment_policy(maximum_points: int) -> str:
+    if type(maximum_points) is not int or maximum_points not in SUPPORTED_POINT_LIMITS:
+        raise ValueError("SAM2 raw-point limit must be 100000 or 500000")
+    return f"geometry_median_partition_epoch_rotation_{int(maximum_points) // 1000}k/v1"
+
+
+def maximum_points_for_policy(policy: str | None) -> int | None:
+    if policy == FRAGMENT_POLICY:
+        return MAX_VISIT_POINTS
+    if policy == fragment_policy(100_000):
+        return 100_000
+    return None
+
+
+def recorded_point_limit(record: dict) -> int:
+    nested = record.get("sam2_scene_visit_contract") or {}
+    value = record.get("sam2_maximum_raw_points", nested.get("training_maximum_raw_points", nested.get("maximum_raw_points", 500_000)))
+    policy = fragment_policy(value)
+    if nested.get("training_maximum_raw_points", nested.get("maximum_raw_points", value)) != value or nested.get("training_fragment_policy", nested.get("fragment_policy", policy)) != policy:
+        raise ValueError("SAM2 raw-point limit disagrees with its scene-visit contract")
+    return int(value)
+
+
+def validate_point_limit(record: dict, expected: int) -> None:
+    fragment_policy(expected)
+    if recorded_point_limit(record) != expected:
+        raise ValueError("SAM2 raw-point limit differs; use a separate run and fixed evaluation pack")
 
 
 def artifact_path(manifest_path: Path, record: dict) -> Path:
@@ -73,7 +105,7 @@ def audit_sam2_source(manifest_path: Path, *, expected_scene_id=None, verify_has
 
 
 def load_sam2_source(manifest_path: Path, *, input_features, coordinate_normalization_policy,
-                     verify_hashes, color_mean, color_std):
+                     verify_hashes, color_mean, color_std, maximum_raw_points=500_000):
     from delimit3d.training.adaptation import (
         RawFrame, SceneSource, STRUCTURED3D_COORDINATE_NORMALIZATION_POLICY,
         build_input_features, canonicalize_structured3d_points_normals_to_scannet,
@@ -138,7 +170,7 @@ def load_sam2_source(manifest_path: Path, *, input_features, coordinate_normaliz
                        points=points, features=features, labels_by_key={}, raw_frames=tuple(frames),
                        colors=colors, normals=normals, crop_mode="full_scene",
                        coordinate_normalization_policy=coordinate_normalization_policy,
-                       source_variant_id=FRAGMENT_POLICY)
+                       source_variant_id=fragment_policy(maximum_raw_points))
 
 
 def geometry_fragments(points: np.ndarray, maximum_points: int = MAX_VISIT_POINTS) -> tuple[np.ndarray, ...]:
@@ -168,9 +200,12 @@ def sam2_scene_for_visit(scene, *, epoch: int, global_seed: int):
     from delimit3d.training.adaptation import RawFrame
     from delimit3d.training.contracts import stable_seed
 
-    if scene.source_variant_id != FRAGMENT_POLICY or len(scene.points) <= MAX_VISIT_POINTS or scene.crop_id is not None:
+    maximum_points = maximum_points_for_policy(scene.source_variant_id)
+    if maximum_points is None or len(scene.points) <= maximum_points or scene.crop_id is not None:
         return scene
-    fragments = geometry_fragments(scene.points, MAX_VISIT_POINTS)
+    fragments = geometry_fragments(scene.points, maximum_points)
+    # The original 100k training run retained the legacy seed salt while
+    # overriding the partition ceiling. Preserve that exact traversal.
     position = (stable_seed(global_seed, scene.scene_id, FRAGMENT_POLICY) + int(epoch)) % len(fragments)
     indices = fragments[position]
     inverse = np.full(len(scene.points), -1, dtype=np.int64)

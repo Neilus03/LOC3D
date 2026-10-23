@@ -2,6 +2,6 @@
 
 from .identity import artifact_root, project_name, project_slug
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 
 __all__ = ["__version__", "artifact_root", "project_name", "project_slug"]

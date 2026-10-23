@@ -21,6 +21,15 @@
       "sha256": "4067a6966b06df984828f537da0f02389ff28655a8985a1e1f4a3e1de4077195",
       "size_bytes": 188689844,
       "reference": "UnSAMv2+ checkpoint from the official demo, hash matched to the executed teacher"
+    },
+    "loc3d_sam2_overlap_allowed_100k_e150": {
+      "url": "https://github.com/Neilus03/LOC3D/releases/download/sam2-overlap-allowed-100k-e150/loc3d_sam2_overlap_allowed_100k_e150.pt",
+      "sha256": "5f84913185468868c14f793bf548cfb6a192238d3ac9feb0c98a59ad4ba31d5a",
+      "size_bytes": 64073536,
+      "epoch": 150,
+      "training_maximum_raw_points": 100000,
+      "evaluation_maximum_raw_points": 500000,
+      "license": "No license grant specified; see LICENSE.md and THIRD_PARTY_NOTICES.md"
     }
   }
 }

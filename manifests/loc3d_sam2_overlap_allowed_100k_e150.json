@@ -1,0 +1,39 @@
+{
+  "schema": "delimit3d_backbone/v1",
+  "model_id": "loc3d_sam2_overlap_allowed_100k_e150",
+  "architecture": {
+    "litept_variant": "litept_s_star",
+    "input_features": "rgbn6",
+    "grid_size": 0.02,
+    "native_dim": 72,
+    "representative_sampling": "first"
+  },
+  "source_checkpoint_sha256": "bd11b9c19e21b4c220bd23bff0402fb73ad9a86197ef4ee5c3e4ee81229a447c",
+  "epoch": 150,
+  "step": 36630,
+  "seed": 42,
+  "allow_shared_proposal_negatives": true,
+  "training_maximum_raw_points": 100000,
+  "evaluation_maximum_raw_points": 500000,
+  "batchnorm_policy": "raw_training_buffers_preserved",
+  "task_decoder_weights_included": false,
+  "pretraining_heads_included": false,
+  "optimizer_state_included": false,
+  "resumable": false,
+  "tensor_count": 302,
+  "export_sha256": "5f84913185468868c14f793bf548cfb6a192238d3ac9feb0c98a59ad4ba31d5a",
+  "size_bytes": 64073536,
+  "validation": {
+    "all_encoder_tensors_unchanged": true,
+    "weights_only_load": true,
+    "native_backbone_strict_load": true,
+    "tensor_count": 302,
+    "gpu_forward_executed": false,
+    "pinned_litept_source_hashes_match": true
+  },
+  "url": "https://github.com/Neilus03/LOC3D/releases/download/sam2-overlap-allowed-100k-e150/loc3d_sam2_overlap_allowed_100k_e150.pt",
+  "training_initialization": "scratch; no public pretrained encoder used",
+  "release_recipe": "configs/pretrain/sam2_selected_proposal_negatives.yaml",
+  "original_training_code_is_current_release": false,
+  "license": "No license grant specified; see LICENSE.md and THIRD_PARTY_NOTICES.md"
+}

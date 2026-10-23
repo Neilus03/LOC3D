@@ -5,7 +5,7 @@ All standard recipes train LitePT-S* from scratch using RGBN6 and projected 2D m
 | Recipe | Input | Main supervision | Schedule / normalization |
 | --- | --- | --- | --- |
 | `sam2_overlap_veto.yaml` | Full scene, 2 cm; geometry fragments <=500k | SAM2 dec0, shared-mask negatives vetoed | 150 epochs, FP32 SyncBN |
-| `sam2_selected_proposal_negatives.yaml` | Same geometry, grid and training schedule | SAM2 dec0, selected-mask complement negatives | Same schedule and normalization |
+| `sam2_selected_proposal_negatives.yaml` | Full scene, 2 cm; training fragments <=100k, fixed evaluation <=500k | SAM2 dec0, selected-mask complement negatives | Same schedule and normalization |
 | `unsamv2_multiscale.yaml` | Full scene, 2 cm | dec0 + dec3/dec2/dec1 contrastive | 84 epochs, local BN |
 | `unsamv2_hierarchy.yaml` | Sphere <=50k, 5 cm | dec0 + proposal-query hierarchy masks + VICReg | 336 epochs, SyncBN |
 | `unsamv2_hierarchy_no_vicreg.yaml` | Same sphere and grid | Same hierarchy masks; VICReg coefficient zero | Same schedule and normalization |
@@ -27,11 +27,11 @@ The current LOC3D method uses **selected-proposal negatives**. Overlap veto is a
 - **Overlap veto** (`allow_shared_proposal_negatives: false`): a negative must be outside the selected mask and share no same-frame mask with either positive endpoint. `sam2_dec0.yaml` retains this default for compatibility.
 - **Selected-proposal negatives** (`allow_shared_proposal_negatives: true`): a negative must remain outside the selected mask, but another broader mask may contain it and the positive endpoints. Known mask coverage, native token purity, unique pairs and disjoint negative families are still required.
 
-The portable trainer retains a **500k raw-point fragment limit** for these presets. The epoch-150 selected-proposal research checkpoint in the [23 October evidence update](research_update_20261023.md) used a **100k cap**. The formulation is shared, but the portable preset is not an exact reproduction of that checkpoint's training contract. A different cap requires its own verified implementation, data/code records and fixed-evaluation contract.
+The selected-proposal preset uses **100,000 raw points per training scene visit** (`sam2_maximum_raw_points: 100000`). Fixed evaluation independently retains **500,000 points**, matching the original epoch-150 protocol. The legacy overlap-veto preset keeps 500,000 training points. Partitioning and fragment rotation preserve the original 100k run's seed convention. Changing the training cap on resume or reusing a fixed pack with a different evaluation cap is rejected. The [published epoch-150 encoder](weights.md) preserves all encoder tensors and raw BatchNorm buffers. This release has CPU contract checks; it does not claim a fresh end-to-end retraining reproduction.
 
 The selected-proposal policy is restricted to SAM2 dec0-only V2 pretraining. It does not change the older UnSAMv2 recipes. Membership in another overlapping proposal is allowed outside the selected proposal; this does not assert that every such pair belongs to different semantic objects. The policy is stored in execution records, resolved run settings, fixed-evaluation manifests/records and checkpoints. Mixing policies in a batch, using the other policy's evaluation pack, or changing policy during resume is rejected.
 
-Prepare each policy's fixed pack using its recipe as described in [data.md](data.md). The selected-proposal recipe uses `${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives`; the veto uses `$DELIMIT3D_FIXED_EVAL`. Legacy fixed packs without a policy flag are treated as overlap veto. Native fixed-panel losses and gaps use different negatives between policies, so compare their downstream features under the same independent evaluation protocol.
+Prepare each policy's fixed pack using its recipe as described in [data.md](data.md). The selected-proposal recipe uses `${DELIMIT3D_FIXED_EVAL}_selected_proposal_negatives_100k`; the veto uses `$DELIMIT3D_FIXED_EVAL`. Legacy fixed packs without a policy flag are treated as overlap veto. Native fixed-panel losses and gaps use different negatives between policies, so compare their downstream features under the same independent evaluation protocol.
 
 Launch two ranks with six scenes per rank (global batch twelve):
 
@@ -107,7 +107,7 @@ The resume check verifies saved rank coverage/RNG state, optimizer and scheduler
 
 The CPU suite checks model/optimizer recovery at rtol 1e-5 / atol 1e-6. Native policy verification requires exact RNG, coverage, exposure, sampling totals and counters, and reports model/optimizer differences alongside an uninterrupted repetition. The synthetic GPU runs showed floating-point variation in both repetition and resume; they do not establish bitwise tensor reproduction.
 
-Use the original negative-policy recipe and its original fixed pack when resuming SAM2. Changing `allow_shared_proposal_negatives` requires a separate run; it cannot be continued from a checkpoint trained under the other policy. Checkpoints predating the flag default to the veto, subject to the existing code/data compatibility checks.
+Use the original negative-policy recipe, training cap and fixed pack when resuming SAM2. Before this update, selected-proposal presets defaulted to 500k; preserve those runs with `--sam2-maximum-raw-points 500000` and their original `--fixed-eval-pack`. Missing cap metadata means the historical 500k default. Changing `allow_shared_proposal_negatives` requires a separate run; it cannot be continued from a checkpoint trained under the other policy. Checkpoints predating the flag default to the veto, subject to the existing code/data compatibility checks.
 
 Fresh-attempt continuation requires the latest parent checkpoint and the complete expected checkpoint history through that boundary. A parent folder containing later checkpoints is rejected. The synthetic recovery check stages a separate parent snapshot through epoch one; it preserves the uninterrupted run for comparison.
 
