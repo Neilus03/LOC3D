@@ -1,4 +1,4 @@
-"""Bundle the reviewed Delimit3D UI into the dependency-free Worker artifact."""
+"""Bundle the reviewed LOC3D UI into the dependency-free Worker artifact."""
 import json
 from pathlib import Path
 import sys
