@@ -15,6 +15,8 @@ from .factory import build_model
 
 
 def evaluate(config, checkpoint, device):
+    from .low_annotation import validate_config
+    validate_config(config)
     if int(os.environ.get("WORLD_SIZE", "1")) != 1:
         raise ValueError("Evaluate Mask3D with one worker; its validation protocol uses one scene at a time")
     device = torch.device(device)
@@ -43,7 +45,9 @@ def evaluate(config, checkpoint, device):
         backbone_batchnorm_policy=settings["backbone_batchnorm_policy"])
     result = {"epoch": payload["epoch"], "checkpoint_sha256": file_sha256(checkpoint),
         "evaluation_config_sha256": config["_config_sha256"], "model_contract": model_contract(config),
-        "data_identity": config["_data_identity"], "initialization": initialization,
+        "data_identity": config["_data_identity"], "training_data_identity": payload.get("data_identity"),
+        "initialization": payload.get("initialization"), "model_construction_initialization": initialization,
         "normalization_policy": settings["backbone_batchnorm_policy"], "optimizer_steps": 0, "metrics": metrics}
     write_json(path, result)
-    print(json.dumps({key: value for key, value in result.items() if key not in {"data_identity", "initialization"}}, indent=2))
+    print(json.dumps({key: value for key, value in result.items() if key not in {
+        "data_identity", "training_data_identity", "initialization", "model_construction_initialization"}}, indent=2))

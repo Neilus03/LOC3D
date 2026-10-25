@@ -1,0 +1,6 @@
+extends: mask3d_litept.yaml
+name: mask3d_low_data_equal_lr
+description: Custom nested seed-42 scene subsets with dense supervision.
+train:
+  backbone_lr: 0.0001
+  decoder_lr: 0.0001

@@ -8,6 +8,22 @@ from delimit3d.runtime.config import expand_environment, load_config
 from delimit3d.runtime.records import config_sha256, file_sha256, write_json
 
 
+def validate_resume_frontier(latest, resume, payload):
+    """A numbered checkpoint can be newer than latest after failed validation."""
+    if not latest.exists() or file_sha256(latest) == file_sha256(resume):
+        return
+    import torch
+    previous = torch.load(latest, map_location="cpu", weights_only=False)
+    if int(previous["epoch"]) >= int(payload["epoch"]):
+        raise ValueError("Resume would overwrite a newer checkpoint; use a fresh output directory")
+    for key in ("baseline_config_sha256", "data_identity", "model_contract"):
+        if key not in previous or key not in payload or previous[key] != payload[key]:
+            raise ValueError("Newer resume checkpoint belongs to a different experiment")
+    for key in ("backbone_source", "backbone_checkpoint", "decoder_template", "source_file_sha256"):
+        if previous.get("initialization", {}).get(key) != payload.get("initialization", {}).get(key):
+            raise ValueError("Newer resume checkpoint has a different initialization")
+
+
 def resolved_task_config(args, action=None):
     config = load_config(args.config, expand_env=False)
     if args.output is not None:
@@ -100,7 +116,9 @@ def run_task(action, argv=None):
             import torch
             payload = torch.load(args.resume, map_location="cpu", weights_only=False)
             latest = output / ("checkpoints/latest.pt" if config["task"] == "mask3d" else "checkpoints/checkpoint.pth")
-            if latest.exists() and file_sha256(latest) != file_sha256(args.resume):
+            if config["task"] == "mask3d":
+                validate_resume_frontier(latest, args.resume, payload)
+            elif latest.exists() and file_sha256(latest) != file_sha256(args.resume):
                 raise ValueError("Resume would overwrite a newer checkpoint; use a fresh output directory")
             if config["task"] == "mask3d" and (output / "metrics.jsonl").exists():
                 for line in (output / "metrics.jsonl").read_text().splitlines():

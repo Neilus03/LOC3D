@@ -1,0 +1,12 @@
+extends: mask3d_low_data.yaml
+name: mask3d_official_low_annotation
+description: Official sparse mesh-vertex labels; unobserved objects stay unknown.
+data:
+  scans_root: null
+  scannet_gt_cache_root: null
+  limited_annotation:
+    prepared_root: ${DELIMIT3D_LOW_ANNOTATION_ROOT}
+    budget_points: 200
+train:
+  evaluation_epochs: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600]
+  checkpoint_epochs: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600]

@@ -169,6 +169,8 @@ def _split_scene_ids(path: str | Path) -> set[str]:
 
 def _validate_config(config):
     """Validate the real task interface for every supported backbone."""
+    from .low_annotation import validate_config
+    validate_config(config)
     from delimit3d.models.backbones import backbone_name, ptv3_recipe
     name = backbone_name(config)
     data, model = config["data"], config["model"]
@@ -631,6 +633,16 @@ def _make_dataset(
     split_key: str | None = None,
 ) -> MultiSceneDataset:
     data = config["data"]
+    if data.get("limited_annotation") is not None:
+        if split_key is not None:
+            raise ValueError("LA forbids dense training-evaluation loaders")
+        from .low_annotation_data import LowAnnotationDataset
+        from delimit3d.training.contracts import load_scene_ids
+        settings = data["limited_annotation"]
+        return LowAnnotationDataset(settings["prepared_root"],
+            load_scene_ids(_path(data["train_split" if train else "val_split"])),
+            train=train, budget=settings["budget_points"],
+            seed=config["experiment"]["seed"], granularity=parse_granularities(data)[0])
     selected_split_key = split_key or ("train_split" if train else "val_split")
     scene_dirs = build_scene_list(
         _path(data[selected_split_key]), Path(data["scans_root"])
@@ -722,7 +734,13 @@ def _make_targets(
     device: torch.device,
     *,
     class_aware: bool,
+    limited_annotation: bool = False,
 ) -> list[Any]:
+    if limited_annotation:
+        from .low_annotation_data import make_sparse_targets
+        return make_sparse_targets(batch, granularity, device, class_aware=class_aware)
+    if any(isinstance(meta, dict) and meta.get("limited_annotation") for meta in batch.scene_meta):
+        raise ValueError("Sparse LA batch reached dense target construction")
     targets = []
     for scene_index in range(batch.num_scenes):
         segments = batch.scan_segments[scene_index]
@@ -761,6 +779,13 @@ def _make_targets(
 
 
 def _concat_segments(batch: Any, device: torch.device) -> torch.Tensor:
+    sparse = [isinstance(meta, dict) and bool(meta.get("limited_annotation")) for meta in batch.scene_meta]
+    if any(sparse):
+        if not all(sparse):
+            raise ValueError("Dense and sparse scenes cannot share a training/evaluation batch")
+        from .sparse_supervision import geometry_voxel_segments
+        return geometry_voxel_segments(batch.points.to(device=device, non_blocking=True),
+                                       batch.point_offsets.to(device=device), grid_size=.05)
     if any(segment is None for segment in batch.scan_segments):
         raise RuntimeError("Every scene must provide ScanNet segment ids")
     return torch.cat(
@@ -825,6 +850,9 @@ def _evaluate_impl(
             _concat_segments(batch, device),
             scene_offsets=batch.point_offsets.to(device),
         )
+        if any(isinstance(meta, dict) and meta.get("limited_annotation") for meta in batch.scene_meta):
+            from .low_annotation import validate_voxel_mapping
+            validate_voxel_mapping(predictions)
         point_parts = batch.split_tensor(batch.points)
         for scene_index, prediction in enumerate(predictions):
             gt_labels = batch.labels_by_granularity[granularity][scene_index]
@@ -1017,6 +1045,8 @@ def main(argv=None, *, config=None) -> None:
     args = _parse_args(argv)
     config = load_config(args.config) if config is None else config
     _validate_config(config)
+    from .low_annotation import enabled, SupervisionAudit, suppress_empty_adamw_update, validate_voxel_mapping
+    limited_annotation = enabled(config)
     from delimit3d.tasks.data_identity import mask3d_data_identity
     from delimit3d.tasks.contracts import model_contract
     config["_data_identity"] = mask3d_data_identity(config)
@@ -1037,6 +1067,8 @@ def main(argv=None, *, config=None) -> None:
     distributed, rank, local_rank, world_size, device, eval_group = (
         _distributed_runtime(args.device)
     )
+    if limited_annotation and distributed:
+        raise ValueError("The matched LA recipe requires one GPU and real five-scene batches")
     v2_probe = _load_v2_probe_contract(
         args,
         config_path=args.config,
@@ -1276,7 +1308,10 @@ def main(argv=None, *, config=None) -> None:
         else None
     )
 
-    if model_config.get("mask_only", False):
+    if limited_annotation:
+        from .sparse_supervision import SparseMask3DCriterion
+        criterion_type = SparseMask3DCriterion
+    elif model_config.get("mask_only", False):
         from delimit3d.tasks.mask3d.losses.mask3d_mask_only_loss import Mask3DMaskOnlyCriterion
         criterion_type = Mask3DMaskOnlyCriterion
         if class_aware or eval_config.get("report_dbscan", False):
@@ -1399,6 +1434,13 @@ def main(argv=None, *, config=None) -> None:
     max_epochs = int(train_config.get("max_epochs", 100))
     eval_every = int(train_config.get("eval_every_epochs", 10))
     save_every = int(train_config.get("save_every_epochs", 10))
+    evaluation_epochs = train_config.get("evaluation_epochs")
+    checkpoint_epochs = train_config.get("checkpoint_epochs")
+    for cadence in (evaluation_epochs, checkpoint_epochs):
+        if cadence is not None and (not isinstance(cadence, list) or not cadence
+                or any(type(epoch) is not int or not 1 <= epoch <= max_epochs for epoch in cadence)
+                or cadence != sorted(set(cadence)) or cadence[-1] != max_epochs):
+            raise ValueError("Explicit evaluation/checkpoint epochs must be sorted, unique, and include the final epoch")
     report_loss_components = bool(
         train_config.get("report_loss_components", False)
     )
@@ -1728,6 +1770,10 @@ def main(argv=None, *, config=None) -> None:
             if train_config.get("persistent_workers", True):
                 raise ValueError("Epoch seeding requires persistent_workers=false")
             set_seed(seed + epoch)
+        supervision_audit = None
+        if limited_annotation:
+            train_dataset.epoch = epoch
+            supervision_audit = SupervisionAudit()
         epoch_start_time = time.perf_counter()
         if train_sampler is not None:
             train_sampler.set_epoch(epoch)
@@ -1780,13 +1826,18 @@ def main(argv=None, *, config=None) -> None:
                 granularity,
                 device,
                 class_aware=class_aware,
+                limited_annotation=limited_annotation,
             )
+            if supervision_audit is not None:
+                supervision_audit.observe(batch, targets)
             predictions = wrapped(
                 points,
                 features,
                 segments,
                 scene_offsets=batch.point_offsets.to(device),
             )
+            if limited_annotation:
+                validate_voxel_mapping(predictions)
             losses = criterion(
                 predictions,
                 targets,
@@ -1899,6 +1950,10 @@ def main(argv=None, *, config=None) -> None:
                         ],
                         float(grad_clip_norm),
                     )
+                if supervision_audit is not None:
+                    effective = suppress_empty_adamw_update(optimizer, criterion)
+                    supervision_audit.effective_updates += int(effective)
+                    supervision_audit.empty_batches += int(not effective)
                 optimizer.step()
                 scheduler.step()
                 observed_optimizer_updates += 1
@@ -1964,8 +2019,13 @@ def main(argv=None, *, config=None) -> None:
             if epoch_record is None:
                 raise RuntimeError("rank-0 epoch record was not initialized")
             _append_jsonl(output_dir / "metrics.jsonl", epoch_record)
+            if supervision_audit is not None:
+                supervision_record = supervision_audit.finish(train_dataset.scene_ids, criterion, epoch)
+                _append_jsonl(output_dir / "supervision.jsonl", supervision_record)
 
-        if epoch % save_every == 0 and rank == 0:
+        evaluate_this_epoch = epoch in evaluation_epochs if evaluation_epochs is not None else epoch % eval_every == 0
+        checkpoint_this_epoch = epoch in checkpoint_epochs if checkpoint_epochs is not None else epoch % save_every == 0
+        if checkpoint_this_epoch and rank == 0:
             checkpoint_path = output_dir / "checkpoints" / f"epoch_{epoch:04d}.pt"
             torch.save(
                 {
@@ -1975,7 +2035,7 @@ def main(argv=None, *, config=None) -> None:
                     "data_identity": config["_data_identity"],
                     "baseline_config_sha256": baseline_config_hash,
                     "deterministic_epoch_seed": seed + epoch + 1,
-                    "validation_completed": epoch % eval_every != 0,
+                    "validation_completed": not evaluate_this_epoch,
                     "optimizer_state_dict": optimizer.state_dict(),
                     "scheduler_state_dict": scheduler.state_dict(),
                     "first_train_set_loss": first_train_set_loss,
@@ -1987,7 +2047,7 @@ def main(argv=None, *, config=None) -> None:
             )
             log.info("saved %s", checkpoint_path)
 
-        if epoch % eval_every == 0:
+        if evaluate_this_epoch:
             _wait_for_rank0_eval(distributed, eval_group)
             if rank == 0:
                 report_dbscan = bool(eval_config.get("report_dbscan", True)) and not args.skip_dbscan

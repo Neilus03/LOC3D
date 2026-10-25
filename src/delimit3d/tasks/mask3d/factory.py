@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from delimit3d.models.backbones import backbone_name, ptv3_recipe
 from delimit3d.models.concerto_wrapper import configure_direct_decoder_inputs, tensor_hash, component_counts
-from .initialization import initialize_litept_mask3d_arm, load_decoder_template
+from .initialization import initialize_litept_mask3d_arm, load_decoder_template, load_litept_backbone_checkpoint
+from delimit3d.runtime.records import file_sha256
 from .model import LitePTMask3DModel
 from .ptv3 import ptv3_model_type
 
@@ -38,6 +39,11 @@ def build_model(config, device):
             backbone_checkpoint=initialization.get("backbone_checkpoint"),
             freeze_backbone=initialization.get("freeze_backbone", False),
         )
+        if initialization.get("scratch_checkpoint"):
+            if initialization["backbone_source"] != "scratch":
+                raise ValueError("scratch_checkpoint is only valid for the scratch arm")
+            report["backbone_checkpoint"] = load_litept_backbone_checkpoint(model, initialization["scratch_checkpoint"])
+            report["backbone_state_sha256"] = model.backbone_state_hash()
     else:
         # Load the original 72D decoder strictly before changing input widths.
         decoder = load_decoder_template(model, initialization["decoder_template"])
@@ -57,4 +63,9 @@ def build_model(config, device):
             "projection_initialization": projection, "parameters": component_counts(model),
             "official_mask3d_weights_loaded": False,
         }
+    report["source_file_sha256"] = {
+        key: file_sha256(initialization[key])
+        for key in ("decoder_template", "backbone_checkpoint", "scratch_checkpoint")
+        if initialization.get(key)
+    }
     return model, report

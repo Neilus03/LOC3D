@@ -51,6 +51,22 @@ python scripts/evaluate.py --config configs/tasks/mask3d_litept.yaml \
 
 Use a single worker for evaluation. Training supports the retained distributed engine. Changing the batch/world-size layout changes the update contract and must be recorded.
 
+### Low-data and low-annotation experiments
+
+Use [the limited-supervision workflow](limited_supervision.md) to prepare, verify,
+train, resume and evaluate a matched scratch/pretrained LitePT-S* pair. Low-data
+uses dense annotations on fixed custom 1/5/10/20% scene subsets. Low-annotation
+uses the official 20/50/100/200 vertex allocations across all 1,201 training
+scenes, with a separate sparse loss and geometry-derived voxel masks. Both use
+all 312 densely labelled validation scenes for evaluation.
+
+These presets use **equal encoder and decoder learning rates of 1e-4**, 600
+natural epochs and five scenes per update. Their equal-LR recipe differs from
+the generic Mask3D recipe above. A point budget is not implemented by truncating
+dense targets: unannotated vertices remain unknown, and unmatched queries do not
+receive no-object supervision. The guide records the resulting protocol and
+checkpoint boundaries explicitly.
+
 ## AGILE3D
 
 ```bash

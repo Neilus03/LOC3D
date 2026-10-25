@@ -8,6 +8,8 @@ def model_contract(config):
              if key not in {"litept_root", "freeze_encoder", "backbone_name", "litept_variant"}}
     # FPN selection changes the readout even when tensor widths agree.
     result = {"task": config["task"], "backbone": name, "model": model}
+    if config["task"] == "mask3d" and config.get("data", {}).get("limited_annotation"):
+        result["mask_domain"] = "geometry_voxels"
     if config["task"] == "agile3d":
         result.update(voxel_size_m=config["protocol"]["voxel_size_m"],
                       input_features=config["protocol"]["input_features"])

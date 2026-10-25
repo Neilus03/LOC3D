@@ -103,6 +103,22 @@ python scripts/prepare_data.py --action task-inputs --task mask3d \
 
 Mesh vertex order, RGB and area-weighted normals are kept together. Instance/segment targets come from official ScanNet aggregation, segmentation and label metadata. No teacher masks or CHORUS checkout are needed for task training.
 
+For **low-data**, keep these dense inputs and use the fixed scene subsets made by
+`scripts/limited_supervision.py prepare --protocol low-data`. The custom seed-42
+subsets contain 12, 60, 120 or 240 scenes; they are separate from the official
+ScanNet Data-Efficient limited-scene splits.
+
+For **low-annotation**, run `scripts/prepare_low_annotation.py` on the raw ScanNet
+meshes, these geometry packs and the official `points.zip` archive. It verifies
+the archive hash and exact original mesh vertex order, then exports geometry,
+only the selected training labels, and separate dense validation labels. The
+training loader never receives a dense GT cache. Official duplicate index entries
+are preserved; the budgets do not imply that every object is annotated.
+
+See [the limited-supervision guide](limited_supervision.md) for the archive,
+complete preparation command, verification and experiment generation. Existing
+prepared output is immutable; choose a new directory for a different input set.
+
 ## ScanNet inputs for AGILE3D
 
 Download the official processed benchmark described in the [pinned AGILE3D benchmark guide](https://github.com/ywyue/AGILE3D/tree/b73638da41edbabe52a1b578d52ddeb8fa552173/benchmark). Set the paths to its processed PLY files, training/validation sample JSON mappings, and SO `object_ids.npy` / `object_classes.txt` files. Keep the official object mappings and click indices.

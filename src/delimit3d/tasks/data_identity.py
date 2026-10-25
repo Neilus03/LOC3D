@@ -47,6 +47,8 @@ def agile3d_data_identity(paths, *, training=True):
 
 
 def mask3d_data_identity(config, *, evaluation=False):
+    if config["data"].get("limited_annotation") is not None:
+        return low_annotation_data_identity(config, evaluation=evaluation)
     from .mask3d.data.training_pack import _resolve_pack_dir
     from .mask3d.data.scannet_gt_cache import cache_file
     data = config["data"]
@@ -66,3 +68,46 @@ def mask3d_data_identity(config, *, evaluation=False):
                 if path.is_file() and path.name.endswith((".labels.ply", ".segs.json", ".aggregation.json")):
                     records[scene][path.name] = file_sha256(path)
     return {"splits": {key: file_sha256(data[key]) for key in splits}, "scenes": records}
+
+
+def low_annotation_data_identity(config, *, evaluation=False):
+    """Hash consumed sanitized assets and verify their sealed preparation record."""
+    data = config["data"]
+    settings = data["limited_annotation"]
+    root = Path(settings["prepared_root"]).resolve(strict=True)
+    manifest_path = root / "data_manifest.json"
+    manifest_hash = file_sha256(manifest_path)
+    if (root / "data_manifest.sha256").read_text().strip() != manifest_hash:
+        raise ValueError("LA data preparation manifest changed")
+    manifest = json.loads(manifest_path.read_text())
+    if manifest.get("hidden_training_annotations_exported") is not False:
+        raise ValueError("LA data must contain only selected training annotations")
+    budget = int(settings["budget_points"])
+    if budget not in manifest["budgets"]:
+        raise ValueError("Annotation budget was not prepared")
+    keys = ("val_split",) if evaluation else ("train_split", "val_split")
+    splits = {key: load_scene_ids(Path(data[key])) for key in keys}
+    if set(splits.get("train_split", [])) & set(splits["val_split"]):
+        raise ValueError("LA train and validation splits overlap")
+    records = {}
+    for key, scene_ids in splits.items():
+        allowed = set(manifest["scene_ids"]["train" if key == "train_split" else "validation"])
+        if len(set(scene_ids)) != len(scene_ids) or not set(scene_ids) <= allowed:
+            raise ValueError(f"LA {key} contains duplicate or foreign scenes")
+        for scene in scene_ids:
+            relative_paths = [f"geometry/{scene}.npz",
+                              f"train_annotations/{budget}/{scene}.npz" if key == "train_split"
+                              else f"validation/{scene}.npz"]
+            records[scene] = {}
+            for relative in relative_paths:
+                path = (root / relative).resolve(strict=True)
+                if not path.is_relative_to(root):
+                    raise ValueError("LA asset escapes its prepared data root")
+                expected = manifest["files"][relative]
+                digest = file_sha256(path)
+                if path.stat().st_size != expected["bytes"] or digest != expected["sha256"]:
+                    raise ValueError(f"Sealed LA asset changed: {relative}")
+                records[scene][relative] = digest
+    return {"protocol": "scannet_official_limited_annotation", "budget_points": budget,
+            "preparation_manifest_sha256": manifest_hash,
+            "splits": {key: file_sha256(data[key]) for key in splits}, "scenes": records}

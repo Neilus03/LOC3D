@@ -1,0 +1,22 @@
+{
+  "protocol": "custom_nested_seed42_dense_scene_subsets",
+  "selection": "Random(42).shuffle(sorted(official_1201_train))[:floor(N*percent/100)]",
+  "files": {
+    "configs/splits/low_data/scannet_1pct_seed42.txt": {
+      "sha256": "8e94282233427bc5ba7b6400a2078f7e08ee3fb7a09300a49534ca565d2b3b9d",
+      "scenes": 12
+    },
+    "configs/splits/low_data/scannet_5pct_seed42.txt": {
+      "sha256": "a04442935bedd74016624cea2b4d70f8c6f6e8bfc2fedc5b26ee8593f5dfd081",
+      "scenes": 60
+    },
+    "configs/splits/low_data/scannet_10pct_seed42.txt": {
+      "sha256": "e045c37f249aae60664b8ac4cd98581a0aad10d51da110c1e99d5393b3adf501",
+      "scenes": 120
+    },
+    "configs/splits/low_data/scannet_20pct_seed42.txt": {
+      "sha256": "3dcddce9aafdf8d61e53bd1714034422c60f20de8e944806bc745ef6f6032312",
+      "scenes": 240
+    }
+  }
+}

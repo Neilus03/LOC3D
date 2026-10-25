@@ -16,12 +16,13 @@ The repository also supports the **SAM2 overlap-veto comparison**, earlier **UnS
 | --- | --- |
 | Pretraining | SAM2 dec0 with overlap veto or selected-proposal negatives; UnSAMv2 contrastive multiscale; UnSAMv2 hierarchy with or without VICReg |
 | Mask3D | LitePT-S*, Concerto-small, Sonata-small; trainable or frozen encoders |
+| Limited supervision | Matched scratch/pretrained LitePT-S* Mask3D: custom 1/5/10/20% scene subsets or official 20/50/100/200 annotated vertices per scene |
 | AGILE3D | The same backbones; official single-object and multi-object click evaluation |
 | Feature segmentation | Native features; cosine retrieval from user-selected points; spherical K-means |
 | Trained-model inference | LitePT-S* + Mask3D automatic instances; LitePT-S* + AGILE3D foreground/background clicks |
 | Browser workbench | Select registered checkpoints, load NPZ/PLY scenes, explore 3D predictions and download full-resolution results |
 
-Concerto and Sonata are pretrained baselines. Their native PTv3 feature dimensions and task adapters are retained. A comparison between these models and LitePT-S* includes differences in architecture, pretraining and feature interfaces. Utonia Small appears in the research experiment records; its adapter and the newer low-annotation runners are not yet integrated into these portable commands.
+Concerto and Sonata are pretrained baselines. Their native PTv3 feature dimensions and task adapters are retained. A comparison between these models and LitePT-S* includes differences in architecture, pretraining and feature interfaces. Utonia Small appears in the research experiment records; its adapter is not yet integrated into these portable commands. The [limited-supervision guide](docs/limited_supervision.md) provides preparation, sealed experiment generation, training, resume and evaluation commands for the LitePT-S* pair.
 
 ## Repository layout
 
@@ -57,6 +58,8 @@ Copy [env.example](env.example) to `.env`, edit the paths and source it from the
 | `scripts/pretrain.py` | `delimit3d-pretrain` | Train or resume a pretraining recipe |
 | `scripts/train.py` | `delimit3d-train` | Train or resume Mask3D/AGILE3D |
 | `scripts/evaluate.py` | `delimit3d-evaluate` | Evaluate a full task checkpoint |
+| `scripts/prepare_low_annotation.py` | Run with Python | Prepare and verify official ScanNet sparse annotations with original mesh vertex alignment |
+| `scripts/limited_supervision.py` | Run with Python | Prepare, verify, train and evaluate matched low-data or low-annotation experiments |
 | `scripts/probe.py` | `delimit3d-probe` | Segment native features directly |
 | `scripts/export_backbone.py` | `delimit3d-export` | Export a strict LitePT-S* backbone without training heads |
 | `scripts/calibrate_bn.py` | `delimit3d-calibrate-bn` | Produce a separate checkpoint with recalibrated BN buffers |
@@ -124,6 +127,7 @@ The full-scene recipes have substantial memory requirements. Follow the recipe-s
 - [Download pretrained weights](docs/weights.md): exact epoch-150 identity, checksums and loading.
 - [Pretrain](docs/pretraining.md): SAM2 and both earlier UnSAMv2 objectives, calibration, export and resume.
 - [Train and evaluate tasks](docs/tasks.md): native adapters, frozen/trainable controls, losses and click protocols.
+- [Low-data and low-annotation experiments](docs/limited_supervision.md): exact scene/point budgets, matched initialization, sparse supervision and checkpoint provenance.
 - [Feature segmentation](docs/probes.md): cosine retrieval and spherical K-means without task decoders.
 - [Reproduce earlier experiments](docs/reproduction.md): historical recipes, feature pipelines and checkpoint boundaries.
 - [Release migration](docs/migration.md): what was retained, removed and preserved.
