@@ -1,5 +1,8 @@
 # LOC3D
 
+[Uploading utonia_loc3d_two_scenes_divider_fixed.pdf…]()
+
+
 LOC3D learns **object- and part-aware 3D representations from projected 2D masks**. The main recipe trains **LitePT-S*** from scratch on 2,930 Structured3D scenes, using frozen SAM2 proposals and a contrastive objective through a projection head on native dec0 features. Positives share a selected proposal; negatives lie outside it and may share another, broader proposal. The overlapping masks provide local relations rather than a global scene partition.
 
 RGB, geometry and normals are encoder inputs; camera poses support projection during data preparation. No 3D object or part labels supervise pretraining. The projection head and 2D teacher are absent when reusing the encoder. Downstream supervised training and semantic classifiers use their own explicitly stated annotations.
