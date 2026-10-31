@@ -432,6 +432,8 @@ class FrameProposalCatalog:
     visible_indices: torch.Tensor
     proposal_offsets: torch.Tensor
     proposal_point_indices: torch.Tensor
+    # Restrict positive selection without removing any known-point relation.
+    positive_eligible: torch.Tensor | None = None
 
     def valid_proposal_indices(self) -> torch.Tensor:
         if (self.cell not in (*DEFAULT_2D_CELLS, "2d/sam2")) or not self.frame_id:
@@ -2124,6 +2126,8 @@ def sample_multigranular_frame_group_plan(
                     visible_indices=catalog.visible_indices.detach().cpu(),
                     proposal_offsets=catalog.proposal_offsets.detach().cpu(),
                     proposal_point_indices=catalog.proposal_point_indices.detach().cpu(),
+                    positive_eligible=(catalog.positive_eligible.detach().cpu()
+                                       if catalog.positive_eligible is not None else None),
                 )
                 for catalog in catalogs
             )
@@ -2151,6 +2155,13 @@ def sample_multigranular_frame_group_plan(
             if source_catalog.visible_indices.device != points.device:
                 raise ValueError("frame catalogs and points must share one device")
             valid_indices = catalog.valid_proposal_indices()
+            if catalog.positive_eligible is not None:
+                eligible = catalog.positive_eligible
+                if (eligible.dtype != torch.bool or eligible.ndim != 1
+                        or eligible.numel() != catalog.proposal_offsets.numel() - 1
+                        or eligible.device != catalog.proposal_offsets.device):
+                    raise ValueError("positive eligibility must be an aligned boolean proposal vector")
+                valid_indices = valid_indices[eligible[valid_indices]]
             for tensor_name, tensor in (
                 ("visible_indices", catalog.visible_indices),
                 ("proposal_point_indices", catalog.proposal_point_indices),

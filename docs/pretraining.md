@@ -50,6 +50,10 @@ Fragments are a geometry-based traversal of large scenes, retaining the logical 
 
 The command creates a scratch initialization beside a new run when `--initial-checkpoint` is omitted. Supply an existing initialization for a controlled comparison. It verifies the sealed data/code records and publishes an execution record binding those bytes, the initialization and both splits before training. Each rank rechecks the same record.
 
+## Sampling controls
+
+See [sampling_ablations.md](sampling_ablations.md) for matched hard-negative, overlap-veto and positive-area controls, their train-only area audit, common initialization/fixed panel, preserved LR horizon and checkpoint admission.
+
 ## Earlier UnSAMv2 contrastive multiscale
 
 This is the original local-BN, full-scene objective: dec0 contrastive plus dec3/dec2/dec1 weighted .2/.3/.5, scaled by .4 with a 20-epoch auxiliary warmup. It uses random sampling with replacement and a balanced three-cell permutation. Encoder LR is 1e-3, head LR 3e-3, weight decay .05, clip norm 1 and warmup 17.

@@ -1,0 +1,6 @@
+extends: ../../pretrain/sam2_selected_proposal_negatives.yaml
+name: sam2_sampling_no_feature_hard_epoch50
+ablation_variant: no_feature_hard
+ablation_activation_update: 6106
+# Preserve the nominal 150-epoch LR horizon; stop at the exact epoch-50 boundary.
+pause_after_update: 12210

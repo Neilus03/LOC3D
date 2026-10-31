@@ -314,6 +314,7 @@ def _v2_frame_catalogs(
     scene: Any,
     device: torch.device,
     cells: tuple[str, ...],
+    proposal_area_cutoff: int | None = None,
 ) -> dict[str, tuple[FrameProposalCatalog, ...]]:
     """Move one scene's immutable frame-local proposal catalogs to a rank device."""
 
@@ -322,6 +323,10 @@ def _v2_frame_catalogs(
         if not cell.startswith("2d/"):
             raise ValueError(f"V2 multigranular sampling is 2D-only, got {cell!r}")
         granularity = cell.split("/", 1)[1]
+        if proposal_area_cutoff is not None and any(
+            frame.proposal_areas is None for frame in scene.frames(granularity, "train")
+        ):
+            raise ValueError("area-filter ablation requires original 2D proposal areas")
         output[cell] = tuple(
             FrameProposalCatalog(
                 cell=cell,
@@ -340,6 +345,11 @@ def _v2_frame_catalogs(
                     frame.proposal_point_indices,
                     dtype=torch.long,
                     device=device,
+                ),
+                positive_eligible=(
+                    torch.as_tensor(frame.proposal_areas > proposal_area_cutoff,
+                                    dtype=torch.bool, device=device)
+                    if proposal_area_cutoff is not None else None
                 ),
             )
             for frame in scene.frames(granularity, "train")

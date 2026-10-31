@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "delimit3d"
-version = "0.3.3"
+version = "0.4.0"
 description = "LOC3D: object- and part-aware 3D representations from projected 2D masks"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -35,6 +35,8 @@ delimit3d-export = "delimit3d.pretraining.export:main"
 delimit3d-calibrate-bn = "delimit3d.cli.recalibrate_bn:main"
 delimit3d-infer = "delimit3d.inference.cli:main"
 delimit3d-demo = "delimit3d.inference.cli:demo_main"
+delimit3d-visualize = "delimit3d.visualization.suite:main"
+delimit3d-feature-diagnostics = "delimit3d.evaluation.feature_diagnostics_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

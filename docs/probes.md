@@ -72,3 +72,10 @@ remain research implementations outside those commands. Their experiment
 evidence can be documented without implying a portable command-line workflow.
 The code audit and transferred-file hashes are recorded in
 [`research_code_refresh_20261023.json`](../manifests/research_code_refresh_20261023.json).
+
+## Ground-truth-assisted common-grid diagnostics
+
+For original-vertex ScanNet20/200 targets, shared-cell pooling, GT-K clustering
+and GT-query cosine scoring, see [Frozen-feature diagnostics](feature_diagnostics.md).
+That separate command preserves background leakage and records its oracle
+inputs explicitly. It leaves this page's user-supplied-K/query interface intact.

@@ -1,0 +1,54 @@
+# Saved predictions only. No decoder replay or inference. Use a fresh output directory.
+# CPU: python scripts/visualization/run_suite.py --config THIS.yaml --output NEW --formats html png pdf
+version: 1
+seed: 42
+max_display_points: 20000
+max_analysis_points: 12000
+visualizations: [rgb, labels, prediction, clicks]
+scenes:
+  - scene_id: scene0568_00
+    dataset: ScanNet
+    kind: ply
+    path: /path/to/original/scene0568_00.ply
+    fields:
+      points: [x, y, z]
+      colors: [R, G, B]
+      labels: label
+    metadata:
+      background_ids: [0]
+      experiment_family: public_vs_256_update_adaptation
+    queries: []
+models:
+  - kind: agile3d_episode
+    name: LitePT + corresponding trained AGILE3D decoder
+    path: /path/to/saved_episode/record.json
+# Future evaluator export:
+# save_episode_export(NEW, scene, record={
+#   "episode_id": "dataset/scene/target-set", "mode": "recorded_benchmark",
+#   "targets": [{"target_id": "object25", "label_id": 25}], "background_id": 0,
+#   "prediction_target_map": {"1": "object25"},
+#   "prediction_domain": "tokens", "metric_domain": "raw_points",
+#   "click_budget": {"definition": "all clicks / target count", "maximum": 20,
+#                    "counts_background": True, "denominator": 1},
+#   "click_policy": "actual evaluator policy",
+#   "clicks": [{"click_id": "event0", "order": 0, "point_index": RAW_ID,
+#               "token_index": TOKEN_ID, "position": scene.points[RAW_ID].tolist(),
+#               "target_id": "object25", "polarity": "positive", "assigned_label_id": 25}],
+#   "frames": [{"frame_id": "after_first", "click_count": 1, "metrics": [
+#       {"name": "iou", "value": RECORDED_IOU, "unit": "fraction", "domain": "raw_points",
+#        "target_id": "object25"}]}],
+#   "model": {"encoder": {"checkpoint": EXACT_PATH, "sha256": SHA},
+#             "decoder": {"checkpoint": EXACT_DECODER, "sha256": DECODER_SHA},
+#             "decoder_trained_with_encoder_sha256": SHA,
+#             "preprocessing": EXACT_RECORDED_SETTINGS, "preprocessing_sha256": SETTINGS_SHA}},
+#   arrays={"predictions": STEP_BY_TOKEN_IDS, "inverse_map": ORIGINAL_INVERSE,
+#           "representative_indices": ORIGINAL_REPS, "target_labels": RAW_GT})
+# Modes: recorded_benchmark, controlled_replay, exploratory_replay. Native adaptive
+# sequences are NOT identical-click comparisons unless compare_click_sequences verifies them.
+# Existing 256-update ScanNet40 format can instead use:
+# kind: agile3d_scannet40
+# path: /root/public/evaluation/MO/predictions/{scene_id}.npz
+# trace_path: /root/public/evaluation/MO/traces/{scene_id}.json
+# cache_path: /root/feature_cache/public/{scene_id}.pt
+# model_record: {encoder: {...}, decoder: {...}, preprocessing: {...}}
+# source_snapshot: /root/freeze/source_4a1888213f0507eae86b51d16df76b7d8809ba7b.tar

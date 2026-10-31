@@ -1,0 +1,69 @@
+# CPU-only saved-feature research recipe. Replace /path/to inputs with real exports.
+# This is a schema example, not experimental evidence. It launches no inference.
+title: Matched checkpoint feature study
+seed: 42
+formats: [html, png, pdf]
+max_display_points: 16000
+max_analysis_points: 12000
+reference: Epoch 36
+visualizations: [rgb, labels, pca, similarity, delta, boundaries, norm]
+research:
+  features:
+    enabled: true
+    nearby_radius: 0.5       # Scene coordinate units; define units in scene metadata.
+    boundary_radius: 0.1
+    boundary_k: 8
+    # Optional: pin a saved numerical transform. All paths refer to immutable NPZ
+    # states from a previous suite run. Adding another checkpoint does not refit
+    # or recolor either state. Default fitting is independent per source/layer.
+    # pca_states:
+    #   Epoch 36/dec0: /path/to/previous/pca-state-36.npz
+    #   Epoch 50/dec0: /path/to/previous/pca-state-50.npz
+    requested_identities:
+      Epoch 36:
+        scene_id: scene0704_00
+        epoch: 36
+        query_original_point_ids: [87077]
+        # checkpoint_sha256: COPY_ACTUAL_RECORDED_CHECKPOINT_DIGEST_HERE
+      Epoch 50:
+        scene_id: scene0704_00
+        epoch: 50
+        query_original_point_ids: [87077]
+models:
+  - kind: cache
+    name: Epoch 36
+    path: /path/to/epoch36/{scene_id}.npz
+    features: {dec0: features}
+  - kind: cache
+    name: Epoch 50
+    path: /path/to/epoch50/{scene_id}.npz
+    features: {dec0: features}
+scenes:
+  - scene_id: scene0704_00
+    dataset: ScanNet
+    kind: npz
+    path: /path/to/original_order_scene.npz
+    queries: [87077]
+    metadata:
+      experiment: structured3d_scratch_pretraining_5cm
+      label_kind: instance
+      coordinate_units: meters
+      background_ids: [0]
+      example_selection: Fixed original query from the recorded epoch-36 study; no checkpoint substitution.
+# Example figure recipes for integration with the research suite. Similarity
+# scales are shared [-1,1]; scalar delta is [-2,2]. PCA color coordinates are
+# independent and must not be interpreted as aligned semantics.
+recipes:
+  - name: checkpoint_query_context
+    title: Fixed-query representation progression
+    panels: [rgb, labels, 'Epoch 36/dec0/similarity/q87077', 'Epoch 50/dec0/similarity/q87077']
+    columns: 4
+    sizes: [paper, presentation]
+    crop: {query_index: 87077, radius: 0.8}
+    caption: Same scene and original query point at the exact recorded checkpoints. Cosine affinity is a feature diagnostic; these panels are not downstream predictions.
+  - name: independent_frozen_pca
+    title: Frozen within-checkpoint feature projections
+    panels: [rgb, labels, 'Epoch 36/dec0/pca', 'Epoch 50/dec0/pca']
+    columns: 4
+    sizes: [paper, presentation]
+    caption: Each checkpoint has its own saved PCA center, basis, fitting point identities, and fixed component scales. Colors across independent fits do not establish semantic correspondence.

@@ -21,6 +21,11 @@ def main(argv=None):
     preview.add_argument("--show-config", action="store_true", help="Print the merged recipe without loading a model.")
     preview.add_argument("--allow-shared-proposal-negatives", action=argparse.BooleanOptionalAction, default=None)
     preview.add_argument("--sam2-maximum-raw-points", type=int, choices=(100_000, 500_000))
+    from delimit3d.training.sampling_ablation import VARIANTS
+    preview.add_argument("--ablation-variant", choices=VARIANTS)
+    preview.add_argument("--ablation-activation-update", type=int)
+    preview.add_argument("--proposal-area-cutoff", type=int)
+    preview.add_argument("--proposal-area-audit", type=Path)
     preview.add_argument("--source-root", type=Path)
     preview.add_argument("--train-split", type=Path)
     preview.add_argument("--holdout-split", type=Path)

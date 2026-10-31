@@ -1,0 +1,6 @@
+extends: ../../pretrain/sam2_selected_proposal_negatives.yaml
+name: sam2_sampling_overlap_veto_epoch50
+ablation_variant: overlap_veto
+ablation_activation_update: 6106
+# Preserve the nominal 150-epoch LR horizon; stop at the exact epoch-50 boundary.
+pause_after_update: 12210

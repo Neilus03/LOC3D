@@ -37,6 +37,8 @@ from .records import (
 
 def validate_negative_policy_resume(previous, current, checkpoint=None):
     """Reject a policy change before loading model or optimizer state."""
+    from delimit3d.training.sampling_ablation import validate_ablation_resume
+    validate_ablation_resume(previous, current)
     def read(config):
         flag = config.get("allow_shared_proposal_negatives", False)
         policy = negative_policy_name(flag)

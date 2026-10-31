@@ -55,6 +55,10 @@ def validate_execution_record(payload, args):
         raise ValueError("Execution record negative policy differs from the recipe")
     if getattr(args, "source_granularity", None) == "sam2":
         validate_point_limit(payload, getattr(args, "sam2_maximum_raw_points", 500_000))
+    from delimit3d.training.sampling_ablation import ablation_contract
+    contract = ablation_contract(args)
+    if payload.get("sampling_ablation", {}) != contract:
+        raise ValueError("Execution record sampling ablation differs from the recipe")
     return payload
 
 
@@ -63,6 +67,10 @@ def prepare_execution_record(args):
         return
     path = args.output_dir.with_name(args.output_dir.name + "_execution.json")
     expected = {"schema_version": SCHEMA, "passed": True, "trust_root": input_bindings(args)}
+    from delimit3d.training.sampling_ablation import ablation_contract
+    contract = ablation_contract(args)
+    if contract:
+        expected["sampling_ablation"] = contract
     flag = getattr(args, "allow_shared_proposal_negatives", False)
     if getattr(args, "source_granularity", None) == "sam2":
         expected.update(allow_shared_proposal_negatives=flag, negative_policy=negative_policy_name(flag),

@@ -2,7 +2,7 @@ include README.md CURRENT.md LICENSE.md THIRD_PARTY_NOTICES.md env.example
 recursive-include configs *.yaml *.json *.txt *.list
 recursive-include scripts *.py
 recursive-include environment *.md *.txt
-recursive-include docs *.md
+recursive-include docs *.md *.json
 recursive-include manifests *.json *.md
 include src/delimit3d/tasks/agile3d/protocol/LICENSE
 recursive-include third_party *.LICENSE

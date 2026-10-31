@@ -9,7 +9,7 @@ RGB, geometry and normals are encoder inputs; camera poses support projection du
 
 **LOC3D is the current project name.** The Python package, installed commands, `DELIMIT3D_*` environment variables and legacy default artifact paths retain `delimit3d` for compatibility. Historical experiments keep their original names and recipes.
 
-Start with the [research direction](docs/research.md) and [23 October experiment update](docs/research_update_20261023.md). The update distinguishes completed custom evaluations, frozen-feature diagnostics, pilot experiments and work without final results.
+Start with the [research direction](docs/research.md), [31 October code update](docs/release_update_20261031.md), and [23 October experiment evidence](docs/research_update_20261023.md). Code availability and CPU verification are separate from completed experiments and benchmark results.
 
 The repository also supports the **SAM2 overlap-veto comparison**, earlier **UnSAMv2 multigranular and multiscale recipes**, transfer through **Mask3D** and **AGILE3D**, and direct feature segmentation with cosine similarity or spherical K-means. Their results are not interchangeable with the main selected-proposal recipe.
 
@@ -22,6 +22,8 @@ The repository also supports the **SAM2 overlap-veto comparison**, earlier **UnS
 | Limited supervision | Matched scratch/pretrained LitePT-S* Mask3D: custom 1/5/10/20% scene subsets or official 20/50/100/200 annotated vertices per scene |
 | AGILE3D | The same backbones; official single-object and multi-object click evaluation |
 | Feature segmentation | Native features; cosine retrieval from user-selected points; spherical K-means |
+| Visualization | Saved-feature galleries, matched point/mesh views, PCA, query similarity and recorded task episodes |
+| Research diagnostics | Common-grid frozen-feature scoring and controlled sampling ablations with explicit protocol records |
 | Trained-model inference | LitePT-S* + Mask3D automatic instances; LitePT-S* + AGILE3D foreground/background clicks |
 | Browser workbench | Select registered checkpoints, load NPZ/PLY scenes, explore 3D predictions and download full-resolution results |
 
@@ -68,6 +70,9 @@ Copy [env.example](env.example) to `.env`, edit the paths and source it from the
 | `scripts/calibrate_bn.py` | `delimit3d-calibrate-bn` | Produce a separate checkpoint with recalibrated BN buffers |
 | `scripts/infer.py` | `delimit3d-infer` | List trained models or predict masks on an unlabelled scene |
 | `scripts/demo.py` | `delimit3d-demo` | Serve the local 3D segmentation workbench |
+| `scripts/visualization/run_suite.py` | `delimit3d-visualize` | Build reproducible visualization galleries from saved inputs |
+| `scripts/feature_diagnostics.py` | `delimit3d-feature-diagnostics` | Prepare targets and score common-grid frozen features |
+| `scripts/sampling_ablation.py` | Run with Python | Prepare controlled sampling ablations and verify checkpoint identity |
 
 Every command has `--help`. Config inheritance merges mappings and replaces lists; explicit flags override defaults. Task settings can be overridden with `--set section.key=value`.
 
@@ -132,6 +137,8 @@ The full-scene recipes have substantial memory requirements. Follow the recipe-s
 - [Train and evaluate tasks](docs/tasks.md): native adapters, frozen/trainable controls, losses and click protocols.
 - [Low-data and low-annotation experiments](docs/limited_supervision.md): exact scene/point budgets, matched initialization, sparse supervision and checkpoint provenance.
 - [Feature segmentation](docs/probes.md): cosine retrieval and spherical K-means without task decoders.
+- [Visualization](docs/visualization.md): saved-input galleries, rendering, query affinity and evidence boundaries.
+- [31 October code update](docs/release_update_20261031.md): visualization, sampling ablations, frozen-feature diagnostics and audit scope.
 - [Reproduce earlier experiments](docs/reproduction.md): historical recipes, feature pipelines and checkpoint boundaries.
 - [Release migration](docs/migration.md): what was retained, removed and preserved.
 - [11–17 October update](docs/weekly_update_20261017.md): current completed evidence, experiment contracts and release scope.

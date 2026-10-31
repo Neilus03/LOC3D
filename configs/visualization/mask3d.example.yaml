@@ -1,0 +1,24 @@
+title: Mask3D prediction atlas
+seed: 42
+formats: [html, png, pdf]
+visualizations: [rgb, labels, prediction, confidence]
+models:
+  - kind: mask3d
+    name: Mask3D checkpoint
+    path: ${VIS_CACHE_ROOT}/mask3d/{scene_id}.npz
+    # Export points in original order, pred_masks [N,Q], pred_logits [Q,C+1].
+    # For voxel/segment masks, export the original-point -> row inverse_map.
+    mask_key: pred_masks
+    class_key: pred_logits
+    mask_layout: NQ
+    mask_threshold: 0.5
+    class_threshold: 0.0
+    no_object_index: -1
+    # CHORUS raw output: mask_key: mask_logits, class_key: object_logits,
+    # mask_layout: QN. This is visualization postprocessing, not benchmark AP.
+scenes:
+  - scene_id: scene0000_00
+    dataset: ScanNet
+    kind: npz
+    path: ${VIS_DATA_ROOT}/scannet/scene0000_00.npz
+    metadata: {background_ids: [0], ignore_label_ids: [-1]}

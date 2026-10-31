@@ -142,6 +142,8 @@ def load_sam2_source(manifest_path: Path, *, input_features, coordinate_normaliz
         frame_offsets = np.asarray(cache["proposal_frame_offsets"], dtype=np.int64)
         offsets = np.asarray(cache["proposal_point_offsets"], dtype=np.int64)
         members = np.asarray(cache["proposal_point_indices"], dtype=np.int64)
+        proposal_areas = (np.asarray(cache["proposal_areas"], dtype=np.int64)
+                          if "proposal_areas" in cache.files else None)
     if ids != manifest["frames"]["physical"] or splits.shape != (len(ids),) or not np.isin(splits, (0, 1)).all():
         raise ValueError(f"{cache_path}: frame/split identity drift")
     for value, count, terminal in ((known_offsets, len(ids), len(known)),
@@ -152,6 +154,8 @@ def load_sam2_source(manifest_path: Path, *, input_features, coordinate_normaliz
     for value in (known, members):
         if value.size and (value.min() < 0 or value.max() >= n):
             raise ValueError(f"{cache_path}: point index outside scene")
+    if proposal_areas is not None and (proposal_areas.shape != (len(offsets) - 1,) or (proposal_areas < 0).any()):
+        raise ValueError(f"{cache_path}: proposal area alignment drift")
     frames = []
     for index, frame_id in enumerate(ids):
         split = "train" if splits[index] == 0 else "heldout"
@@ -165,6 +169,7 @@ def load_sam2_source(manifest_path: Path, *, input_features, coordinate_normaliz
             proposal_offsets=offsets[begin:end + 1] - start,
             # Keep every overlap relation, not only selected/trainable masks.
             proposal_point_indices=members[start:stop],
+            proposal_areas=proposal_areas[begin:end] if proposal_areas is not None else None,
         ))
     return SceneSource(scene_id=audit.scene_id, manifest_path=path, manifest_sha256=audit.manifest_sha256,
                        points=points, features=features, labels_by_key={}, raw_frames=tuple(frames),
@@ -221,7 +226,7 @@ def sam2_scene_for_visit(scene, *, epoch: int, global_seed: int):
         prefix = np.concatenate(([0], np.cumsum(keep, dtype=np.int64)))
         offsets = prefix[frame.proposal_offsets]
         frames.append(RawFrame(frame.granularity, frame.physical_frame_id, frame.split,
-                               known, offsets, mapped[keep]))
+                               known, offsets, mapped[keep], frame.proposal_areas))
     digest = hashlib.sha256(indices.tobytes()).hexdigest()[:16]
     return replace(scene, points=scene.points[indices], features=scene.features[indices],
                    colors=scene.colors[indices], normals=scene.normals[indices], raw_frames=tuple(frames),

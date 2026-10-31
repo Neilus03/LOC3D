@@ -46,6 +46,13 @@ def _comma_separated_nonnegative_ints(value: str) -> tuple[int, ...]:
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    from delimit3d.training.sampling_ablation import VARIANTS, REFERENCE_FEATURE_HARD_ACTIVATION_UPDATE
+    parser.add_argument("--ablation-variant", choices=VARIANTS, default="full")
+    parser.add_argument("--proposal-area-cutoff", type=int)
+    parser.add_argument("--proposal-area-audit", type=Path)
+    parser.add_argument("--ablation-activation-update", type=int,
+                        default=REFERENCE_FEATURE_HARD_ACTIVATION_UPDATE,
+                        help="Fixed feature-hard activation for controlled variants; record the reference's actual update.")
     parser.add_argument("--config", type=Path, help="YAML/JSON recipe; explicit CLI flags override it.")
     parser.add_argument(
         "--allow-shared-proposal-negatives", action=argparse.BooleanOptionalAction,
@@ -510,6 +517,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     args = parse_with_config(parser, argv)
     if args.sam2_maximum_raw_points != 500_000 and args.source_granularity != "sam2":
         parser.error("SAM2 training point limits require source_granularity=sam2")
+    from delimit3d.training.sampling_ablation import validate_ablation_args
+    try:
+        validate_ablation_args(args)
+    except (ValueError, OSError, TypeError) as error:
+        parser.error(str(error))
     return args
 
 

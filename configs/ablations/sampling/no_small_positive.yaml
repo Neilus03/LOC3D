@@ -1,0 +1,8 @@
+extends: ../../pretrain/sam2_selected_proposal_negatives.yaml
+name: sam2_sampling_no_small_positive_epoch50
+ablation_variant: no_small_positive
+ablation_activation_update: 6106
+# Preserve the nominal 150-epoch LR horizon; stop at the exact epoch-50 boundary.
+pause_after_update: 12210
+proposal_area_cutoff: ${DELIMIT3D_AREA_CUTOFF}
+proposal_area_audit: ${DELIMIT3D_AREA_AUDIT}

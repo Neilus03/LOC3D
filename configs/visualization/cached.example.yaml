@@ -1,0 +1,33 @@
+title: LOC3D representation atlas
+cpu_only: true
+seed: 42
+formats: [html, png, pdf, ply]
+max_display_points: 12000
+max_analysis_points: 12000
+queries: {count: 2}  # Geometry-selected; use a list for original point indices.
+reference: LitePT-S* (public)
+visualizations: [rgb, labels, pca, similarity, delta, boundaries, norm, prediction, confidence, clicks]
+
+# Paths are relative to this file; environment variables and absolute paths work.
+# Each cache must contain ordered raw points or another verified geometry witness.
+models:
+  - name: LitePT-S* (public)
+    kind: cache
+    path: ${VIS_CACHE_ROOT}/public/{scene_id}.npz
+    features: {dec0: features}
+  - name: LOC3D (exact saved checkpoint)
+    kind: cache
+    path: ${VIS_CACHE_ROOT}/delimit3d/{scene_id}.npz
+    features: {dec0: features}
+
+scenes:
+  - scene_id: scene0000_00
+    dataset: ScanNet
+    kind: npz
+    path: ${VIS_DATA_ROOT}/scannet/scene0000_00.npz
+    metadata: {background_ids: [0], ignore_label_ids: [-1]}
+  - scene_id: example_room
+    dataset: S3DIS
+    kind: npz
+    path: ${VIS_DATA_ROOT}/s3dis/example_room.npz
+    metadata: {ignore_label_ids: [-1]}

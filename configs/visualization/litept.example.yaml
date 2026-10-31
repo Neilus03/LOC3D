@@ -1,0 +1,26 @@
+title: LitePT encoder inspection
+seed: 42
+formats: [html, png, pdf]
+max_display_points: 12000
+queries: {count: 2}
+models:
+  - name: LitePT checkpoint
+    kind: litept
+    checkpoint: ${VIS_CHECKPOINT}
+    litept_root: ${DELIMIT3D_LITEPT_ROOT}
+    device: cuda
+    grid_size: 0.05
+    input_features: rgbn6
+    center_shift: center_xy_ground_z
+    normalize_normals: true
+    rgb_mean: [0.0, 0.0, 0.0]
+    rgb_std: [1.0, 1.0, 1.0]
+    levels: [dec0, dec1, dec2, dec3, enc4]
+    # These are identity RGB normalization; replace with the checkpoint recipe.
+scenes:
+  - scene_id: scene_00000
+    dataset: Structured3D
+    kind: directory
+    path: ${VIS_DATA_ROOT}/scene_00000
+    fields: {points: points, colors: colors, normals: normals}
+    # Do not relabel pseudomasks as ground truth. Leave labels unset unless GT.

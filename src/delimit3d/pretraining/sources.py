@@ -50,6 +50,8 @@ class RawFrame:
     visible_indices: np.ndarray
     proposal_offsets: np.ndarray
     proposal_point_indices: np.ndarray
+    # Original image mask areas survive geometry fragmentation unchanged.
+    proposal_areas: np.ndarray | None = None
 
 
 @dataclass(frozen=True)

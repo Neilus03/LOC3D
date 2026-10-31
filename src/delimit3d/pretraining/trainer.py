@@ -172,6 +172,10 @@ from .validation import (
 def _run(args=None) -> None:
     if args is None:
         args = parse_args()
+    from delimit3d.training.sampling_ablation import NegativeBudget, negative_budget, ablation_contract, validate_ablation_args
+    validate_ablation_args(args)
+    sampling_ablation = ablation_contract(args)
+    train_allow_shared = bool(args.allow_shared_proposal_negatives) and args.ablation_variant != "overlap_veto"
     # Keep the training/sampling seed independent from the immutable artifacts
     # when a controlled seed repeat is requested.  Legacy invocations retain
     # the previous behavior because both defaults fall back to --seed.
@@ -1351,6 +1355,7 @@ def _run(args=None) -> None:
                     }
                 )
             ),
+            **sampling_ablation,
             "sampling_profile": args.sampling_profile,
             **({"allow_shared_proposal_negatives": args.allow_shared_proposal_negatives,
                 "negative_policy": negative_policy_name(args.allow_shared_proposal_negatives)}
@@ -1673,6 +1678,8 @@ def _run(args=None) -> None:
                 "source_cell_schedule",
                 "source_cell_schedule_seed",
                 "sampling_profile",
+                *sampling_ablation,
+                "ablation_variant",
                 "allow_shared_proposal_negatives",
                 "negative_policy",
                 "sampling",
@@ -1691,7 +1698,10 @@ def _run(args=None) -> None:
             for key in base_immutable:
                 previous_value = previous.get(key)
                 resolved_value = resolved.get(key)
-                if key == "allow_shared_proposal_negatives":
+                if key == "ablation_variant":
+                    previous_value = previous.get(key, "full")
+                    resolved_value = resolved.get(key, "full")
+                elif key == "allow_shared_proposal_negatives":
                     previous_value = previous.get(key, False)
                     resolved_value = resolved.get(key, False)
                 if key == "negative_policy":
@@ -2425,6 +2435,7 @@ def _run(args=None) -> None:
                 optimizer.zero_grad(set_to_none=True)
                 if (
                     sampling_mode == V2_SAMPLING_MODE
+                    and args.ablation_variant == "full"
                     and not bool(feature_hard_state["enabled"])
                     and bool(
                         feature_hard_state.get(
@@ -2446,6 +2457,17 @@ def _run(args=None) -> None:
                 ):
                     feature_hard_state["enabled"] = True
                     feature_hard_state["activation_update"] = int(update)
+                if (args.ablation_variant != "full" and not feature_hard_state["enabled"]
+                        and update >= args.ablation_activation_update):
+                    feature_hard_state.update(enabled=True, activation_update=int(update),
+                                              activation_policy="fixed_to_reference_actual_activation")
+                current_ablation_budget = (
+                    NegativeBudget(int(sampling.uniform_negatives), int(sampling.spatial_hard_negatives),
+                                   int(sampling.feature_hard_negatives) if feature_hard_state["enabled"] else 0)
+                    if args.ablation_variant == "full" else
+                    negative_budget(args.ablation_variant, update=update,
+                                    activation_update=args.ablation_activation_update)
+                )
                 scene_metric_sums = [0.0 for _ in range(6)]
                 multiscale_metric_sums: dict[str, dict[str, float]] = {
                     name: {
@@ -2591,6 +2613,7 @@ def _run(args=None) -> None:
                                     scene=scene,
                                     device=device,
                                     cells=tuple(source_cells),
+                                    proposal_area_cutoff=args.proposal_area_cutoff,
                                 ),
                                 total_proposal_quota=int(
                                     sampling.proposals_per_forward
@@ -2600,24 +2623,20 @@ def _run(args=None) -> None:
                                     sampling.positive_pairs_per_proposal
                                 ),
                                 num_uniform_negatives=int(
-                                    sampling.uniform_negatives
+                                    current_ablation_budget.uniform
                                 ),
                                 num_spatial_hard_negatives=int(
-                                    sampling.spatial_hard_negatives
+                                    current_ablation_budget.spatial
                                 ),
                                 spatial_candidate_pool=int(
                                     sampling.spatial_candidate_pool
                                 ),
-                                num_feature_hard_negatives=(
-                                    int(sampling.feature_hard_negatives)
-                                    if bool(feature_hard_state["enabled"])
-                                    else 0
-                                ),
+                                num_feature_hard_negatives=int(current_ablation_budget.feature),
                                 feature_candidate_pool=int(
                                     sampling.feature_candidate_pool
                                 ),
                                 require_negative_proposal_membership=True,
-                                allow_shared_proposal_negatives=args.allow_shared_proposal_negatives,
+                                allow_shared_proposal_negatives=train_allow_shared,
                                 require_hierarchy_routes=not single_granularity,
                                 grid_size=args.grid_size,
                                 operation=sampling_visit.operation,
@@ -3489,11 +3508,16 @@ def _run(args=None) -> None:
                             row["sampling_health"] = _summarize_v2_sampling(
                                 flattened_sampling,
                                 cells=source_cells,
-                                allow_shared_proposal_negatives=args.allow_shared_proposal_negatives,
+                                allow_shared_proposal_negatives=train_allow_shared,
                             )
-                            row["sampling_health"]["feature_hard_enabled"] = bool(
-                                feature_hard_state["enabled"]
-                            )
+                            row["sampling_health"]["feature_hard_enabled"] = current_ablation_budget.feature > 0
+                            if sampling_ablation:
+                                row["ablation_negative_budget"] = {
+                                    "uniform": current_ablation_budget.uniform,
+                                    "spatial": current_ablation_budget.spatial,
+                                    "feature": current_ablation_budget.feature,
+                                    "requested_total": current_ablation_budget.total,
+                                }
                             flattened_token_pure = [
                                 record
                                 for rank_records in gathered_token_pure
@@ -4239,6 +4263,7 @@ def _run(args=None) -> None:
                 "token_pure_dec0": bool(model.token_pure_dec0),
                 "hierarchy_supervision": resolved["hierarchy_supervision"],
                 "normalization": resolved["normalization"],
+                **sampling_ablation,
                 "feature_hard_gate": feature_hard_state,
                 "cumulative_health": cumulative_health_final,
                 "auxiliary_budget_applicable": bool(hierarchy_enabled or args.multiscale_supervision),

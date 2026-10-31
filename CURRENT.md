@@ -1,6 +1,18 @@
 # LOC3D project and release status
 
-**Updated 23 October 2026.** LOC3D is the current public name for the project. The Python package and commands remain `delimit3d`; existing environment variables, default artifact locations, checkpoints and historical run identities retain their compatibility names.
+**Updated 31 October 2026.** Version 0.4.0 adds the public visualization suite,
+common-grid frozen-feature diagnostics and controlled sampling-ablation tools.
+The [code update](docs/release_update_20261031.md) describes the investigation,
+supported workflows and deferred research integrations. Its
+[verification manifest](manifests/code_refresh_20261031.json) records the current
+CPU checks and file identities. This is a software update, with no new GPU
+benchmark or ablation performance claim.
+
+The 25 October update added the [Mask3D limited-supervision workflows](docs/limited_supervision.md),
+including matched low-data experiments and official sparse annotations. The
+AGILE3D sparse-annotation prototype remains a separate research implementation.
+
+LOC3D is the current public name for the project. The Python package and commands remain `delimit3d`; existing environment variables, default artifact locations, checkpoints and historical run identities retain their compatibility names.
 
 The [research direction](docs/research.md) describes the current selected-proposal SAM2 method, open questions and the distinction between native-system comparisons and controlled initialization comparisons. The [23 October evidence update](docs/research_update_20261023.md) and its [hashed snapshot](docs/research_update_20261023.json) supersede the 17 October research-status snapshot where newer completion artifacts exist. Dated evidence is not a live training dashboard.
 

@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-31",
+  "existing_modules_already_identical_to_research": [
+    "src/delimit3d/data/granularity_ablation.py",
+    "src/delimit3d/training/granularity_ablation.py",
+    "src/delimit3d/training/logical_batch_schedule.py"
+  ],
+  "historical_refactor_manifest": "manifests/pretraining_refactor.json is an unchanged historical record, not a claim of current AST equality after this port.",
+  "limitations": [
+    "Historical epoch-5 nonflushed snapshot admission uses its original snapshot and receipt validation, outside the new exact-boundary helper.",
+    "Cluster launchers and existing job state are excluded.",
+    "Full validation metrics require separate diagnostic execution, complete scene coverage and output hash verification."
+  ],
+  "new_portable_workflow": [
+    "train-only source-hashed area audit",
+    "common-initialization/common-panel study preparation",
+    "preserved nominal LR horizon and existing logical-batch flushes",
+    "strict per-recipe and input-bound checkpoint admission",
+    "earlier exact-boundary checkpoint admission explicitly marked interim"
+  ],
+  "ported_controls": [
+    "stage-specific negative-budget reallocation",
+    "fixed reference activation for non-full arms",
+    "training-only overlap veto with common selected-proposal fixed evaluation",
+    "original 2D area propagated through geometry fragments",
+    "positive eligibility without deleting negative-support relations"
+  ],
+  "preserved_release_changes": [
+    "configurable and recorded 100k/500k training point limit",
+    "independent fixed 500k evaluation point limit",
+    "CPU positive-pair RNG consistency in optional CUDA planning",
+    "modular pretraining entrypoints and portable provenance",
+    "ordinary full-reference adaptive gate and legacy default compatibility"
+  ],
+  "schema": "loc3d_sampling_ablation_release_port/v1",
+  "source_files_sha256": {
+    "src/delimit3d/data/contrastive_sampler_v2.py": "a5bb407dc387feb237d86e0bbdda11279dc1d71b6da4229edc5f40595a491e59",
+    "src/delimit3d/data/sam2_source.py": "5315518ba02ff14058c8dccc2d4d0b838bf694b6e83e5f5223c24638a1abf516",
+    "src/delimit3d/training/adaptation.py": "7dac8dc7252c39abdb9fbc310debbdcb2f0a88028800f92982d5d03a85af7b5e",
+    "src/delimit3d/training/runner.py": "65b37cad5e9a91bd8620fac88e544840ff9dfb8b4f581c9ee4428c8b15f163f3",
+    "src/delimit3d/training/sampling_ablation.py": "91030ab50274514ec6cd69fd72720c1e64bc40833435c9b39f442d0371b17a3c",
+    "tests/test_sampling_ablation.py": "88fd5647d95df2b12647a4ee754b4d93f460437ba21ccaceab253ef0be9e887a"
+  },
+  "source_study": "loc3d_sampling_ablation_50ep_20261030_v1",
+  "validation_scope": "CPU tests and compilation; no GPU training, scheduler submissions or new evaluation metrics."
+}

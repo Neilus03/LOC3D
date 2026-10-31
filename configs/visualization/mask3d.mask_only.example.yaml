@@ -1,0 +1,37 @@
+# Native Delimit3D mask-only output: no class head or class probabilities required.
+# CPU: python scripts/visualization/run_suite.py --config THIS.yaml --output NEW --formats html png pdf
+version: 1
+seed: 42
+max_display_points: 20000
+max_analysis_points: 12000
+visualizations: [rgb, labels, prediction, confidence]
+scenes:
+  - scene_id: scene0568_00
+    dataset: ScanNet
+    kind: npz
+    path: /path/to/original_scene.npz
+    metadata:
+      background_ids: [0]
+      experiment_family: scratch_vs_pretrained_5cm
+    queries: []
+models:
+  - kind: mask3d_proposals
+    name: LitePT + mask-only Mask3D (exact checkpoint)
+    path: /path/to/saved_proposals/record.json
+# Future evaluator export (arrays are already evaluated outputs; no inference here):
+# save_proposal_export(NEW, scene, record={
+#   "output_contract": "mask_only", "prediction_domain": "segments",
+#   "mask_layout": "QN", "mask_values": "logits",
+#   "mask_threshold": 0.5, "threshold_comparator": "gt",
+#   "score_semantics": "mean sigmoid over positive native mask logits",
+#   "evaluated_postprocessing": EXACT_EVALUATOR_SETTINGS,
+#   "recorded_matching": EXACT_MATCH_ROWS_IF_EXPORTED,
+#   "model": EXACT_ENCODER_DECODER_AND_PREPROCESSING_RECORD},
+#   arrays={"masks": QUERY_BY_SEGMENT_LOGITS, "query_ids": ORIGINAL_QUERY_IDS,
+#           "scores": ACTUAL_EVALUATED_SCORES, "inverse_map": ORIGINAL_POINT_TO_SEGMENT,
+#           "selected_by_evaluator": ORIGINAL_SELECTED_FLAGS})
+# Save all proposals before overlap resolution and record benchmark postprocessing
+# (thresholds, scores, DBSCAN/NMS/top-k settings, mask expansion, ignored labels).
+# Rendering uses separate visualization-only overlap resolution; diagnostics are not AP.
+# Compatible class-aware exports declare output_contract: class_aware and may retain
+# class_logits/class_probabilities/class_ids arrays. Scores are not uncertainty.
